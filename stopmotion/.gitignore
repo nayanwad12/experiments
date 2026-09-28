@@ -1,0 +1,3 @@
+out/*
+!out/claymation.mp4
+__pycache__/
