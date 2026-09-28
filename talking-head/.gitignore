@@ -1,0 +1,6 @@
+raw/
+out/
+work/*.wav
+work/*.png
+work/*.jpg
+__pycache__/

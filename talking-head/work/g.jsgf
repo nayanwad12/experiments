@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar end;
+public <s> = <p> +;
+<p> = link | in | bio | see | you | inside | the | below | description | so | this | video | and | i | will | um | uh | okay | thank | thanks | bye | course | now | enroll | check | out;

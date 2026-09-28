@@ -1,0 +1,3 @@
+out/*
+!out/explainer.mp4
+__pycache__/
