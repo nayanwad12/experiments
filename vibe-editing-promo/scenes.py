@@ -622,6 +622,7 @@ def s_payoff(ctx, t):
         ctx.pop()
     paper(ctx, circ_pts(0, 0, 16, 14), LIME, 279, depth=1, amp=0.4, outline=(INK, 4))
     ctx.pop()
+    ctx.pop()
 
 
 # ---------------------------------------------------------------- 6. CTA

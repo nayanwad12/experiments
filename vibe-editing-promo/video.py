@@ -46,7 +46,9 @@ class Renderer:
             c = self.scene_surf.getCanvas()
             c.clear(rgb(PAPER))
             ctx = Ctx(c, idx * 1000 + lstep, t)
+            n = c.getSaveCount()
             scenes.SCENE_FNS[name](ctx, tl)
+            c.restoreToCount(n)  # never let a scene's transform leak into the next frame
             self.cache_img = self.scene_surf.makeImageSnapshot()
             self.cache_key = key
         return self.cache_img
