@@ -2,7 +2,9 @@
 
 One take, filmed on a phone, with the edit directions spoken on camera. Claude listens to every word
 (Whisper + forced alignment), looks at the frames, and builds each effect on the exact word that asks for it.
-The dead air is cut: 86 s raw → 67 s final, 1920×1080 (16:9), 30 fps.
+The dead air is cut and the whole edit plays 1.1× faster (voice time-stretched, pitch kept): 86 s raw → 58.7 s final,
+1920×1080 (16:9), 30 fps. `out/final.mp4` is the edit; `out/trimmed_raw.mp4` is the untouched take with the same cuts
+and speed, frame-for-frame aligned for side-by-side comparison.
 
 ## Pipeline
 
@@ -14,8 +16,9 @@ The dead air is cut: 86 s raw → 67 s final, 1920×1080 (16:9), 30 fps.
 | plate | `prep.py plate` | empty-room clean plate: masked temporal median + LaMa for the wall + headboard/sheet rebuilt from visible texture |
 | track | `prep.py palm_track` | template-matched palm so the logo sits on the hand |
 | edit | `common.py` | edit decision list (silences trimmed, pauses kept where an effect needs room) |
-| sound | `sound.py` | voice cut + compressed, original synthesised music bed (ducked), cinematic drone, SFX on the words |
+| sound | `sound.py` | voice cut + time-stretched + compressed; original 128 BPM track (drops, sidechain pump, underwater filter, trailer percussion), ducked ~9 dB under the voice; SFX on the words |
 | picture | `render.py` | every effect, word-locked; `--stills <beat…>` renders check frames |
+| compare | `trim_raw.py` | raw take with the same cuts and speed-up, no effects |
 
 ## The beats (each triggered by the spoken direction)
 
@@ -27,8 +30,8 @@ The dead air is cut: 86 s raw → 67 s final, 1920×1080 (16:9), 30 fps.
 6. **"Now remove me." / "Bring me back."** — he disintegrates into particles, the empty room keeps talking, he re-forms.
 7. **"Put me inside a frame on the right… the anatomy of a viral reel."** — he shrinks into a reel card; hook / retention / share build on the words.
 8. **"Back to the full screen."** — card expands back.
-9. **"Now put my best videos floating behind me in 3D."** — the repo's own renders play on floating 3D screens behind his cutout.
-10. **"Turn this entire scene into a cinematic documentary… dramatic lighting, slow camera push-in, movie-style titles."** — letterbox, teal/orange grade, relight, push-in, serif titles, subtitles.
+9. **"Now put my best videos floating behind me in 3D."** — the repo's own renders orbit him on a tilted 3D ring, behind him on the far side and in front on the near side.
+10. **"Turn this entire scene into a cinematic documentary… dramatic lighting, slow camera push-in, movie-style titles."** — paper-cut motion design: a stop-motion paper diorama builds behind his die-cut cutout, turns from dusk to night with paper light rays and lit windows, parallax push-in, torn letterbox, sticker-cut title.
 11. **"And all of this was edited with AI."** — recap grid of every effect.
 12. **"Comment EDIT and I will show you how."** — comment box types EDIT, send.
 
@@ -41,6 +44,7 @@ cd work && python3 asr.py turbo en && python3 align.py && python3 matte.py && cd
 python3 prep.py
 python3 sound.py
 python3 render.py          # -> out/final.mp4
+python3 trim_raw.py        # -> out/trimmed_raw.mp4
 ```
 
-Raw footage, model outputs (`*.npy`) and renders stay out of git.
+Raw footage, model outputs (`*.npy`) and intermediate renders stay out of git.
