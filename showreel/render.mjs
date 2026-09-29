@@ -35,7 +35,7 @@ async function openPage() {
   const meta = await page.evaluate(() => window.META);
   return { browser, page, meta };
 }
-const shot = page => page.screenshot({ type: 'png', clip: { x: 0, y: 0, width: 1920, height: 1080 } });
+const shot = page => page.screenshot({ type: 'png', clip: { x: 0, y: 0, width: 1920, height: 1080 }, timeout: 180000 });
 
 if (STILLS) {
   const dir = path.join(OUT, 'stills'); fs.mkdirSync(dir, { recursive: true });
@@ -52,39 +52,57 @@ if (STILLS) {
 
 const { browser: probe, meta } = await openPage();
 await probe.close();
-const N = meta.FRAMES, per = Math.ceil(N / WORKERS);
-console.log(`rendering ${N} frames @ ${FPS} fps, ${MBS} blur samples, ${WORKERS} workers`);
+const N = meta.FRAMES, CH = 60;
+const SEGDIR = path.join(OUT, `segs_${FPS}fps_mb${MBS}`);
+fs.mkdirSync(SEGDIR, { recursive: true });
+const segPath = c => path.join(SEGDIR, `seg_${String(c).padStart(4, '0')}.mp4`);
+const chunks = [...Array(Math.ceil(N / CH)).keys()];
+const todo = chunks.filter(c => !fs.existsSync(segPath(c)));   // resumable: finished chunks are kept
+console.log(`rendering ${N} frames @ ${FPS} fps, ${MBS} blur samples, ${WORKERS} workers (${todo.length}/${chunks.length} chunks to do)`);
 const t0 = Date.now();
 let done = 0;
+const total = todo.length * CH;
 
-async function worker(k) {
-  const a = k * per, b = Math.min(N, a + per);
-  if (a >= b) return null;
-  const seg = path.join(OUT, `seg_${k}.mp4`);
+async function renderChunk(ctx, c) {
+  const a = c * CH, b = Math.min(N, a + CH), part = segPath(c) + '.part.mp4';
   const ff = spawn(FFMPEG, ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'png', '-i', '-',
-    '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-pix_fmt', 'yuv420p', '-r', String(FPS), seg], { stdio: ['pipe', 'inherit', 'inherit'] });
+    '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-pix_fmt', 'yuv420p', '-r', String(FPS), part], { stdio: ['pipe', 'inherit', 'inherit'] });
   const closed = new Promise(r => ff.on('close', r));
-  const { browser, page } = await openPage();
-  for (let i = a; i < b; i++) {
-    await page.evaluate(n => window.renderFrame(n), i);
-    const buf = await shot(page);
-    if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
-    done++;
-    if (done % 60 === 0) {
-      const el = (Date.now() - t0) / 1000;
-      console.log(`${done}/${N} frames  ${el.toFixed(0)}s elapsed  eta ${(el / done * (N - done)).toFixed(0)}s`);
+  try {
+    for (let i = a; i < b; i++) {
+      await ctx.page.evaluate(n => window.renderFrame(n), i);
+      const buf = await ctx.page.screenshot({ type: 'png', clip: { x: 0, y: 0, width: 1920, height: 1080 }, timeout: 180000 });
+      if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
     }
-  }
+  } catch (e) { ff.stdin.destroy(); ff.kill(); await closed; throw e; }
   ff.stdin.end();
-  await closed;
-  await browser.close();
-  return seg;
+  const code = await closed;
+  if (code !== 0) throw new Error('ffmpeg exited ' + code);
+  fs.renameSync(part, segPath(c));
+  done += b - a;
+  const el = (Date.now() - t0) / 1000;
+  console.log(`${done}/${total} frames  ${el.toFixed(0)}s elapsed  eta ${(el / done * (total - done)).toFixed(0)}s`);
 }
 
-const segs = (await Promise.all([...Array(WORKERS).keys()].map(worker))).filter(Boolean);
-const list = path.join(OUT, 'segs.txt');
-fs.writeFileSync(list, segs.map(s => `file '${s}'`).join('\n'));
+async function worker() {
+  let ctx = await openPage();
+  while (todo.length) {
+    const c = todo.shift();
+    for (let attempt = 1; ; attempt++) {
+      try { await renderChunk(ctx, c); break; }
+      catch (e) {
+        console.error(`chunk ${c} attempt ${attempt} failed: ${e.message.split('\n')[0]}`);
+        if (attempt >= 3) throw e;
+        await ctx.browser.close().catch(() => {});
+        ctx = await openPage();
+      }
+    }
+  }
+  await ctx.browser.close();
+}
+
+await Promise.all([...Array(WORKERS)].map(worker));
+const list = path.join(SEGDIR, 'list.txt');
+fs.writeFileSync(list, chunks.map(c => `file '${segPath(c)}'`).join('\n'));
 execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', path.join(OUT, 'video.mp4')]);
-for (const s of segs) fs.unlinkSync(s);
-fs.unlinkSync(list);
-console.log(`done in ${((Date.now() - t0) / 1000).toFixed(0)}s -> out/video.mp4`);
+console.log(`done in ${((Date.now() - t0) / 1000).toFixed(0)}s -> out/video.mp4 (segments kept in ${path.basename(SEGDIR)}/ for resume)`);
