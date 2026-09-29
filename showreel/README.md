@@ -1,5 +1,7 @@
 # VIBE EDITING: 30 s motion-design showreel
 
+**Watch:** [`out/vibe_editing_showreel.mp4`](out/vibe_editing_showreel.mp4)
+
 A 30 second 16:9 showreel (1920×1080, 60 fps, real motion blur) for the **Vibe Editing** course. Every frame is generated in code: an HTML Canvas + WebGL2 engine rendered headlessly with Playwright, and an original soundtrack synthesised in numpy.
 
 **Concept:** the reel is edited *by prompt*. A chat bar types a vibe ("make it pop", "make it kinetic", "make it flow"…), hits send, and the next section drops on the downbeat.
@@ -23,7 +25,7 @@ A 30 second 16:9 showreel (1920×1080, 60 fps, real motion blur) for the **Vibe 
 ## Build
 
 ```bash
-./build.sh                               # audio + frames + mux -> out/vibe_editing_showreel.mp4 (≈35 min on 4 CPU cores)
+./build.sh                               # audio + frames + mux -> out/vibe_editing_showreel.mp4 (≈50 min on 4 CPU cores; resumable)
 ./build.sh --fps 30 --mb 3               # ~4x faster draft
 node render.mjs --stills 4.2,16.3,19.1   # preview PNGs -> out/stills/
 ```
