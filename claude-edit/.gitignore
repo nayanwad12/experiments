@@ -1,0 +1,12 @@
+raw/
+out/
+work/*.npy
+work/*.wav
+work/*.png
+work/*.jpg
+work/frames/
+work/refs/
+work/nframes.txt
+work/*.log
+work/turbo_out.txt
+__pycache__/
