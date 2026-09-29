@@ -1,5 +1,6 @@
 raw/
-out/
+out/*
+!out/final.mp4
 work/*.npy
 work/*.wav
 work/*.png
