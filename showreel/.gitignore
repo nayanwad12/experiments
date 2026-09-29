@@ -1,0 +1,3 @@
+out/*
+!out/vibe_editing_showreel.mp4
+__pycache__/
