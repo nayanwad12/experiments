@@ -23,25 +23,32 @@ HAND = (195.0, 318.0)        # open palm (top surface) in source px, at ~7s
 # ------------------------------------------------------------------ EDL
 # (src_start, src_end, base_zoom). Silences are trimmed, but pauses where an effect needs room to play stay.
 SEGS = [
-    (0.35, 6.30, 1.00),    # hook, "watch this", "zoom in on my hand"
-    (6.50, 9.75, 1.00),    # "now put my logo right here, in 3D"
-    (10.00, 13.85, 1.00),  # "nice" + "make me grab the logo and throw it"
-    (13.95, 16.35, 1.00),  # "straight at the camera" + glass crack hold
-    (16.60, 18.33, 1.08),  # "okay, harder one" (punch-in)
-    (18.33, 23.95, 1.00),  # layers
-    (24.35, 27.30, 1.00),  # "now remove me" + empty room
-    (27.70, 29.30, 1.00),  # "bring me back"
-    (33.50, 45.20, 1.00),  # frame on the right + anatomy of a viral reel
-    (46.95, 48.75, 1.00),  # "back to the full screen"
-    (49.85, 55.15, 1.00),  # floating videos + "perfect"
-    (56.70, 58.10, 1.10),  # "last one"
-    (62.45, 74.90, 1.00),  # cinematic documentary
-    (76.40, 80.05, 1.07),  # "all of this was edited with AI"
-    (80.35, 83.75, 1.00),  # CTA
+    (0.40, 6.15, 1.00),    # hook, "watch this", "zoom in on my hand"
+    (6.50, 9.62, 1.00),    # "now put my logo right here, in 3D"
+    (10.02, 13.85, 1.00),  # "nice" + "make me grab the logo and throw it"
+    (13.95, 16.05, 1.00),  # "straight at the camera" + glass crack hold
+    (16.62, 18.33, 1.08),  # "okay, harder one" (punch-in)
+    (18.33, 23.85, 1.00),  # layers
+    (24.35, 27.05, 1.00),  # "now remove me" + empty room
+    (27.72, 29.20, 1.00),  # "bring me back"
+    (33.55, 45.00, 1.00),  # frame on the right + anatomy of a viral reel
+    (47.00, 48.65, 1.00),  # "back to the full screen"
+    (49.92, 55.05, 1.00),  # floating videos + "perfect"
+    (56.75, 57.95, 1.10),  # "last one"
+    (62.55, 74.85, 1.00),  # cinematic documentary
+    (76.48, 79.95, 1.07),  # "all of this was edited with AI"
+    (80.45, 83.60, 1.00),  # CTA
 ]
 OFFS = np.cumsum([0] + [e - s for s, e, _ in SEGS])
-DUR = float(OFFS[-1])
-NFRAMES = int(round(DUR * FPS))
+DUR = float(OFFS[-1])          # "edit time": the cut, before the global speed-up
+SPEED = 1.10                   # whole edit plays 10% faster (voice time-stretched, pitch kept)
+OUT_DUR = DUR / SPEED          # final running time
+NFRAMES = int(round(OUT_DUR * FPS))
+
+
+def ot(t_edit):
+    """edit time -> final (output) time"""
+    return t_edit / SPEED
 
 
 def seg_of_out(t):

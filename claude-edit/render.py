@@ -15,7 +15,7 @@ import cv2
 import numpy as np
 import skia
 
-from common import (DUR, FACE, FFMPEG, FONTS, FPS, H, NFRAMES, OUT, S0, SEGS, SH, SW, W, WORDS, WORK, clamp, eio,
+from common import (DUR, FACE, FFMPEG, FONTS, FPS, H, NFRAMES, OUT, S0, SEGS, SH, SPEED, SW, W, WORDS, WORK, clamp, eio,
                     ei, eo, eob, lerp, prog, spring, src_of_out, out_of_src, window, wt)
 
 # ------------------------------------------------------------------ palette + fonts
@@ -121,6 +121,8 @@ B = dict(
 B["screens_out"] = out_of_src(54.86)
 B["layers_close"] = B["text_end"] + 0.02
 B["text_fade"] = out_of_src(29.02)
+BUMPS = [B[k] for k in ("over", "watch", "here", "d3", "l_bg", "l_me", "l_text", "rm", "back", "hook", "ret", "share",
+                        "perfect", "dramatic", "movie", "crazy", "edited", "ai", "comment")]
 
 
 # ------------------------------------------------------------------ camera
@@ -149,6 +151,12 @@ def camera(t, si):
     if kp > 0:
         z = lerp(z, 1.2, kp)
         cy = lerp(cy, 175, kp)
+    # hook energy: open punched-in and snap back, then quick zoom "bumps" on the big hits
+    z *= 1 + 0.14 * (1 - eo(prog(t, 0.0, 0.5)))
+    for tb in BUMPS:
+        d = t - tb
+        if 0 <= d < 0.6:
+            z *= 1 + 0.045 * math.exp(-d / 0.11)
     z, cx, cy = cam_clamp(z, cx, cy)
     # impact shake
     sx = sy = 0.0
@@ -943,14 +951,9 @@ def frame_section(t, base):
     return arr[..., :3].astype(np.float32), pa
 
 
-# ------------------------------------------------------------------ 6. best videos floating behind me, in 3D
-SCREENS = [  # clip, centre x, centre y, height, yaw(deg), pitch, delay
-    ("clip_promo", 330, 520, 600, 30, -4, 0.00),
-    ("clip_evo", 960, 170, 300, 0, -14, 0.14),
-    ("clip_expl", 1590, 520, 600, -30, -4, 0.28),
-    ("clip_promo2", 1335, 180, 290, -18, -10, 0.42),
-    ("clip_promo", 585, 180, 290, 18, -10, 0.56),
-]
+# ------------------------------------------------------------------ 6. best videos orbiting around me, in 3D
+ORBIT = ["clip_promo", "clip_evo", "clip_expl", "clip_promo2", "clip_promo"]
+ORBIT_OFF = [0, 60, 0, 25, 110]          # start offset (frames) so the two promo screens differ
 
 
 def screen_quad(cx, cy, w, h, yaw, pitch, zoff=0.0):
@@ -967,133 +970,264 @@ def screen_quad(cx, cy, w, h, yaw, pitch, zoff=0.0):
     return pts
 
 
+def draw_screen(c, fr, pts, a):
+    fh, fw = fr.shape[:2]
+    glow = skia.Paint(AntiAlias=True, Color4f=col(tuple(int(min(255, v)) for v in fr.reshape(-1, 3).mean(0) * 1.4 + 40), 0.75 * a))
+    glow.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 34))
+    gp = skia.Path()
+    gp.addPoly(pts, True)
+    c.drawPath(gp, glow)
+    m = skia.Matrix()
+    m.setPolyToPoly([skia.Point(0, 0), skia.Point(fw, 0), skia.Point(fw, fh), skia.Point(0, fh)], pts)
+    rr = skia.RRect.MakeRectXY(skia.Rect(0, 0, fw, fh), fw * 0.06, fw * 0.06)
+    c.save()
+    c.concat(m)
+    c.save()
+    c.clipRRect(rr, True)
+    c.drawImage(sk_image(fr), 0, 0, SAMP, skia.Paint(Alphaf=a))
+    c.restore()
+    c.drawRRect(rr, skia.Paint(AntiAlias=True, Color4f=col(WHITE, 0.9 * a), Style=skia.Paint.kStroke_Style,
+                               StrokeWidth=max(2.0, fw * 0.014)))
+    c.restore()
+
+
 def screens_section(t, base, al):
+    """Screens on a tilted ring that orbits him: behind him on the far side, in front on the near side."""
     t0 = B["floating"] - 0.25
     t_out = B["screens_out"]
-    if not (t0 <= t <= t_out + 0.45):
+    if not (t0 <= t <= t_out + 0.5):
         return None
-    dim = eio(prog(t, t0, 0.6)) * (1 - eio(prog(t, t_out, 0.4)))
-    out = base.astype(np.float32)
-    # dim + cool the room so the screens glow
-    vign = studio_bg()
-    out = out * (1 - 0.55 * dim) + vign * 0.55 * dim
-    arr, s = new_layer()
-    c = s.getCanvas()
-    for i, (clip, cx, cy, hgt, yaw, pitch, dl) in enumerate(SCREENS):
-        k = prog(t, t0 + 0.15 + dl, 0.7)
-        ko = eio(prog(t, t_out + 0.04 * i, 0.4))
-        if k <= 0 or ko >= 1:
-            continue
+    app = eo(prog(t, t0, 0.9))
+    ex = eio(prog(t, t_out, 0.45))
+    dim = eio(prog(t, t0, 0.6)) * (1 - ex)
+    basef = base.astype(np.float32)
+    a3 = al[..., None]
+    room = basef * (1 - 0.6 * dim) + studio_bg() * 0.6 * dim
+    out = basef * a3 + room * (1 - a3)
+    back_arr, bs = new_layer()
+    front_arr, fs = new_layer()
+    cb, cf = bs.getCanvas(), fs.getCanvas()
+    cx, cy = 960, 560
+    rx = lerp(260, 800, app) * (1 + 0.7 * ex)
+    rz, tilt = 520, 150
+    spin = 0.9 * (t - t0) + 2.2 * (1 - app)       # spins in fast, settles into a steady orbit
+    # orbit ring: far half behind him, near half in front
+    for half, cv in ((1, cb), (-1, cf)):
+        path = skia.Path()
+        first = True
+        for j in range(121):
+            th = math.pi * j / 120 * half
+            z = rz * math.sin(th)
+            k = 1500 / (1500 + z)
+            X, Y = cx + rx * math.cos(th) * k, cy - tilt * math.sin(th) * k
+            (path.moveTo if first else path.lineTo)(X, Y)
+            first = False
+        cv.drawPath(path, skia.Paint(AntiAlias=True, Color4f=col(YEL, 0.45 * dim), Style=skia.Paint.kStroke_Style,
+                                     StrokeWidth=3, PathEffect=skia.DashPathEffect.Make([14, 10], -40 * t)))
+    items = []
+    for i, clip in enumerate(ORBIT):
+        th = 2 * math.pi * i / len(ORBIT) + spin
+        z = rz * math.sin(th)
+        k = 1500 / (1500 + z)
+        x = cx + rx * math.cos(th) * k
+        y = cy - tilt * math.sin(th) * k + 8 * math.sin(1.7 * t + i)
+        items.append((z, i, clip, th, x, y, k))
+    items.sort(key=lambda q: -q[0])
+    for z, i, clip, th, x, y, k in items:
         frames = D(clip)
-        fi = int((t - t0) * FPS) % len(frames)
-        fr = np.ascontiguousarray(frames[fi])
+        fr = np.ascontiguousarray(frames[(int((t - t0) * FPS) + ORBIT_OFF[i]) % len(frames)])
         fh, fw = fr.shape[:2]
-        w = hgt * fw / fh
-        e = eob(k)
-        bob = 10 * math.sin(1.6 * t + i * 1.3)
-        wob = 4 * math.sin(1.1 * t + i) + 18 * math.exp(-max(0, t - B["d3b"]) * 3) * math.sin(max(0, t - B["d3b"]) * 12) * (t > B["d3b"])
-        zoff = lerp(900, 0, eo(k)) + 700 * ko
-        pts = screen_quad(cx, cy + bob - 40 * ko, w * lerp(0.6, 1, e), hgt * lerp(0.6, 1, e), yaw + wob, pitch, zoff)
-        a = min(1, k * 2.5) * (1 - ko)
-        glow = skia.Paint(AntiAlias=True, Color4f=col(tuple(int(v) for v in fr.reshape(-1, 3).mean(0) * 1.4 + 40), 0.8 * a))
-        glow.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 38))
-        gp = skia.Path()
-        gp.addPoly(pts, True)
-        c.drawPath(gp, glow)
-        m = skia.Matrix()
-        m.setPolyToPoly([skia.Point(0, 0), skia.Point(fw, 0), skia.Point(fw, fh), skia.Point(0, fh)], pts)
-        c.save()
-        c.concat(m)
-        rr = skia.RRect.MakeRectXY(skia.Rect(0, 0, fw, fh), fw * 0.06, fw * 0.06)
-        c.clipRRect(rr, True)
-        c.drawImage(sk_image(fr), 0, 0, SAMP, skia.Paint(Alphaf=a))
-        c.restore()
-        c.save()
-        c.concat(m)
-        c.drawRRect(rr, skia.Paint(AntiAlias=True, Color4f=col(WHITE, 0.85 * a), Style=skia.Paint.kStroke_Style,
-                                   StrokeWidth=max(2.0, fw * 0.012)))
-        c.restore()
-    out = over(out, arr, 1 - al)
+        hgt = (420 if fh > fw else 250) * k * lerp(0.4, 1, app)
+        wdt = hgt * fw / fh
+        yaw = -48 * math.cos(th)
+        pts = screen_quad(x, y, wdt, hgt, yaw, -6)
+        a = min(1, app * 2) * (1 - ex) * (0.75 + 0.25 * clamp(1 - z / rz))
+        draw_screen(cb if z > 0 else cf, fr, pts, a)
+    out = over(out, back_arr, 1 - al)
+    out = over(out, front_arr)
     return out
 
 
-# ------------------------------------------------------------------ 7. cinematic documentary
+# ------------------------------------------------------------------ 7. documentary, as paper-cut motion design
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "vibe-editing-promo"))
+import paper as P  # noqa: E402
+
+
 def cine_k(t):
-    return eio(prog(t, B["cine"], 0.7)) * (1 - eio(prog(t, B["crazy"] - 0.05, 0.3)))
+    return eio(prog(t, B["cine"] - 0.1, 0.8)) * (1 - eio(prog(t, B["crazy"] - 0.05, 0.4)))
 
 
 @lru_cache(None)
 def vignette():
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
     r = np.sqrt(((xx - W / 2) / (W * 0.62)) ** 2 + ((yy - H / 2) / (H * 0.7)) ** 2)
-    return np.clip(1 - 0.75 * r ** 2.2, 0.15, 1)[..., None]
+    return np.clip(1 - 0.6 * r ** 2.2, 0.25, 1)[..., None]
+
+
+def hexmix(a, b, k):
+    k = round(k * 5) / 5            # quantised so the paper paints stay cached
+    ca = [(a >> s) & 255 for s in (16, 8, 0)]
+    cb = [(b >> s) & 255 for s in (16, 8, 0)]
+    r, g, bl = (int(lerp(x, y, k)) for x, y in zip(ca, cb))
+    return (r << 16) | (g << 8) | bl
+
+
+# dusk -> night palettes (hex) for each paper layer
+PAL = dict(sky=(0xF7D9B5, 0x17213D), halo3=(0xF6B783, 0x2A3A66), halo2=(0xF39A6B, 0x3B4F86), halo1=(0xFFE3B8, 0xF7E6C4),
+           far=(0xE08C6A, 0x22345C), city=(0x7B5EA7, 0x2B2450), near=(0x2F4858, 0x0E1628), win=(0xF7D9B5, 0xFFD23F))
 
 
 @lru_cache(None)
-def beam():
+def doc_geometry():
+    rng = np.random.default_rng(21)
+    xs = np.linspace(-80, W + 80, 14)
+    far = [(x, 600 + 90 * math.sin(x / 210) + rng.uniform(-50, 30)) for x in xs] + [(W + 80, H + 80), (-80, H + 80)]
+    bld, x = [], -60.0
+    while x < W + 60:
+        w = rng.uniform(70, 150)
+        h = rng.uniform(140, 330) * (0.7 if 700 < x < 1220 else 1.0)
+        wins = [(x + 14 + i * 26, 820 - h + 24 + j * 34) for i in range(int((w - 20) // 26)) for j in range(int((h - 40) // 34))
+                if rng.random() < 0.55]
+        bld.append((x, w, h, wins))
+        x += w + rng.uniform(-8, 10)
+    xs2 = np.linspace(-80, W + 80, 9)
+    near = [(x, 905 + 35 * math.sin(x / 160 + 1) + rng.uniform(-10, 10)) for x in xs2] + [(W + 80, H + 80), (-80, H + 80)]
+    stars = [(rng.uniform(0, W), rng.uniform(40, 520), rng.uniform(4, 10)) for _ in range(26)]
+    return far, bld, near, stars
+
+
+def doc_scene(t, M):
+    """Paper diorama behind him: sky, halo + rays, mountains, city, hills. Returns RGBA (transparent where not built yet)."""
+    tq = math.floor(t * 12) / 12                      # stop-motion: paper animates on 12 fps
+    step = int(t * 12)
+    light = eio(prog(tq, B["dramatic"], 0.9))
+    push = M[0, 0] / S0 - 1                           # camera push-in drives parallax
     arr, s = new_layer()
     c = s.getCanvas()
-    p = skia.Paint(AntiAlias=True, Color4f=col((255, 214, 170), 0.5))
-    p.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 60))
-    path = skia.Path()
-    path.addPoly([skia.Point(80, -50), skia.Point(420, -50), skia.Point(1150, H), skia.Point(620, H)], True)
-    c.drawPath(path, p)
-    return arr[..., 3:4].astype(np.float32) / 255
+    ctx = P.Ctx(c, step)
+    far, bld, near, stars = doc_geometry()
+    col_ = {k: hexmix(v[0], v[1], light) for k, v in PAL.items()}
+
+    def slide(i, from_top=False):
+        ki = eob(prog(tq, B["cine"] - 0.1 + 0.07 * i, 0.55))
+        ko = ei(prog(tq, B["crazy"] - 0.05 + 0.04 * i, 0.4))
+        dy = (1 - ki) * H * 1.05 + ko * H * 1.1
+        return -dy if from_top else dy
+
+    def layer(i, depth, from_top=False):
+        sc = 1 + push * depth
+        c.save()
+        c.translate(960, 380)
+        c.scale(sc, sc)
+        c.translate(-960, -380 + slide(i, from_top))
+
+    # sky
+    layer(0, 0.15, True)
+    c.drawRect(skia.Rect(-200, -200, W + 200, H + 200), P.paper_paint(col_["sky"], 1))
+    if light > 0:
+        for sx, sy, r in stars:
+            tw = 0.5 + 0.5 * math.sin(step * 0.9 + sx)
+            P.paper(ctx, P.sparkle_pts(sx, sy, r * (0.7 + 0.5 * tw)), 0xFFF3D6, int(sx), depth=0.5, amp=0.6, alpha=int(255 * light))
+    c.restore()
+    # halo + rotating light rays
+    layer(1, 0.3)
+    hx, hy = 960, 330
+    if light > 0:
+        rot = 4 * tq
+        p = P.paper_paint(0xFFF1D0, 3, int(120 * light))
+        for i in range(16):
+            a0 = math.radians(rot + i * 22.5)
+            a1 = a0 + math.radians(9)
+            path = P.path_of([(hx, hy), (hx + 1500 * math.cos(a0), hy + 1500 * math.sin(a0)),
+                              (hx + 1500 * math.cos(a1), hy + 1500 * math.sin(a1))])
+            P.tdraw(c, path, p, i)
+    for r, key_, sd in ((460, "halo3", 11), (350, "halo2", 12), (240, "halo1", 13)):
+        P.paper(ctx, P.circ_pts(hx, hy, r, 64), col_[key_], sd, depth=2.2, amp=2.5)
+    c.restore()
+    # far mountains
+    layer(2, 0.5)
+    P.paper(ctx, far, col_["far"], 31, depth=2.5, amp=5, seg=50)
+    c.restore()
+    # city skyline with lit windows at night
+    layer(3, 0.7)
+    for j, (x, w, h, wins) in enumerate(bld):
+        P.paper(ctx, P.rect_pts(x + w / 2, 820 - h / 2 + 60, w, h + 120), col_["city"], 40 + j, depth=1.6, amp=1.2)
+        if light > 0.3:
+            wp = P.paper_paint(col_["win"], 7, int(255 * clamp((light - 0.3) / 0.5)))
+            for k, (wx, wy) in enumerate(wins):
+                if (k * 7 + j + step // 6) % 9:
+                    c.drawRect(skia.Rect(wx, wy, wx + 12, wy + 16), wp)
+    c.restore()
+    # near hills
+    layer(4, 0.9)
+    P.torn(ctx, near, col_["near"], 51, depth=3, edge=(0, 8), amp=7)
+    c.restore()
+    return arr
 
 
-def cinematic(t, img, al):
+def cutout_layers(al):
+    """White die-cut border + soft drop shadow around his matte (sticker/paper cutout look)."""
+    a8 = (al * 255).astype(np.uint8)
+    border = cv2.dilate(a8, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (23, 23)))
+    border = cv2.GaussianBlur(border, (0, 0), 1.2).astype(np.float32) / 255
+    sh = cv2.GaussianBlur(np.roll(np.roll(border, 16, 0), 10, 1), (0, 0), 9)
+    return border, sh
+
+
+def cinematic(t, img, al, M):
     k = cine_k(t)
     if k <= 0:
         return img
     light = eio(prog(t, B["dramatic"], 0.9)) * (1 - eio(prog(t, B["crazy"] - 0.05, 0.3)))
-    a3 = al[..., None]
+    scene = doc_scene(t, M)
+    sa = scene[..., 3:4].astype(np.float32) / 255
+    out = img * (1 - sa) + scene[..., :3].astype(np.float32) * sa
+    border, sh = cutout_layers(al)
+    bk = (border * k)[..., None]
+    out = out * (1 - 0.45 * (sh * k)[..., None])
+    out = out * (1 - bk) + np.array([251, 248, 241], np.float32) * bk
+    person = img
     if light > 0:
-        xg = np.linspace(1.45, 0.45, W, dtype=np.float32)[None, :, None]
-        key = np.array([1.06, 0.98, 0.88], np.float32) * xg
-        person = img * lerp(1, 1, 0) * (1 + (key - 1) * light)
-        bg = img * (1 - 0.72 * light) * np.array([0.88, 0.97, 1.15], np.float32)
-        bg = bg + beam() * np.array([255, 210, 160], np.float32) * 0.28 * light
-        rim = np.clip(al - cv2.GaussianBlur(np.roll(al, 7, axis=1), (0, 0), 3), 0, 1)[..., None]
-        img = person * a3 + bg * (1 - a3) + rim * np.array([255, 190, 130], np.float32) * 0.9 * light
-    # teal / orange split tone, contrast, desat
-    lum = img.mean(2, keepdims=True) / 255
-    tone = (1 - lum) * np.array([-14, 4, 16], np.float32) + lum * np.array([16, 6, -14], np.float32)
-    g = satur(img, 0.82) + tone
-    g = (g - 128) * 1.12 + 128
-    g = g * lerp(1, 1, 0) * (vignette() ** 1.0)
-    img = img * (1 - k) + g * k
-    rng = np.random.default_rng(int(t * FPS))
-    grain = cv2.resize(rng.normal(0, 1, (H // 2, W // 2)).astype(np.float32), (W, H))[..., None]
-    img = img + grain * 7 * k
-    return img
+        xg = np.linspace(1.3, 0.72, W, dtype=np.float32)[None, :, None]
+        key = np.array([1.07, 0.99, 0.9], np.float32) * xg
+        person = img * (1 + (key - 1) * light)
+        rim = np.clip(al - cv2.GaussianBlur(np.roll(al, 8, axis=1), (0, 0), 3), 0, 1)[..., None]
+        person = person + rim * np.array([255, 205, 120], np.float32) * 0.8 * light
+    a3 = al[..., None]
+    out = out * (1 - a3) + person * a3
+    out = out * lerp(1, 1, 0) * (1 - 0.35 * k + 0.35 * k * vignette())
+    return out
 
 
 def cine_overlay(c, t):
     k = cine_k(t)
     if k <= 0:
         return
-    bar = 138 * k
-    p = skia.Paint(Color4f=col((0, 0, 0), 1))
-    c.drawRect(skia.Rect(0, 0, W, bar), p)
-    c.drawRect(skia.Rect(0, H - bar, W, H), p)
-    km = prog(t, B["movie"] - 0.05, 0.9)
-    out = 1 - prog(t, B["crazy"] - 0.1, 0.25)
+    step = int(t * 12)
+    tq = math.floor(t * 12) / 12
+    ctx = P.Ctx(c, step)
+    bar = 132 * k
+    P.torn(ctx, [(-60, -60), (W + 60, -60), (W + 60, bar), (-60, bar)], 0x111111, 61, depth=2, edge=(0, -6), amp=6)
+    P.torn(ctx, [(-60, H - bar), (W + 60, H - bar), (W + 60, H + 60), (-60, H + 60)], 0x111111, 62, depth=2, edge=(0, 6), amp=6)
+    out = 1 - prog(tq, B["crazy"] - 0.1, 0.2)
+    if out <= 0:
+        return
+    km = prog(tq, B["movie"] - 0.05, 0.4)
     if km > 0:
-        band = skia.Paint(Shader=skia.GradientShader.MakeLinear(
-            [skia.Point(0, 540), skia.Point(0, H - bar)],
-            [skia.Color4f(0, 0, 0, 0).toColor(), skia.Color4f(0, 0, 0, 0.72 * eo(km) * out).toColor()]))
-        c.drawRect(skia.Rect(0, 540, W, H - bar), band)
-    if km > 0:
-        draw_text(c, "A  FILM  ABOUT  THE  ONE  WHO", W / 2, 640, font("Jost-Light", 30), (235, 225, 210),
-                  eo(km) * out, "c", track=0.35)
-    kt = prog(t, B["movie"] + 0.35, 1.3)
-    if kt > 0:
-        tr = lerp(0.08, 0.22, eo(kt))
-        draw_text(c, "STOPPED EDITING", W / 2, 790, font("Cormorant-Light", 132), (255, 248, 236), eo(kt) * out, "c",
-                  track=tr, shadow=12)
-    ks = prog(t, B["movie"] + 1.0, 0.9)
+        P.draw_text(ctx, "A FILM ABOUT THE ONE WHO", W / 2, 668, 34, fill=0x111111, back=0xFBF8F1, seed=71, wob=0.6,
+                    sc=eob(km) * out, track=0.12, depth=2)
+    t1 = B["movie"] + 0.2
+
+    def anim(i):
+        kk = prog(tq, t1 + 0.028 * i, 0.25)
+        return 0.0, -40 * (1 - eob(kk)), 12 * (1 - eob(kk)), eob(kk) * out
+    if tq > t1 - 0.05:
+        P.draw_text(ctx, "STOPPED EDITING", W / 2, 776, 124, fill=0xFBF8F1, back=0x111111, under=0xFF5C5C, seed=72,
+                    wob=0.8, maxw=1500, depth=3, anim=anim)
+    ks = prog(tq, B["movie"] + 1.1, 0.4)
     if ks > 0:
-        draw_text(c, "A  DOCUMENTARY", W / 2, 850, font("Jost-Light", 26), (220, 205, 185), eo(ks) * out * 0.9, "c", track=0.5)
+        P.draw_text(ctx, "A DOCUMENTARY", W / 2, 866, 30, fill=0xFBF8F1, back=0xFF5C5C, seed=73, wob=0.6,
+                    sc=eob(ks) * out, track=0.25, depth=2)
 
 
 # ------------------------------------------------------------------ 8. recap grid
@@ -1324,7 +1458,7 @@ def render(t, recap=True):
     hl = hook_layer(t)
     if hl is not None:
         img = over(img, hl, 1 - al)
-    img = cinematic(t, img, al)
+    img = cinematic(t, img, al, M)
     if recap:
         img = recap_section(t, img)
 
@@ -1360,7 +1494,7 @@ def render_chunk(args):
                           "-r", str(FPS), "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "15",
                           "-pix_fmt", "yuv420p", path], stdin=subprocess.PIPE)
     for i in range(i0, i1):
-        p.stdin.write(render(i / FPS).tobytes())
+        p.stdin.write(render(i / FPS * SPEED).tobytes())
     p.stdin.close()
     p.wait()
     return path
@@ -1392,7 +1526,7 @@ def main():
     open(lst, "w").write("".join(f"file '{j[2]}'\n" for j in jobs))
     final = os.path.join(OUT, "final.mp4")
     subprocess.run([FFMPEG, "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-i", os.path.join(OUT, "mix.wav"),
-                    "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "256k", "-shortest",
+                    "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "256k",
                     "-movflags", "+faststart", final], check=True)
     print("wrote", final)
 
