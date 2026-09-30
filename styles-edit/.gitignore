@@ -1,0 +1,13 @@
+raw/
+out/*
+!out/final.mp4
+!out/trimmed_raw.mp4
+!out/comparison_reel.mp4
+work/*.npy
+work/*.wav
+work/*.png
+work/*.jpg
+work/frames/
+work/nframes.txt
+work/*.log
+__pycache__/
