@@ -3,7 +3,8 @@
 80 s, 1920×1080 (16:9), 24 fps, stereo. Built from 8 AI-generated clips (Gemini/Veo) and the supplied narration,
 edited so it doesn't read as AI.
 
-**Deliverable:** `out/oncoxpress_brand_film.mp4`. The high-bitrate master is rendered locally by `encode.sh` and isn't committed.
+**Deliverable:** `out/oncoxpress_brand_film.mp4` (8 Mbps). `encode.sh` also makes a 24 Mbps full-grain version,
+`out/oncoxpress_brand_film_HQ.mp4` (240 MB), which isn't committed.
 
 ## What was done to the footage
 
