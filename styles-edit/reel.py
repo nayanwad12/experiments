@@ -72,8 +72,8 @@ def background():
     c = s.getCanvas()
     c.drawPaint(skia.Paint(Shader=skia.GradientShader.MakeRadial(
         skia.Point(RW * 0.5, RH * 0.42), RH * 0.75,
-        [skia.Color4f(0.13, 0.11, 0.22, 1).toColor(), skia.Color4f(0.03, 0.03, 0.06, 1).toColor()])))
-    dot = skia.Paint(AntiAlias=True, Color4f=c4(WHITE, 0.07))
+        [skia.Color4f(1, 1, 1, 1).toColor(), skia.Color4f(0.93, 0.93, 0.95, 1).toColor()])))
+    dot = skia.Paint(AntiAlias=True, Color4f=c4((20, 20, 40), 0.07))
     for x in range(0, RW + 1, 40):
         for y in range(0, RH + 1, 40):
             c.drawCircle(x, y, 1.5, dot)
@@ -85,21 +85,21 @@ def background():
     top = band0 + (band1 - band0 - block) / 2              # centre the headline block in its band
     y1 = top + 58
     y = y1 + 92
-    text(c, "Fully Edited", ZX, y1, black, fs, WHITE)
+    text(c, "Fully Edited", ZX, y1, black, fs, INK)
     fnt = skia.Font(black, fs)
     x0 = ZX - fnt.measureText("by AI") / 2
     wb = fnt.measureText("by ")
     wai = fnt.measureText("AI")
-    text(c, "by ", x0, y, black, fs, WHITE, "l")
+    text(c, "by ", x0, y, black, fs, INK, "l")
     hl = skia.RRect.MakeRectXY(skia.Rect(x0 + wb - 11, y - 66, x0 + wb + wai + 11, y + 12), 12, 12)
     c.drawRRect(hl, skia.Paint(AntiAlias=True, Color4f=c4(YEL)))
     text(c, "AI", x0 + wb, y, black, fs, INK, "l")
     sparkle(c, x0 + wb + wai + 36, y - 60, 20, YEL)
-    sparkle(c, x0 - 30, y - 74, 12, WHITE)
-    text(c, "5 STYLES  ·  ZERO EDITING", ZX, y + 48, tf("SpaceGrotesk-Bold"), 24, (185, 180, 215), track=0.08)
+    sparkle(c, x0 - 30, y - 74, 12, INK)
+    text(c, "5 STYLES  ·  ZERO EDITING", ZX, y + 48, tf("SpaceGrotesk-Bold"), 24, (110, 110, 125), track=0.08)
     # card shadows
     for (x, yy) in (TOP, BOT):
-        sh = skia.Paint(AntiAlias=True, Color4f=c4((0, 0, 0), 0.6))
+        sh = skia.Paint(AntiAlias=True, Color4f=c4((20, 20, 50), 0.22))
         sh.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 24))
         c.drawRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(x, yy + 14, CW, CH), RAD, RAD), sh)
     return arr[..., :3].copy()
@@ -110,8 +110,8 @@ def overlay():
     arr = np.zeros((RH, RW, 4), np.uint8)
     s = skia.Surface(arr)
     c = s.getCanvas()
-    for (x, y), fill, fg, label, border in ((TOP, (236, 236, 240), INK, "ORIGINAL", (255, 255, 255, 0.35)),
-                                            (BOT, YEL, INK, "VIBE EDITED", (255, 210, 63, 1.0))):
+    for (x, y), fill, fg, label, border in ((TOP, INK, WHITE, "ORIGINAL", (17, 17, 20, 0.18)),
+                                            (BOT, YEL, INK, "VIBE EDITED", (240, 190, 20, 1.0))):
         c.drawRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(x, y, CW, CH), RAD, RAD),
                     skia.Paint(AntiAlias=True, Color4f=c4(border[:3], border[3]), Style=skia.Paint.kStroke_Style,
                                StrokeWidth=4 if label == "VIBE EDITED" else 2.5))

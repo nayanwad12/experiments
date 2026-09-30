@@ -265,7 +265,8 @@ def projector(d):
     step = int(SR / 24)
     for i in range(0, n, step):
         m = int(0.012 * SR)
-        x[i:i + m] += filt(ns(0.012)[:m], "bandpass", [1500, 5000]) * np.exp(-T(m) / 0.003)
+        click = filt(ns(0.012)[:m], "bandpass", [1500, 5000]) * np.exp(-T(m) / 0.003)
+        x[i:i + m] += click[: len(x[i:i + m])]
     crackle = np.zeros(n)
     k = int(d * 90)
     crackle[rng.integers(0, n, k)] = rng.uniform(-1, 1, k)
@@ -363,21 +364,39 @@ def cartoon_bed(seg, d, bpm=150):
         k += 1
 
 
-def chiptune(seg, d, bpm=150):
+def chiptune(seg, d, bpm=176):
+    """Bouncy, swung 8-bit platformer tune (original melody): square lead, triangle bass, noise drums."""
     beat = 60 / bpm
-    arps = [[60, 64, 67, 72], [57, 60, 64, 69], [53, 57, 60, 65], [55, 59, 62, 67]]
+    lead = [76, 76, 0, 76, 0, 72, 76, 0, 79, 0, 0, 0, 67, 0, 0, 0,
+            72, 0, 0, 67, 0, 0, 64, 0, 0, 69, 0, 71, 0, 70, 69, 0]
+    bassn = [48, 0, 55, 0, 48, 0, 55, 0, 43, 0, 50, 0, 43, 0, 50, 0]
     k = 0
-    while k * beat / 4 < d:
-        tb = k * beat / 4
-        ch = arps[(k // 16) % 4]
-        place(seg, chip_note(ch[k % 4] + 12, beat / 4, 0.25), tb, 0.6)
+    while k * beat / 2 < d:
+        tb = k * beat / 2 + (beat * 0.08 if k % 2 else 0)      # swing
+        m = lead[k % len(lead)]
+        if m:
+            place(seg, chip_note(m, beat * 0.45, 0.25), tb, 0.55)
+            place(seg, chip_note(m - 12, beat * 0.45, 0.5), tb, 0.12)
+        bm = bassn[k % len(bassn)]
+        if bm:
+            place(seg, tri(bm, beat * 0.45), tb, 0.9)
         if k % 4 == 0:
-            place(seg, tri(ch[0] - 12, beat * 0.9), tb, 0.8)
-        if k % 8 == 0:
-            place(seg, filt(ns(0.08), "lp", 3000) * env(int(0.08 * SR), 0.001, 0.03), tb, 0.5)
-        if k % 8 == 4:
-            place(seg, filt(ns(0.1), "hp", 2000) * env(int(0.1 * SR), 0.001, 0.05), tb, 0.35)
+            place(seg, filt(ns(0.06), "lp", 2500) * env(int(0.06 * SR), 0.001, 0.02), tb, 0.5)
+        if k % 4 == 2:
+            place(seg, filt(ns(0.08), "hp", 3000) * env(int(0.08 * SR), 0.001, 0.04), tb, 0.3)
         k += 1
+
+
+def bump():
+    n = int(0.12 * SR); t = T(n)
+    f = 180 - 90 * t / 0.12
+    return np.where((np.cumsum(f) / SR) % 1 < 0.5, 1.0, -1.0) * env(n, 0.001, 0.05) * 0.4
+
+
+def jump():
+    n = int(0.25 * SR); t = T(n)
+    f = 300 + 900 * t / 0.25
+    return np.where((np.cumsum(f) / SR) % 1 < 0.25, 1.0, -1.0) * env(n, 0.002, 0.15) * 0.25
 
 
 def ragtime(seg, d, bpm=190):
@@ -404,7 +423,7 @@ def build():
     s_news, s_tr, s_ca, s_ga, s_old = (E("channel", 5) + 0.05 / SPEED, E("trailer", 10) + 0.05 / SPEED,
                                        E("cartoon", 15) + 0.05 / SPEED, E("game", 20) + 0.05 / SPEED,
                                        E("movie", 26) + 0.05 / SPEED)
-    s_rw = ot(float(np.cumsum([0] + [e - s for s, e, _ in SEGS])[5]))
+    s_rw = ot(float(np.cumsum([0] + [e - s for s, e, _ in SEGS])[5]) - 0.62)   # rewind sits in the silence before "back"
     rw_d = 0.62 / SPEED
     sil0, sil1 = E("A", 28.8) - 0.12 / SPEED, E("editing.", 31.4, True) + 0.25 / SPEED
 
@@ -449,7 +468,10 @@ def build():
     for i in range(9):
         S(pop(), E("colorful", 18) - 0.1 / SPEED + 0.035 * i / SPEED, 0.25)
     S(coin(), s_ga - 0.1, 0.5)
-    S(levelup(), E("Level", 21.5), 0.55)
+    S(bump(), E("Level", 21.5) - 0.02, 0.6)
+    S(coin(), E("Level", 21.5) + 0.05, 0.5)
+    S(levelup(), E("Level", 21.5) + 0.15, 0.55)
+    S(jump(), s_ga + 0.2, 0.4)
     for w_ in ("New", "skills", "unlocked"):
         S(coin(), E(w_, 22.5), 0.3)
     S(riser(0.6, 400, 3000), s_old - 0.5, 0.3)

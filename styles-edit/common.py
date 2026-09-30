@@ -24,7 +24,7 @@ SEGS = [
     (9.36, 14.52, 1.00),    # movie trailer
     (14.72, 19.25, 1.00),   # cartoon
     (19.55, 24.15, 1.00),   # video game
-    (24.40, 32.25, 1.00),   # old movie + silent-film card
+    (24.40, 32.95, 1.00),   # old movie + silent-film card + rewind (in the silence before "back to normal")
     (33.30, 35.90, 1.06),   # back to normal
     (36.00, 39.85, 1.00),   # "I didn't edit any of this"
     (40.02, 42.55, 1.00),   # CTA

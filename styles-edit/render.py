@@ -15,6 +15,8 @@ import cv2
 import numpy as np
 import skia
 
+import worlds as WD
+
 from common import (DUR, FFMPEG, FONTS, FPS, H, NFRAMES, OFFS, OUT, S0, SEGS, SH, SPEED, SW, W, WORDS, WORK, clamp, eio,
                     ei, eo, eob, lerp, out_of_src, prog, spring, src_of_out, wt)
 
@@ -177,7 +179,7 @@ B = dict(
     cartoon=wt("cartoon") + 0.05, hi=wt("Hi!"), everything=wt("Everything"), colorful=wt("colorful"),
     game=wt("game") + 0.05, level=wt("Level"), up=wt("up!"), new=wt("New", 22.5), unlocked=wt("unlocked"),
     old=wt("movie", 26) + 0.05, twenties=wt("twenties"), silent0=wt("A", 28.8) - 0.12, silent1=wt("editing.", 31.4, end=True) + 0.25,
-    rewind=float(OFFS[5]), back=wt("Back", 33), normal=wt("normal"), fun=wt("fun"),
+    rewind=float(OFFS[5]) - 0.62, back=wt("Back", 33), normal=wt("normal"), fun=wt("fun"),
     didnt=wt("didn't"), said=wt("said", 38.5), loud=wt("loud"),
     comment=wt("comment", 40), edit=wt("EDIT", 40.5), how=wt("how"),
 )
@@ -517,144 +519,123 @@ def trailer_overlay(c, t, lt, out_k):
 
 def cartoon_overlay(c, t, lt, out_k):
     a = 1 - out_k
-    # comic panel border
-    bw = 26 * eo(prog(lt, 0, 0.3))
-    frame = skia.Path()
-    frame.setFillType(skia.PathFillType.kEvenOdd)
-    frame.addRect(skia.Rect(0, 0, W, H))
-    frame.addRect(skia.Rect(bw, bw, W - bw, H - bw))
-    c.drawPath(frame, skia.Paint(Color4f=col(WHITE, a)))
-    c.drawRect(skia.Rect(bw, bw, W - bw, H - bw), skia.Paint(AntiAlias=True, Color4f=col(INK, a), Style=skia.Paint.kStroke_Style, StrokeWidth=8))
-    # "POW!" on entry
-    kp = prog(lt, 0.0, 0.6)
+    # "POW!" on entry, as a glossy 3D burst
+    kp = prog(lt, 0.0, 0.7)
     if 0 < kp < 1:
         s = eob(min(1, kp * 2.5)) * (1 - prog(kp, 0.7, 0.3))
         c.save()
-        c.translate(1560, 250)
-        c.rotate(-12)
+        c.translate(1560, 300)
+        c.rotate(-10)
         c.scale(s, s)
-        poly(c, burst_pts(0, 0, 190, 120, 12, 1), YEL, a, INK, 8)
-        draw_text(c, "POW!", 0, 36, font("Montserrat-Black", 96), RED, a, "c", stroke=INK, sw=10)
+        poly(c, burst_pts(0, 12, 200, 130, 12, 1), (255, 140, 0), a)
+        poly(c, burst_pts(0, 0, 200, 130, 12, 1), YEL, a)
+        WD.text3d(c, "POW!", 0, 40, font("Montserrat-Black", 110), (255, 70, 70), depth=12, a=a)
         c.restore()
-    # "HI!" speech bubble + wave lines
+    # glossy "HI!" bubble on the wave
     kh = prog(t, B["hi"] - 0.05, 0.35)
     ko = prog(t, B["everything"] + 0.2, 0.25)
     if kh > 0 and ko < 1:
         s = eob(kh) * (1 - eio(ko))
+        bob = 8 * math.sin(t * 5)
         c.save()
-        c.translate(560, 300)
+        c.translate(560, 290 + bob)
         c.scale(s, s)
-        c.rotate(-6)
-        bub = skia.Path()
-        bub.addOval(skia.Rect(-170, -120, 170, 110))
+        sh = skia.Paint(AntiAlias=True, Color4f=col((0, 40, 90), 0.25))
+        sh.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 18))
+        c.drawOval(skia.Rect(-170, -100, 180, 150), sh)
+        bub = skia.Paint(AntiAlias=True)
+        bub.setShader(skia.GradientShader.MakeRadial(skia.Point(-60, -70), 300,
+                                                     [WD.cint((255, 255, 255)), WD.cint((236, 246, 255)), WD.cint((190, 215, 245))], [0, 0.5, 1]))
+        c.drawOval(skia.Rect(-175, -120, 175, 115), bub)
         tail = skia.Path()
-        tail.addPoly([skia.Point(80, 70), skia.Point(210, 170), skia.Point(20, 95)], True)
-        for pth in (bub, tail):
-            c.drawPath(pth, skia.Paint(AntiAlias=True, Color4f=col(WHITE, a)))
-        for pth in (bub, tail):
-            c.drawPath(pth, skia.Paint(AntiAlias=True, Color4f=col(INK, a), Style=skia.Paint.kStroke_Style, StrokeWidth=9))
-        c.drawRect(skia.Rect(40, 60, 120, 105), skia.Paint(AntiAlias=True, Color4f=col(WHITE, a)))
-        draw_text(c, "HI!", 0, 40, font("Montserrat-Black", 120), (0, 120, 255), a, "c", stroke=INK, sw=8)
+        tail.addPoly([skia.Point(70, 80), skia.Point(200, 175), skia.Point(10, 105)], True)
+        c.drawPath(tail, bub)
+        WD.text3d(c, "HI!", 0, 45, font("Montserrat-Black", 130), (40, 150, 255), depth=14)
         c.restore()
-        for i in range(3):
-            ang = math.radians(-150 + i * 22 + 6 * math.sin(t * 14))
-            r0, r1 = 150, 210
-            cx, cy = 380, 590
-            c.drawLine(cx + r0 * math.cos(ang), cy + r0 * math.sin(ang), cx + r1 * math.cos(ang), cy + r1 * math.sin(ang),
-                       skia.Paint(AntiAlias=True, Color4f=col(INK, a * s), StrokeWidth=9, StrokeCap=skia.Paint.kRound_Cap))
-    # "COLORFUL!" rainbow bouncing letters + stars
+    # "COLORFUL!" glossy balloon letters bouncing
     kc = prog(t, B["colorful"] - 0.1, 0.1)
     if kc > 0:
         word = "COLORFUL!"
-        cols = [(255, 59, 48), (255, 149, 0), (255, 204, 0), (52, 199, 89), (0, 170, 255), (88, 86, 214), (175, 82, 222),
-                (255, 45, 146), (255, 59, 48)]
-        f = font("Montserrat-Black", 128)
-        total = text_w(word, f) + 12 * (len(word) - 1)
+        cols = [(255, 70, 80), (255, 150, 30), (255, 205, 40), (60, 200, 100), (40, 170, 255), (110, 100, 240), (190, 90, 230),
+                (255, 70, 160), (255, 70, 80)]
+        f = font("Montserrat-Black", 132)
+        total = sum(f.measureText(ch) for ch in word) + 10 * (len(word) - 1)
         x = W / 2 - total / 2
         for i, ch in enumerate(word):
             ki = prog(t, B["colorful"] - 0.1 + 0.035 * i, 0.3)
-            if ki <= 0:
-                x += f.measureText(ch) + 12
-                continue
-            bounce = -40 * (1 - eob(ki)) - 10 * abs(math.sin((t - B["colorful"]) * 9 + i))
-            c.save()
-            c.translate(x + f.measureText(ch) / 2, 260 + bounce)
-            c.rotate(math.sin(i * 1.7) * 8)
-            c.scale(eob(ki), eob(ki))
-            draw_text(c, ch, 0, 0, f, cols[i], a, "c", stroke=INK, sw=12)
-            c.restore()
-            x += f.measureText(ch) + 12
-        r = np.random.default_rng(4)
+            wch = f.measureText(ch)
+            if ki > 0:
+                bounce = -50 * (1 - eob(ki)) - 12 * abs(math.sin((t - B["colorful"]) * 8 + i))
+                c.save()
+                c.translate(x + wch / 2, 250 + bounce)
+                c.rotate(math.sin(i * 1.7) * 7)
+                c.scale(eob(ki), eob(ki))
+                WD.text3d(c, ch, 0, 0, f, cols[i], depth=16, a=a)
+                c.restore()
+            x += wch + 10
         for i in range(10):
             ki = prog(t, B["colorful"] + 0.03 * i, 0.4)
-            sx, sy = r.uniform(120, W - 120), r.uniform(120, H - 160)
-            if abs(sx - 960) < 330 and sy > 250:
-                sx += 500 if sx > 960 else -500
-            sc = eob(ki) * (0.8 + 0.2 * math.sin(t * 10 + i))
-            poly(c, star_pts(sx, sy, 30 * sc, 13 * sc), cols[i % 8], a * min(1, ki * 3), INK, 4)
+            r = np.random.default_rng(40 + i)
+            sx, sy = r.uniform(140, W - 140), r.uniform(360, 760)
+            if abs(sx - 960) < 360:
+                sx += 560 if sx > 960 else -560
+            WD.sphere(c, sx, sy + 10 * math.sin(t * 4 + i), 22 * eob(ki), cols[i % 8], a * min(1, ki * 3))
 
 
-def game_overlay(c, t, lt, out_k, score):
+def game_overlay(c, t, lt, out_k, score, coins):
     a = 1 - out_k
     px = 6
-    # HUD top-left
+    # retro HUD: player/score, coins, world, time
     kh = eo(prog(lt, 0.1, 0.35))
     if kh > 0:
-        c.save()
-        c.translate(-300 * (1 - kh), 0)
-        pix_text(c, "P1  VIBE", 60, 120, px, WHITE, a)
-        for i in range(5):
-            hx, hy = 60 + i * 52, 178
-            heart = "01010 11111 11111 01110 00100".split()
-            for r, row in enumerate(heart):
-                for q, bit in enumerate(row):
-                    if bit == "1":
-                        c.drawRect(skia.Rect.MakeXYWH(hx + q * 7, hy + r * 7, 7, 7), skia.Paint(Color4f=col((255, 50, 70), a)))
-        # XP bar
-        xp = clamp(0.3 + 0.7 * eo(prog(t, B["level"], 0.6)))
-        c.drawRect(skia.Rect.MakeXYWH(60, 230, 360, 26), skia.Paint(Color4f=col((0, 0, 0), 0.6 * a)))
-        c.drawRect(skia.Rect.MakeXYWH(64, 234, 352 * xp, 18), skia.Paint(Color4f=col((80, 230, 120), a)))
-        pix_text(c, "XP", 432, 232, 3, WHITE, a)
-        c.restore()
-    # score top-right
-    ks = eo(prog(lt, 0.15, 0.35))
-    if ks > 0:
-        pix_text(c, "SCORE", W - 60, 60, px, YEL, a * ks, "r")
-        pix_text(c, f"{score:06d}", W - 60, 116, px, WHITE, a * ks, "r")
-    # +100 coins on words
+        y = 26 - 120 * (1 - kh)
+        px = 5
+        pix_text(c, "VIBE", 120, y, px, WHITE, a)
+        pix_text(c, f"{score:06d}", 120, y + 46, px, WHITE, a)
+        cx = 600
+        c.drawCircle(cx + 12, y + 64, 12, skia.Paint(AntiAlias=False, Color4f=col((252, 188, 60), a)))
+        pix_text(c, f"x{coins:02d}", cx + 36, y + 46, px, WHITE, a)
+        pix_text(c, "WORLD", 1180, y, px, WHITE, a)
+        pix_text(c, " 5-4", 1180, y + 46, px, WHITE, a)
+        pix_text(c, "TIME", 1580, y, px, WHITE, a)
+        pix_text(c, f" {max(0, 300 - int(lt * 9)):03d}", 1580, y + 46, px, WHITE, a)
+    # +100 on each word
     for w in WORDS:
         if B["game"] < w["s"] < B["old"] - 0.4 and w["s"] <= t < w["s"] + 0.7:
             k = (t - w["s"]) / 0.7
-            x = 1250 + (hash(w["w"]) % 300)
-            y = 520 - 140 * eo(k)
-            c.drawCircle(x - 34, y + 20, 16, skia.Paint(AntiAlias=True, Color4f=col((255, 200, 0), a * (1 - k))))
-            c.drawCircle(x - 34, y + 20, 9, skia.Paint(AntiAlias=True, Color4f=col((255, 240, 120), a * (1 - k))))
-            pix_text(c, "+100", x, y, 5, YEL, a * (1 - k))
+            x = 1240 + (hash(w["w"]) % 280)
+            pix_text(c, "100", x, 520 - 140 * eo(k), 5, WHITE, a * (1 - k))
     # LEVEL UP!
     kl = prog(t, B["level"] - 0.05, 0.3)
     ko = prog(t, B["new"] - 0.05, 0.25)
     if kl > 0 and ko < 1:
         s = eob(kl) * (1 - eio(ko))
         c.save()
-        c.translate(W / 2, 330)
-        c.rotate(8 * t % 360 * 0)
-        for i in range(16):
-            ang = math.radians(i * 22.5 + t * 40)
-            c.drawPath(_ray(ang), skia.Paint(AntiAlias=True, Color4f=col((255, 220, 80), 0.25 * s * a)))
+        c.translate(430, 330)
+        c.rotate(-6)
         c.scale(s, s)
-        pix_text(c, "LEVEL UP!", 0, -60, 16, (255, 214, 0), a, "c", outline=(120, 40, 0))
+        pix_text(c, "LEVEL", 0, 0, 14, (252, 216, 60), a, "c", outline=(0, 0, 0))
+        pix_text(c, "UP!", 0, 118, 18, (252, 216, 60), a, "c", outline=(0, 0, 0))
         c.restore()
-    # achievement toast
-    ka = prog(t, B["new"] - 0.05, 0.4)
+    # NES-style dialog box: skill unlocked
+    ka = prog(t, B["new"] - 0.05, 0.3)
     kao = prog(t, B["old"] - 0.35, 0.3)
     if ka > 0 and kao < 1:
-        x0 = lerp(W + 40, W - 60 - 640, eob(ka)) + 800 * ei(kao)
-        y = 210
-        rrect(c, x0, y, 640, 130, 65, (24, 24, 30), 0.92 * a, shadow=14)
-        c.drawCircle(x0 + 65, y + 65, 46, skia.Paint(AntiAlias=True, Color4f=col((80, 230, 120), a)))
-        poly(c, star_pts(x0 + 65, y + 65, 28, 12), WHITE, a)
-        pix_text(c, "SKILL UNLOCKED", x0 + 130, y + 28, 5, (80, 230, 120), a)
-        pix_text(c, "VIBE EDITING", x0 + 130, y + 72, 7, WHITE, a)
+        n = int(len("VIBE EDITING") * clamp((t - B["new"] - 0.2) / 0.5))
+        cxb = 1480
+        x0, y0, bw, bh = cxb - 380, 300, 760, 170
+        sc = eob(ka) * (1 - eio(kao))
+        c.save()
+        c.translate(cxb, y0 + bh / 2)
+        c.scale(sc, sc)
+        c.translate(-cxb, -(y0 + bh / 2))
+        c.drawRect(skia.Rect.MakeXYWH(x0, y0, bw, bh), skia.Paint(Color4f=col((0, 0, 0), 0.92)))
+        for inset, wdt in ((10, 6), (22, 3)):
+            c.drawRect(skia.Rect.MakeXYWH(x0 + inset, y0 + inset, bw - 2 * inset, bh - 2 * inset),
+                       skia.Paint(Color4f=col(WHITE), Style=skia.Paint.kStroke_Style, StrokeWidth=wdt))
+        pix_text(c, "NEW SKILL UNLOCKED!", cxb, y0 + 44, 5, (252, 216, 60), 1.0, "c")
+        pix_text(c, "VIBE EDITING"[:n], cxb, y0 + 96, 8, WHITE, 1.0, "c")
+        c.restore()
 
 
 @lru_cache(None)
@@ -892,6 +873,8 @@ def tracker(c, t):
     if not (B["watch"] + 0.4 <= t < B["rewind"]):
         return
     name, idx, lt = style_at(t)
+    if name == "game" and lt > 0.2:
+        return
     names = ["NEWS", "TRAILER", "CARTOON", "GAME", "1920s"]
     a = eo(prog(t, B["watch"] + 0.4, 0.3))
     x, y = 60, 44
@@ -1023,7 +1006,11 @@ def draw_captions(c, t):
             c.translate(x + wd / 2, 0)
             s2 = 1.05 if active else 1.0
             c.scale(s2, s2)
-            draw_text(c, txt, -wd / 2, 0, f, fill, 1.0 if said else 0.55, stroke=INK, sw=size * 0.2, shadow=8)
+            if name == "cartoon":
+                WD.text3d(c, txt, 0, 0, f, fill if active else (255, 255, 255), side=(40, 90, 200) if not active else None,
+                          depth=9, a=1.0 if said else 0.6, outline=(20, 40, 90))
+            else:
+                draw_text(c, txt, -wd / 2, 0, f, fill, 1.0 if said else 0.55, stroke=INK, sw=size * 0.2, shadow=8)
             c.restore()
             x += wd + gap
         c.restore()
@@ -1047,10 +1034,12 @@ def render(t, overlays=True, recap=True):
     elif name == "trailer":
         img = look_trailer(img, al, t, lt)
     elif name == "cartoon":
-        img = look_cartoon(img, al)
-        img = over(img, halftone(), (1 - al) * 1.0)
+        bg, fg = WD.toon_world(t, lt, 1.0)
+        a3 = al[..., None]
+        img = WD.pixar_person(img, al) * a3 + bg * (1 - a3)
+        img = over(img, fg)
     elif name == "game":
-        img = look_game(img, al)
+        img = WD.platformer(t, lt, B["level"], img, al)
     elif name == "old":
         img = look_old(img, al, t)
     img = pixel_transition(img, t)
@@ -1071,7 +1060,8 @@ def render(t, overlays=True, recap=True):
             cartoon_overlay(c, t, lt, out_k)
         elif name == "game":
             score = int(1200 * max(0, lt) + 5000 * eo(prog(t, B["level"], 0.6)))
-            game_overlay(c, t, lt, out_k, score)
+            coins = sum(1 for w in WORDS if B["game"] < w["s"] <= t) + (1 if t >= B["level"] else 0)
+            game_overlay(c, t, lt, out_k, score, coins)
         elif name == "old":
             old_overlays(c, t)
             old_title(c, t, lt)
