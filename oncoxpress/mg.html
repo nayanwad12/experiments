@@ -133,6 +133,9 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
 
 <!-- ============ PRODUCT SEQUENCE ============ -->
 <div id="prod" class="scene paperbg">
+  <div id="k_sec1" class="kline serif" style="top:360px">Your entire journey,</div>
+  <div id="k_sec2" class="kline serif" style="top:452px"><em>one secure place.</em></div>
+  <div id="rchips"></div>
   <div id="k_exact" class="kline serif" style="top:330px">Exactly<br><em>as they are.</em></div>
   <div id="k_no1" class="kline" style="top:560px; font-size:52px; font-weight:400"><span class="chk"><svg width="22" height="18"><path d="M2 9l6 6L20 3" stroke="#fff" stroke-width="3" fill="none"/></svg></span>No renaming.</div>
   <div id="k_no2" class="kline" style="top:650px; font-size:52px; font-weight:400"><span class="chk"><svg width="22" height="18"><path d="M2 9l6 6L20 3" stroke="#fff" stroke-width="3" fill="none"/></svg></span>No sorting.</div>
@@ -346,11 +349,29 @@ function biomarkerScreen() {
      <div class="sec"><h5>${ICON.micro} Findings</h5><div style="font-size:13px;color:#555;line-height:1.5">Invasive ductal carcinoma, Grade 2. Tumour size 2.1 cm. Margins clear. Lymphovascular invasion absent.</div></div>
      <div class="sec"><h5>${ICON.lab} Trend · CA 15-3</h5>${spark([52.4,41,33,24.1],320,60,'#1F6B50')}</div></div></div>`;
 }
+function secScreen() {
+  const cats = [['Lab reports', 11, 'lab'], ['Imaging', 6, 'scan'], ['Biopsy & Pathology', 3, 'micro'], ['Prescriptions', 4, 'rx']];
+  return `<div class="screen" id="scr_sec" style="background:linear-gradient(160deg,#2F7F63 0%,#1F6B50 45%,#164A38 100%)">${STATUS(false)}
+   <div style="position:absolute;left:0;right:0;top:92px;text-align:center;color:#fff">
+     <div style="font-size:15px;opacity:.75;font-weight:300">Anita Verma</div>
+     <div style="font-size:26px;font-weight:600;margin-top:4px">Health Records</div></div>
+   <div id="sec_ring" style="position:absolute;left:50%;top:190px;width:190px;height:190px;margin-left:-95px;border-radius:95px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center">
+     <div style="width:120px;height:120px;border-radius:60px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center">
+       <svg width="58" height="70" viewBox="0 0 58 70"><path id="sec_shackle" d="M14 32V20a15 15 0 0 1 30 0v12" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+       <rect x="5" y="30" width="48" height="36" rx="9" fill="#fff"/><circle cx="29" cy="46" r="5" fill="#1F6B50"/><rect x="27" y="48" width="4" height="9" rx="2" fill="#1F6B50"/></svg></div></div>
+   <div id="sec_state" style="position:absolute;left:0;right:0;top:398px;text-align:center;color:#CFE8DA;font-size:14px;font-weight:500;letter-spacing:.14em;text-transform:uppercase">Securing…</div>
+   <div style="position:absolute;left:18px;right:18px;top:444px">
+     ${cats.map((c, i) => `<div id="sec_c${i}" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.14);border-radius:16px;padding:12px 14px;margin-bottom:10px;color:#fff">
+       <div style="width:38px;height:38px;border-radius:19px;background:#fff;display:flex;align-items:center;justify-content:center">${ICON[c[2]]}</div>
+       <div style="flex:1;font-size:15.5px;font-weight:500">${c[0]}</div><div id="sec_n${i}" style="font-size:16px;font-weight:600;color:#BFE3CF">0</div></div>`).join('')}</div>
+   <div style="position:absolute;left:0;right:0;bottom:34px;text-align:center;color:rgba(255,255,255,0.75);font-size:13px">Private · Encrypted · Shared only with your doctor</div>
+  </div>`;
+}
 function phoneHTML(id, inner) {
   return `<div class="phone" id="${id}"><div class="scr">${inner}<div class="island"></div></div><div class="glare"></div></div>`;
 }
 $('phones').innerHTML =
-  phoneHTML('pA', uploadScreen() + timelineScreen() + overviewScreen()) +
+  phoneHTML('pA', uploadScreen() + timelineScreen() + overviewScreen() + secScreen()) +
   phoneHTML('p1', timelineScreen().replace(/id="[^"]*"/g, '')) +
   phoneHTML('p2', caseScreen()) +
   phoneHTML('p3', uploadScreen().replace(/id="[^"]*"/g, '')) +
@@ -361,6 +382,9 @@ document.querySelectorAll('#p3 .pbar i').forEach(e => e.style.width = '100%');
 const FEATS = [['Tumour marker trends', 53.18, ICON.lab], ['Vital signs', 54.39, '<b style="color:#1F6B50">♥</b>'], ['Treatment history', 55.36, ICON.drip],
                ['Scans', 56.30, ICON.scan], ['Pathology', 56.97, ICON.micro], ['Key biomarkers', 58.16, '<b style="color:#1F6B50">✦</b>']];
 $('features').innerHTML = FEATS.map((f, i) => `<div class="feat" id="ft${i}" style="top:${205 + i * 112}px"><div class="dot">${f[2].replace(/width="20" height="20"/, 'width="26" height="26"')}</div><span>${f[0]}</span></div>`).join('');
+const RCH = [['Blood report', 'lab', -470, -250], ['CT scan', 'scan', -520, 30], ['Pathology', 'micro', -430, 300], ['Prescription', 'rx', 400, -290],
+             ['Discharge summary', 'drip', 470, 10], ['PET-CT', 'scan', 380, 300]];
+$('rchips').innerHTML = RCH.map((r, i) => `<div class="fcard" id="rc${i}" style="padding:10px 20px 10px 10px"><div class="ev" style="margin:0"><div class="ic" style="width:44px;height:44px;border-radius:22px">${ICON[r[1]]}</div></div><div class="rname" style="font-size:19px">${r[0]}</div></div>`).join('');
 $('fcards').innerHTML = FILES.map((f, i) => `<div class="fcard" id="fc${i}"><div class="fic ${f[2]==='img'?'img':''}"><b>${f[2]==='img'?'JPG':'PDF'}</b></div><div><div class="rname">${f[0]}</div><div class="rsub">${f[1]}</div></div></div>`).join('');
 const RES = [['PET-CT Whole Body', '02 Aug 2025 · City Imaging Centre', 'scan'], ['CT Chest (Contrast)', '17 Mar 2025 · Sunrise Diagnostics', 'scan'], ['HRCT Thorax', '09 Nov 2024 · City Imaging Centre', 'scan']];
 $('se_res').innerHTML = RES.map((r, i) => `<div class="res" id="sr${i}" style="top:${430 + i * 124}px"><div class="ev" style="margin:0"><div class="ic" style="width:60px;height:60px;border-radius:30px">${ICON[r[2]].replace(/width="20" height="20"/, 'width="30" height="30"')}</div></div>
@@ -368,8 +392,8 @@ $('se_res').innerHTML = RES.map((r, i) => `<div class="res" id="sr${i}" style="t
 
 /* ---------------- scene timings (film seconds; narration + 1.0 s) ---------------- */
 const SC = {
-  s_lead: [28.85, 32.55], s_pow: [32.6, 34.2], s_sec: [35.9, 38.3],
-  brand: [26.2, 28.75], prod: [39.1, 63.7], search: [65.6, 67.6], sixty: [70.7, 72.35], endc: [72.35, 80.0],
+  s_lead: [28.85, 32.55], s_pow: [32.6, 34.2], s_sec: [0, 0],
+  brand: [26.2, 28.75], prod: [35.2, 63.7], search: [65.6, 67.6], sixty: [70.7, 72.35], endc: [72.35, 80.0],
 };
 window.META = { SC };
 
@@ -382,7 +406,7 @@ function drawProd(t) {
   const A = $('pA');
   // ---- global phone pose
   let x = 1270, y = 548, s = 0.97, ry = -9, rx = 3;
-  const kin = eo(seg(t, 39.1, 39.9));
+  const kin = eo(seg(t, 35.2, 36.0));
   y += (1 - kin) * 160; ry += (1 - kin) * -14;
   // slow drift so the frame is never static
   ry += Math.sin(t * 0.5) * 1.5; y += Math.sin(t * 0.7) * 5;
@@ -405,9 +429,40 @@ function drawProd(t) {
   // ---- screens inside the hero phone
   const up = $('scr_up'), tl = $('scr_tl'), ov = $('scr_ov');
   const toTL = eio(seg(t, 47.9, 48.5)), toOV = eio(seg(t, 52.55, 53.1));
-  up.style.opacity = 1 - toTL; up.style.transform = `translateX(${-toTL * 60}px)`;
-  tl.style.opacity = toTL * (1 - toOV); tl.style.transform = `translateX(${(1 - toTL) * 80 - toOV * 60}px)`;
-  ov.style.opacity = toOV; ov.style.transform = `translateX(${(1 - toOV) * 80}px)`;
+  // screens change with an iOS-style push: the new one slides in over the old, which drifts left and dims
+  const kUp = eio(seg(t, 38.45, 38.95));
+  const push = (el, z, kin, kout) => {
+    el.style.zIndex = z; el.style.opacity = (kin > 0 && kout < 1) ? 1 : 0;
+    el.style.transform = `translateX(${(1 - kin) * 392 - kout * 120}px)`;
+    el.style.filter = kout > 0 ? `brightness(${1 - 0.35 * kout})` : 'none';
+    el.style.boxShadow = kin > 0 && kin < 1 ? '-18px 0 40px rgba(0,0,0,0.18)' : 'none';
+  };
+  push(up, 2, t < 38.45 ? 1e-6 : kUp, toTL);
+  if (t < 38.45) up.style.transform = 'translateX(392px)';
+  push(tl, 3, toTL, toOV);
+  push(ov, 4, toOV, 0);
+
+  // ---- secure beat (35.2 - 38.9): records gather into the vault, the lock closes on "secure"
+  const sec = $('scr_sec'), kS = eio(seg(t, 38.45, 38.95));
+  // iOS-style push: the upload screen slides in over the vault, which drifts left and dims
+  sec.style.zIndex = 1; sec.style.opacity = kS >= 1 ? 0 : 1; sec.style.filter = `brightness(${1 - 0.35 * kS})`;
+  sec.style.transform = `translateX(${-kS * 120}px)`;
+  const lockK = eback(seg(t, 37.1, 37.4));
+  $('sec_shackle').setAttribute('transform', `translate(0 ${-9 * (1 - lockK)})`);
+  $('sec_state').textContent = t >= 37.15 ? 'Secured' : 'Securing…';
+  $('sec_ring').style.boxShadow = `0 0 0 ${lockK * 14 * (1 - seg(t, 37.3, 38.2))}px rgba(191,227,207,${0.35 * (1 - seg(t, 37.3, 38.2))})`;
+  const CN = [11, 6, 3, 4];
+  CN.forEach((c, i) => { const k = seg(t, 35.9 + i * 0.25, 37.0 + i * 0.1); $('sec_n' + i).textContent = Math.round(c * eo(k));
+    const e = $('sec_c' + i), a = eo(seg(t, 35.5 + i * 0.1, 35.9 + i * 0.1)); e.style.opacity = a; e.style.transform = `translateY(${(1 - a) * 16}px)`; });
+  RCH.forEach((r, i) => {
+    const e = $('rc' + i), a = 35.35 + i * 0.08, land = 35.95 + i * 0.2;
+    const kIn = eo(seg(t, a, a + 0.5)), kFly = eio(seg(t, land, land + 0.55));
+    const sx = 1270 + r[2], sy = 540 + r[3];
+    e.style.left = (lerp(sx, 1270, kFly) - 120) + 'px'; e.style.top = (lerp(sy, 470, kFly) - 32 + (1 - kIn) * 30) + 'px';
+    e.style.opacity = kIn * (1 - seg(t, land + 0.35, land + 0.55)); e.style.zIndex = 20;
+    e.style.transform = `scale(${lerp(1, 0.5, kFly)}) rotate(${(i % 2 ? 4 : -4) * (1 - kFly)}deg)`;
+  });
+  rise($('k_sec1'), t, 35.35, 0.6, [38.55, 38.95]); rise($('k_sec2'), t, 37.05, 0.6, [38.55, 38.95]);
 
   // upload screen state
   let n = 0;

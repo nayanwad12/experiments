@@ -318,7 +318,7 @@ def design():
     fx = np.zeros((N, 2))
     place(fx, roomtone(9.4, 1.0), 0.0)
     place(fx, roomtone(12.2, 0.7), 9.2)
-    place(fx, roomtone(10.6, 0.7), 28.7)
+    place(fx, roomtone(6.6, 0.7), 28.7)
     place(fx, roomtone(4.0, 0.7), 63.6)
     place(fx, roomtone(3.3, 0.7), 67.5)
     # clip 1 / 3: paper
@@ -347,13 +347,18 @@ def design():
     place(fx, pan(impact(0.55), 0), 26.2)
     place(fx, reverb(pan(shimmer(2.5, 1.0, 86), 0), 0.5), 26.7)
     place(fx, pan(whoosh(0.6, 0.6, 300, 3000), 0), 28.5)
-    # clip 4/5
-    for k in range(18):
-        place(fx, pan(key(0.35), 0.25), 34.2 + k * 0.19 + rng.uniform(0, 0.06))
-    place(fx, pan(pop(0.8, 600), -0.5), 36.0)
-    place(fx, pan(click(0.7, 2800), 0.3), 38.75)
+    # desk push-in, then the records gather into one secure place
+    place(fx, pan(paper(0.6, 0.5), 0.1), 33.2)
+    place(fx, pan(whoosh(0.7, 0.9, 250, 3500), 0), 34.9)
+    for i in range(6):
+        place(fx, pan(whoosh(0.4, 0.4, 900, 6000), [-0.7, -0.8, -0.6, 0.7, 0.8, 0.6][i]), 35.35 + i * 0.08)
+        place(fx, pan(tick(0.5, 1568 + 60 * i), 0.2), 36.4 + i * 0.2)
+    place(fx, pan(click(1.0, 1500), 0.15), 37.12)          # lock: shackle drops, then latches
+    place(fx, pan(click(0.8, 2400), 0.15), 37.155)
+    place(fx, pan(tick(0.9, 2093), 0.15), 37.16)
+    place(fx, reverb(pan(shimmer(1.4, 0.6, 86), 0), 0.5), 37.2)
     # product sequence
-    place(fx, pan(whoosh(0.7, 0.9, 250, 3500), 0), 38.8)
+    place(fx, pan(whoosh(0.6, 0.7, 300, 4000), 0.2), 38.4)
     for i in range(5):
         place(fx, pan(whoosh(0.4, 0.45, 900, 6000), [-0.6, -0.3, 0.6, 0.6, -0.5][i]), 39.15 + i * 0.1)
         place(fx, pan(tick(0.6, 1568), 0.2), 39.95 + i * 0.32)

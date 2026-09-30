@@ -15,15 +15,16 @@ edited so it doesn't read as AI.
 | monitor that rotates by itself (clip 8), phone that grows out of a folder (clip 1) | cut |
 | garbled AI text on screen close-ups (clip 6 entirely, clip 7 dashboard, the AI "OncoXpress" logo in clip 8) | not used. The product is shown as rebuilt app UI instead |
 | screens still in shot (portal, email, PDF, desktop, monitors) | shallow-focus defocus on screen areas only (auto-detected), like a real lens focused on the person |
-| AI-drawn Apple logo on the laptop lid (clip 5) | painted out |
+| clip 5 laptop scene (screen content morphs, desktop flickers) | dropped. The section is rebuilt as a still desk push-in plus a motion-graphic "secure vault" beat |
 | 8 × 10 s clips vs a 76 s narration | shots retimed with optical-flow interpolation (DIS flow) to land on the words |
 
 ## Look
 
-After the reference (warm, hazy, grainy film stills): a warm white balance, lifted green-teal blacks, cream roll-off in the
-highlights, blues pulled to muted teal, greens to olive, golden haze, halation, a slight chromatic fringe, vignette,
-gate weave, flicker, and luma-weighted film grain (`look.py`). The motion graphics get the same finish, at a lower
-strength, so the whole film sits on one stock.
+Clean, warm and soft, for a premium healthcare feel rather than a gritty film one (`look.py`). The white balance is
+gently warm, the blacks are true, and the shadows carry a hint of evergreen. Contrast is soft and filmic with a creamy
+highlight roll-off, skin stays natural, and blues are eased toward the brand's teal-green. The finish is a soft bloom
+and a light vignette. There's no grain: only an invisible sub-code-value dither so the paper gradients don't band. The
+motion graphics get the same grade at a lower strength, so footage and UI sit together.
 
 ## Theme
 
@@ -45,8 +46,9 @@ file names from the screenshots appear in the film.
 | 21.3–26.2 | split screen, "different records, different places": the four sources try to connect, and the links break |
 | 26.2–28.8 | brand reveal |
 | 28.8–32.6 | the doctors, super: *Under the leadership of Dr Aditya Sarin & Dr Shyam Agrawal* |
-| 32.6–39.1 | patient at her desk, *powered by BigOHealth*, *One secure place* |
-| 39.1–63.7 | product: upload as-is, "no renaming / sorting / folders", identifies → categorizes → organizes, timeline, tracked data (the list is scrolled word by word), a complete picture → all in one place |
+| 32.6–35.2 | still desk of scattered records, push in to the phone, *powered by BigOHealth* |
+| 35.2–39.1 | "one secure place": the report cards fly into the phone's health vault, and the lock closes on "secure" |
+| 39.1–63.7 | product (screens change with iOS-style pushes): upload as-is, "no renaming / sorting / folders", identifies → categorizes → organizes, timeline, tracked data (the list is scrolled word by word), a complete picture → all in one place |
 | 63.7–72.4 | consultation, search in 0.4 s, doctor reading history, "under 60 seconds" |
 | 72.4–80 | end card: OncoXpress, powered by BigOHealth, *Faster Care. Trusted Care.* |
 

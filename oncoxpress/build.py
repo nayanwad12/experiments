@@ -2,7 +2,7 @@
 
 Reads the 8 source clips, cleans them (Gemini watermark, stray brand logo), retimes with optical flow,
 reframes to 1920x1080, grades, lays the motion graphics (rendered by render_mg.mjs) on top, and
-finishes everything with halation, vignette, gate weave and grain.
+finishes everything with a soft bloom and a light vignette (clean look, no grain).
 
   python3 build.py                 # all frames -> work/frames/f00000.jpg
   python3 build.py --stills 5,22   # check frames -> work/stills/
@@ -44,18 +44,17 @@ EDL = [
     # 21.30-26.20 split-screen: "Different records. Different places. They rarely speak to each other."
     # 26.20-28.75 brand reveal (mg)
     (28.75, 32.60, 4, 72, 142, 1.03, 1.10, (620, 330)),  # the two doctors — leadership
-    (32.60, 33.90, 5, 18, 42, 1.04, 1.08, (640, 330)),  # patient at her desk — "powered by BigOHealth"
-    (33.90, 38.30, 5, 48, 128, 1.03, 1.12, (600, 360)),  # typing — "…in one secure place."
-    (38.30, 39.10, 5, 128, 146, 1.12, 1.16, (760, 420)),  # she reaches for the screen — "Upload…"
-    # 39.10-63.70 product sequence (mg)
+    (32.60, 35.20, 3, 202, 239, 1.04, 1.34, (380, 490)),  # still desk, push in to the phone — "powered by BigOHealth"
+    # 35.20-63.70 product sequence (mg): the records gather into one secure place, then upload, organise, track
+    # (clip 5's laptop scene was dropped: its screen morphs and the desktop flickers)
     (63.70, 65.60, 8, 44, 78, 1.04, 1.10, (620, 380)),  # consultation — "patients spend less time…"
     # 65.60-67.60 search (mg)
     (67.60, 70.70, 7, 190, 239, 1.02, 1.12, (760, 360)),  # doctor reading — "doctors understand years…"
     # 70.70-72.35 "under 60 seconds" (mg);  72.35-80.00 end card (mg)
 ]
 GRID = (21.30, 26.20)
-MG_FULL = [(26.20, 28.75), (39.10, 63.70), (65.60, 67.60), (70.70, 72.35), (72.35, 80.0)]
-LEAKS = [(0.25, 1.4, 0.55), (26.20, 1.1, 1.0), (39.10, 0.9, 0.55), (63.70, 0.8, 0.45), (72.35, 1.2, 0.9)]  # centre, width, gain
+MG_FULL = [(26.20, 28.75), (35.20, 63.70), (65.60, 67.60), (70.70, 72.35), (72.35, 80.0)]
+LEAKS = [(26.20, 1.0, 0.45), (35.20, 0.8, 0.25), (72.35, 1.1, 0.4)]  # soft warm flashes on the big transitions  # centre, width, gain
 
 APPLE = np.load(os.path.join(WORK, "apple_mask.npy"))
 
@@ -148,9 +147,9 @@ def reframe(img, zoom, cx, cy):
     y0 = min(max(cy - vh / 2, 0), sh - vh)
     M = np.float32([[s, 0, -x0 * s], [0, s, -y0 * s]])
     out = cv2.warpAffine(img, M, (W, H), flags=cv2.INTER_LANCZOS4, borderMode=cv2.BORDER_REFLECT)
-    # gentle sharpening to meet the grain halfway
+    # gentle sharpening to restore detail lost in the 720p -> 1080p scale
     bl = cv2.GaussianBlur(out, (0, 0), 1.6)
-    return cv2.addWeighted(out, 1.35, bl, -0.35, 0)
+    return cv2.addWeighted(out, 1.25, bl, -0.25, 0)
 
 
 def shot_frame(t):
