@@ -319,7 +319,7 @@ def design():
     place(fx, roomtone(9.4, 1.0), 0.0)
     place(fx, roomtone(12.2, 0.7), 9.2)
     place(fx, roomtone(6.6, 0.7), 28.7)
-    place(fx, roomtone(4.0, 0.7), 63.6)
+    place(fx, roomtone(4.1, 0.7), 63.6)
     place(fx, roomtone(3.3, 0.7), 67.5)
     # clip 1 / 3: paper
     place(fx, pan(paper(0.7, 1.0), 0.2), 7.1)
@@ -385,12 +385,10 @@ def design():
     place(fx, pan(whoosh(0.8, 0.8, 200, 3000, rev=True), 0), 62.1)
     place(fx, pan(impact(0.45), 0), 62.92)
     place(fx, reverb(pan(shimmer(1.8, 0.7, 81), 0), 0.5), 62.95)
-    # search
-    place(fx, pan(whoosh(0.5, 0.5, 400, 4000), 0), 65.55)
-    for k in range(7):
-        place(fx, pan(key(0.7), 0), 66.25 + k * 0.06)
-    for i in range(3):
-        place(fx, pan(pop(0.6, 560 + 80 * i), 0.2), 66.8 + i * 0.1)
+    # her, searching through paper
+    place(fx, pan(paper(0.8, 0.9), -0.1), 65.75)
+    place(fx, pan(paper(0.6, 0.7), 0.15), 66.6)
+    place(fx, pan(paper(0.7, 0.8), -0.05), 67.15)
     place(fx, pan(click(0.6, 2800), 0.3), 68.5)
     place(fx, pan(click(0.5, 2800), 0.3), 69.7)
     # under 60 seconds: a clock that runs fast

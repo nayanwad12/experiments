@@ -35,9 +35,10 @@ EDL = [
     (0.00, 4.30, 1, 0, 80, 1.06, 1.14, (640, 330)),     # ward, holding her file — "In cancer care…"
     (4.30, 6.90, 1, 86, 148, 1.04, 1.10, (560, 380)),   # waiting room — "Every report holds information."
     (6.90, 9.25, 1, 157, 204, 1.10, 1.20, (700, 420)),  # the folder, tilt up — "And every detail matters."
-    (9.25, 12.45, 3, 74, 150, 1.02, 1.12, (640, 340)),  # overhead desk — "rarely lives in one place."
+    (9.25, 10.95, 9, 2, 44, 1.03, 1.10, (640, 330)),    # ward desk buried in reports — "But a patient's journey…"
+    (10.95, 12.45, 9, 58, 94, 1.04, 1.10, (640, 380)),  # hands shuffling the messy pile — "…rarely lives in one place."
     (12.45, 14.35, 2, 27, 72, 1.06, 1.12, (700, 300)),  # phone — "Blood reports on the phone."
-    (14.35, 16.25, 2, 96, 141, 1.08, 1.16, (560, 330)),  # portal — "Scans in hospital portals."
+    (14.35, 16.25, 10, 96, 141, 1.04, 1.12, (640, 330)),  # MRI scans on the hospital portal — "Scans in hospital portals."
     (16.25, 18.30, 2, 158, 190, 1.10, 1.18, (580, 330)),  # email — "Pathology reports in emails."
     (18.30, 19.55, 2, 205, 235, 1.10, 1.16, (640, 360)),  # PDF viewer + folder — "Prescriptions and PDFs…"
     (19.55, 21.30, 3, 38, 70, 1.04, 1.10, (640, 400)),  # paper in hand — "…inside physical folders."
@@ -48,18 +49,28 @@ EDL = [
     # 35.20-63.70 product sequence (mg): the records gather into one secure place, then upload, organise, track
     # (clip 5's laptop scene was dropped: its screen morphs and the desktop flickers)
     (63.70, 65.60, 8, 44, 78, 1.04, 1.10, (620, 380)),  # consultation — "patients spend less time…"
-    # 65.60-67.60 search (mg)
+    (65.60, 67.60, 9, 144, 190, 1.04, 1.10, (620, 300)),  # her, still searching through paper — "…searching for documents"
     (67.60, 70.70, 7, 190, 239, 1.02, 1.12, (760, 360)),  # doctor reading — "doctors understand years…"
     # 70.70-72.35 "under 60 seconds" (mg);  72.35-80.00 end card (mg)
 ]
 GRID = (21.30, 26.20)
-MG_FULL = [(26.20, 28.75), (35.20, 63.70), (65.60, 67.60), (70.70, 72.35), (72.35, 80.0)]
-LEAKS = [(26.20, 1.0, 0.45), (35.20, 0.8, 0.25), (72.35, 1.1, 0.4)]  # soft warm flashes on the big transitions  # centre, width, gain
+MG_FULL = [(26.20, 28.75), (35.20, 63.70), (70.70, 72.35), (72.35, 80.0)]
+LEAKS = [(26.20, 1.0, 0.40), (35.20, 0.8, 0.22), (72.35, 1.1, 0.35)]  # soft lavender light sweeps on the big transitions  # centre, width, gain
 
 APPLE = np.load(os.path.join(WORK, "apple_mask.npy"))
 
 
 # ---------------------------------------------------------------- sources
+WM_TMPL = np.load(os.path.join(WORK, "wm_tmpl.npy"))
+
+
+def has_sparkle(f):
+    """Clip 9 carries the Gemini sparkle on some shots only; reverse-blending a frame without it would punch a hole."""
+    g = cv2.cvtColor(f[520:680, 1060:1260], cv2.COLOR_BGR2GRAY).astype(np.float32)
+    h = g - cv2.GaussianBlur(g, (0, 0), 6)
+    return cv2.minMaxLoc(cv2.matchTemplate(h, WM_TMPL, cv2.TM_CCOEFF_NORMED))[1] > 0.45
+
+
 @lru_cache(maxsize=2)
 def clip(c):
     cap = cv2.VideoCapture(os.path.join(HERE, "raw", f"clip{c}B.mp4"))
@@ -68,7 +79,7 @@ def clip(c):
         ok, f = cap.read()
         if not ok:
             break
-        if c in (1, 2):
+        if c in (1, 2) or (c == 9 and has_sparkle(f)):
             f = wm.clean(f)
         if c == 5 and f is not None and len(fr) < 50:
             f = cv2.inpaint(f, APPLE, 6, cv2.INPAINT_TELEA)
@@ -107,7 +118,7 @@ def src_frame(c, s):
     return cv2.addWeighted(i0, 1 - a, i1, a, 0)
 
 
-SOFT = {2: 1.6, 3: 1.0, 4: 1.2, 5: 1.4, 7: 1.5, 8: 1.4}   # screen defocus strength per clip (source px sigma)
+SOFT = {2: 1.6, 3: 1.0, 4: 1.2, 5: 1.4, 7: 1.5, 8: 1.4, 9: 0.9, 10: 2.1}   # screen defocus strength per clip (source px sigma)
 
 
 def soften_screens(img, c):
@@ -181,12 +192,12 @@ F_S = _font("InstrumentSerif-Italic.ttf", 32)
 F_C = _font("Lexend[wght].ttf", 17, 500)
 TILES = [  # clip, src from, src to, title, subtitle
     (2, 30, 70, "Blood reports", "on the phone"),
-    (2, 100, 140, "Scans", "in hospital portals"),
+    (10, 100, 140, "Scans", "in hospital portals"),
     (2, 160, 188, "Pathology reports", "in emails"),
     (3, 40, 70, "Prescriptions & PDFs", "in physical folders"),
 ]
 TW, TH = 700, 394
-PAPER = np.array([0.925, 0.905, 0.868], np.float32)
+PAPER = np.array([0.957, 0.949, 0.973], np.float32)   # soft lavender-white (#F4F2F8), the website's canvas
 
 
 def _rounded_mask(w, h, r):
@@ -291,7 +302,7 @@ def grid_frame(t):
             # node dots
             cv2.circle(draw, (int(ax), int(ay)), 7, 1.0, -1, cv2.LINE_AA)
         draw = draw * fade
-        colr = np.array([0.18, 0.47, 0.37], np.float32) * (1 - kb) + np.array([0.62, 0.30, 0.26], np.float32) * kb
+        colr = np.array([0.29, 0.17, 0.56], np.float32) * (1 - kb) + np.array([0.70, 0.30, 0.36], np.float32) * kb
         layer = layer * (1 - draw[..., None] * 0.9) + colr * draw[..., None] * 0.9
     # small caption top-left
     return layer
@@ -314,7 +325,7 @@ def leak(t, fi):
             px = (rng.uniform(-0.2, 1.2) + 0.35 * k * rng.choice([-1, 1])) * W / 4
             py = rng.uniform(0.0, 1.0) * H / 4
             r = rng.uniform(0.25, 0.55) * W / 4
-            colr = [np.array([1.0, 0.55, 0.22]), np.array([1.0, 0.36, 0.20]), np.array([1.0, 0.80, 0.50]), np.array([0.95, 0.45, 0.35])][b]
+            colr = [np.array([0.80, 0.70, 1.0]), np.array([0.62, 0.50, 0.95]), np.array([1.0, 0.95, 1.0]), np.array([0.55, 0.85, 0.88])][b]
             g = np.exp(-(((xx - px) / r) ** 2 + ((yy - py) / (r * 1.6)) ** 2))
             acc += g[..., None] * colr.astype(np.float32)
         tot += cv2.resize(acc, (W, H), interpolation=cv2.INTER_LINEAR) * env
@@ -344,7 +355,7 @@ def frame(fi):
     full_mg = in_ranges(t, MG_FULL)
     if GRID[0] <= t < GRID[1]:
         x = grid_frame(t)
-        x = look.grade(x, 0.30)
+        x = look.grade(x, 0.10)
         amt = 0.30
     elif full_mg:
         x = np.empty((H, W, 3), np.float32)
@@ -359,7 +370,7 @@ def frame(fi):
     if ml is not None:
         rgb, a = ml
         if full_mg:
-            rgb = look.grade(rgb, 0.30)
+            rgb = look.grade(rgb, 0.10)
         x = x * (1 - a) + rgb * a
     lk = leak(t, fi)
     if lk is not None:

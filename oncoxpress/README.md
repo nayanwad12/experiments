@@ -1,6 +1,6 @@
 # OncoXpress, powered by BigOHealth — brand film
 
-80 s, 1920×1080 (16:9), 24 fps, stereo. Built from 8 AI-generated clips (Gemini/Veo) and the supplied narration,
+80 s, 1920×1080 (16:9), 24 fps, stereo. Built from 10 AI-generated clips (Gemini/Veo) and the supplied narration,
 edited so it doesn't read as AI.
 
 **Deliverable:** `out/oncoxpress_brand_film.mp4` (8 Mbps). `encode.sh` also makes a 24 Mbps full-grain version,
@@ -28,10 +28,11 @@ motion graphics get the same grade at a lower strength, so footage and UI sit to
 
 ## Theme
 
-One system from start to finish: warm **paper** (#EFEBE3) and **evergreen** (#1F6B50), both taken from the app's own UI.
-Typefaces are **Lexend**, close to the app's UI font, and **Instrument Serif** for the titles. The OncoXpress logo
-was pulled from the clip-8 end frame and cleaned into a sharp high-res matte (mark, wordmark and tagline separated
-so they animate individually).
+One system from start to finish, taken from the OncoXpress website: **purple** (#4A2B8E, with #6B46C1 for lighter
+accents) for the app UI and primaries, **teal** (#1E7A80) for highlights, and a **lavender-white** (#F4F2F8) canvas.
+Typefaces are **Lexend** for the UI and **Instrument Serif** for the titles. The OncoXpress logo was pulled from the
+clip-8 end frame and cleaned into a sharp high-res matte (mark, wordmark and tagline separated so they animate
+individually).
 
 The app screens (upload, timeline, health overview, case summary, report detail) are rebuilt from the supplied
 screenshots with a **made-up patient, "Anita Verma"**, and invented values throughout. No real patient data, names or
@@ -42,14 +43,15 @@ file names from the screenshots appear in the film.
 | time | picture |
 | --- | --- |
 | 0–9.3 | clip 1: ward, waiting room, the folder |
-| 9.3–21.3 | the scattered records: overhead desk, phone, portal, email, PDF, paper (clips 3, 2) |
+| 9.3–12.5 | messy reports: the ward desk buried in paper, hands shuffling the pile (clip 9) |
+| 12.5–21.3 | the scattered records: phone, MRI scans on the hospital portal (clip 10), email, PDF, paper (clips 2, 3) |
 | 21.3–26.2 | split screen, "different records, different places": the four sources try to connect, and the links break |
-| 26.2–28.8 | brand reveal |
+| 26.2–28.8 | brand reveal, *powered by BigOHealth* |
 | 28.8–32.6 | the doctors, super: *Under the leadership of Dr Aditya Sarin & Dr Shyam Agrawal* |
 | 32.6–35.2 | still desk of scattered records, push in to the phone, *powered by BigOHealth* |
 | 35.2–39.1 | "one secure place": the report cards fly into the phone's health vault, and the lock closes on "secure" |
 | 39.1–63.7 | product (screens change with iOS-style pushes): upload as-is, "no renaming / sorting / folders", identifies → categorizes → organizes, timeline, tracked data (the list is scrolled word by word), a complete picture → all in one place |
-| 63.7–72.4 | consultation, search in 0.4 s, doctor reading history, "under 60 seconds" |
+| 63.7–72.4 | consultation, her still searching through paper (clip 9), doctor reading history, "under 60 seconds" |
 | 72.4–80 | end card: OncoXpress, powered by BigOHealth, *Faster Care. Trusted Care.* |
 
 ## Sound
@@ -64,7 +66,7 @@ impact, and a fast-running clock for "under 60 seconds". Music is side-chain duc
 
 ```bash
 pip install imageio-ffmpeg opencv-python-headless numpy scipy pillow pocketsphinx
-# put clips as raw/clip1B.mp4 … raw/clip8B.mp4 and raw/narration.mp3
+# put clips as raw/clip1B.mp4 … raw/clip10B.mp4 and raw/narration.mp3
 python3 work/align.py            # word timings (pocketsphinx forced alignment of the script)
 node render_mg.mjs               # motion graphics -> work/mg/
 python3 sound.py                 # -> work/mix.wav

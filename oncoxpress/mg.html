@@ -8,35 +8,35 @@
 @font-face { font-family: Serif; src: url(fonts/InstrumentSerif-Regular.ttf); }
 @font-face { font-family: Serif; src: url(fonts/InstrumentSerif-Italic.ttf); font-style: italic; }
 :root {
-  --green: #1F6B50; --green2: #2E8B67; --deep: #164A38; --mint: #DCEBE3; --paper: #EFEBE3; --paper2: #F4F1EB;
-  --ink: #1B1D1C; --mute: #8A8984; --line: #E7E3DB; --red: #E2463F; --pink: #FDE9E7;
+  --green: #4A2B8E; --green2: #6B46C1; --deep: #2D1B63; --mint: #ECE6F8; --paper: #F4F2F8; --paper2: #F8F7FB;
+  --teal: #1E7A80; --ink: #1B1D1C; --mute: #8A8796; --line: #E6E2EE; --red: #E2463F; --pink: #FDE9E7;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent; font-family: Lexend, sans-serif; color: var(--ink); }
 .scene { position: absolute; inset: 0; display: none; overflow: hidden; }
 .abs { position: absolute; }
 .paperbg { background:
-  radial-gradient(900px 700px at 78% 55%, rgba(46,139,103,0.16), transparent 70%),
-  radial-gradient(800px 600px at 12% 20%, rgba(255,236,200,0.55), transparent 70%),
-  linear-gradient(180deg, #F2EEE6, #E9E4DA); }
+  radial-gradient(900px 700px at 78% 55%, rgba(107,70,193,0.16), transparent 70%),
+  radial-gradient(800px 600px at 12% 20%, rgba(30,122,128,0.10), transparent 70%),
+  linear-gradient(180deg, #F8F6FC, #ECE8F5); }
 .serif { font-family: Serif, serif; font-weight: 400; letter-spacing: -0.01em; }
 .caps { text-transform: uppercase; letter-spacing: 0.28em; font-size: 17px; font-weight: 500; }
 
 /* ---------- phone ---------- */
 .phone { position: absolute; width: 410px; height: 864px; border-radius: 66px; background: linear-gradient(145deg, #3a3d40, #16181a 40%, #2a2c2f);
-  padding: 10px; box-shadow: 0 60px 120px rgba(20,40,30,0.30), 0 18px 40px rgba(20,40,30,0.22), inset 0 0 0 1.5px rgba(255,255,255,0.10); }
-.phone .scr { position: relative; width: 390px; height: 844px; border-radius: 56px; overflow: hidden; background: #F1EFEA; }
+  padding: 10px; box-shadow: 0 60px 120px rgba(30,20,60,0.30), 0 18px 40px rgba(30,20,60,0.22), inset 0 0 0 1.5px rgba(255,255,255,0.10); }
+.phone .scr { position: relative; width: 390px; height: 844px; border-radius: 56px; overflow: hidden; background: #F5F3F9; }
 .phone .island { position: absolute; left: 50%; top: 11px; width: 118px; height: 34px; margin-left: -59px; border-radius: 20px; background: #0b0b0c; z-index: 50; }
 .phone .glare { position: absolute; inset: 0; border-radius: 56px; z-index: 60; pointer-events: none;
   background: linear-gradient(115deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.0) 32%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.06) 100%); }
-.screen { position: absolute; inset: 0; background: #F1EFEA; }
+.screen { position: absolute; inset: 0; background: #F5F3F9; }
 .status { position: absolute; top: 0; left: 0; right: 0; height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 6px 30px 0 38px; font-size: 16px; font-weight: 600; color: #fff; z-index: 40; }
 .status.dark { color: var(--ink); }
 .status .ico { display: flex; gap: 6px; align-items: center; }
 .bars { display: flex; gap: 2px; align-items: flex-end; } .bars i { display: block; width: 3.5px; background: currentColor; border-radius: 1px; }
 .batt { width: 26px; height: 13px; border-radius: 4px; border: 1.5px solid currentColor; padding: 1.5px; } .batt i { display: block; height: 100%; width: 70%; background: currentColor; border-radius: 2px; }
 .hdr { position: absolute; left: 0; right: 0; top: 0; border-radius: 0 0 30px 30px; color: #fff;
-  background: linear-gradient(135deg, #2F7F63 0%, #22634C 55%, #1C5341 100%); }
+  background: linear-gradient(135deg, #5A38A8 0%, #452A8E 55%, #33206E 100%); }
 .hdr .hi { font-size: 15px; opacity: 0.8; font-weight: 300; }
 .hdr .nm { font-size: 25px; font-weight: 600; margin-top: 4px; }
 .pill { display: inline-flex; align-items: center; gap: 7px; border: 1.5px solid rgba(255,255,255,0.35); border-radius: 22px; padding: 8px 14px; font-size: 14px; }
@@ -44,7 +44,7 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
 .tabs span { padding: 10px 18px; border-radius: 24px; }
 .tabs .on { background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.25); font-weight: 500; }
 .chips { display: flex; gap: 8px; white-space: nowrap; }
-.chip { padding: 9px 15px; border-radius: 22px; background: #E6E3DC; color: #5b5a56; font-size: 13.5px; }
+.chip { padding: 9px 15px; border-radius: 22px; background: #ECE9F2; color: #5a5866; font-size: 13.5px; }
 .chip.on { background: var(--mint); color: var(--green); font-weight: 600; }
 .card { background: #fff; border-radius: 20px; box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
 .row { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 18px; padding: 12px 14px; margin-bottom: 10px; }
@@ -53,9 +53,9 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
 .fic.img { background: #E3EEF6; } .fic.img b { background: #3E7FB5; }
 .rname { font-size: 14.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rsub { font-size: 12px; color: var(--mute); margin-top: 3px; white-space: nowrap; }
-.pbar { height: 5px; border-radius: 3px; background: #ECE9E2; margin-top: 7px; overflow: hidden; } .pbar i { display: block; height: 100%; background: var(--green2); width: 0; }
+.pbar { height: 5px; border-radius: 3px; background: #ECE9F1; margin-top: 7px; overflow: hidden; } .pbar i { display: block; height: 100%; background: var(--green2); width: 0; }
 .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px; background: var(--mint); color: var(--green); margin-top: 4px; }
-.navbar { position: absolute; left: 16px; right: 16px; bottom: 22px; height: 72px; border-radius: 36px; background: rgba(236,234,229,0.96);
+.navbar { position: absolute; left: 16px; right: 16px; bottom: 22px; height: 72px; border-radius: 36px; background: rgba(236,233,243,0.96);
   display: flex; align-items: center; justify-content: space-around; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 30; }
 .navbar .fab { width: 60px; height: 60px; border-radius: 30px; background: var(--green2); color: #fff; font-size: 34px; display: flex; align-items: center; justify-content: center; font-weight: 300; }
 .navbar .act { width: 88px; height: 56px; border-radius: 28px; background: var(--green); display: flex; align-items: center; justify-content: center; }
@@ -63,14 +63,14 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
 .month h4 { font-size: 20px; font-weight: 600; } .month h4 small { font-size: 16px; color: var(--mute); font-weight: 400; margin-left: 6px; }
 .ev { display: flex; gap: 12px; margin-top: 12px; align-items: stretch; }
 .ev .d { width: 42px; text-align: center; flex: none; } .ev .d b { display: block; font-size: 19px; } .ev .d span { font-size: 13px; color: var(--mute); }
-.ev .box { flex: 1; border: 1.5px solid #ECE9E2; border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; }
-.ev .ic { width: 40px; height: 40px; border-radius: 20px; background: #E7F0EB; flex: none; display: flex; align-items: center; justify-content: center; }
+.ev .box { flex: 1; border: 1.5px solid #ECE9F1; border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; }
+.ev .ic { width: 40px; height: 40px; border-radius: 20px; background: #EFEAF9; flex: none; display: flex; align-items: center; justify-content: center; }
 .ev .t { font-size: 14.5px; font-weight: 600; } .ev .s { font-size: 11.5px; color: var(--mute); line-height: 1.35; margin-top: 3px; }
 .sec { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; }
 .sec h5 { font-size: 13px; color: var(--mute); font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
 .vit { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.vit div { background: #F6F4EF; border-radius: 14px; padding: 10px 12px; } .vit b { font-size: 20px; } .vit small { font-size: 11px; color: var(--mute); display: block; }
-.tr { display: flex; gap: 10px; font-size: 12.5px; padding: 9px 0; border-top: 1px solid #F0EDE7; } .tr b { width: 92px; flex: none; font-weight: 600; } .tr span { color: #444; }
+.vit div { background: #F6F4FA; border-radius: 14px; padding: 10px 12px; } .vit b { font-size: 20px; } .vit small { font-size: 11px; color: var(--mute); display: block; }
+.tr { display: flex; gap: 10px; font-size: 12.5px; padding: 9px 0; border-top: 1px solid #EFECF4; } .tr b { width: 92px; flex: none; font-weight: 600; } .tr span { color: #444; }
 .scans { display: flex; gap: 8px; }
 .scan { flex: 1; height: 96px; border-radius: 12px; background: #111; position: relative; overflow: hidden; }
 .scan small { position: absolute; left: 8px; bottom: 6px; font-size: 10px; color: #ddd; }
@@ -78,21 +78,21 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
 
 /* ---------- left kinetic text ---------- */
 .kline { position: absolute; left: 150px; font-size: 76px; line-height: 1.02; color: var(--ink); white-space: nowrap; }
-.kline em { font-style: italic; color: var(--green); }
+.kline em { font-style: italic; color: var(--teal); }
 .chk { display: inline-flex; width: 46px; height: 46px; border-radius: 23px; background: var(--green); align-items: center; justify-content: center; margin-right: 22px; vertical-align: 10px; }
 .feat { position: absolute; left: 150px; display: flex; align-items: center; gap: 24px; font-size: 48px; font-weight: 400; color: var(--ink); }
-.feat .dot { width: 66px; height: 66px; border-radius: 33px; border: 1.5px solid rgba(31,107,80,0.35); display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.5); }
+.feat .dot { width: 66px; height: 66px; border-radius: 33px; border: 1.5px solid rgba(74,43,142,0.35); display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.5); }
 
 /* ---------- supers ---------- */
-.super { position: absolute; color: #F7F2E8; text-shadow: 0 2px 18px rgba(0,0,0,0.35); }
-.gline { height: 2px; background: #BFE3CF; }
+.super { position: absolute; color: #F8F6FC; text-shadow: 0 2px 18px rgba(0,0,0,0.35); }
+.gline { height: 2px; background: #D5C6F4; }
 .fcard { position: absolute; display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 18px; padding: 12px 20px 12px 12px;
-  box-shadow: 0 24px 50px rgba(20,40,30,0.16), 0 4px 12px rgba(20,40,30,0.08); }
+  box-shadow: 0 24px 50px rgba(30,20,60,0.16), 0 4px 12px rgba(30,20,60,0.08); }
 .fcard .rname { font-size: 18px; } .fcard .rsub { font-size: 14px; }
-.sbar { position: absolute; left: 510px; width: 900px; height: 92px; border-radius: 46px; background: #fff; box-shadow: 0 30px 60px rgba(20,40,30,0.14);
+.sbar { position: absolute; left: 510px; width: 900px; height: 92px; border-radius: 46px; background: #fff; box-shadow: 0 30px 60px rgba(30,20,60,0.14);
   display: flex; align-items: center; padding: 0 34px; gap: 20px; font-size: 32px; }
 .res { position: absolute; left: 510px; width: 900px; height: 104px; border-radius: 24px; background: #fff; display: flex; align-items: center; gap: 20px; padding: 0 24px;
-  box-shadow: 0 16px 40px rgba(20,40,30,0.10); }
+  box-shadow: 0 16px 40px rgba(30,20,60,0.10); }
 .res .t { font-size: 24px; font-weight: 500; } .res .s { font-size: 17px; color: var(--mute); margin-top: 4px; }
 .caret { display: inline-block; width: 3px; height: 38px; background: var(--green); vertical-align: -6px; margin-left: 3px; }
 </style>
@@ -102,7 +102,7 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
 <!-- ============ SUPERS over live action ============ -->
 <div id="s_lead" class="scene">
   <div class="super" style="left:120px; bottom:118px">
-    <div class="caps" id="lead_a" style="font-size:18px; color:#E9F2EC">Under the leadership of</div>
+    <div class="caps" id="lead_a" style="font-size:18px; color:#EEE8FA">Under the leadership of</div>
     <div class="gline" id="lead_l" style="width:0; margin:16px 0 18px"></div>
     <div class="serif" id="lead_b" style="font-size:66px; line-height:1">Dr Aditya Sarin <span style="font-style:italic; opacity:.8">&amp;</span> Dr Shyam Agrawal</div>
   </div>
@@ -115,19 +115,23 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
 </div>
 <div id="s_sec" class="scene">
   <div id="secchip" class="abs" style="left:120px; bottom:118px; display:flex; align-items:center; gap:16px; padding:16px 26px 16px 18px; border-radius:40px;
-      background:rgba(246,243,236,0.86); backdrop-filter: blur(10px); box-shadow:0 20px 50px rgba(0,0,0,0.18)">
+      background:rgba(246,244,250,0.88); backdrop-filter: blur(10px); box-shadow:0 20px 50px rgba(0,0,0,0.18)">
     <div style="width:52px;height:52px;border-radius:26px;background:var(--green);display:flex;align-items:center;justify-content:center">
       <svg width="24" height="26" viewBox="0 0 24 26"><rect x="3" y="11" width="18" height="13" rx="3" fill="#fff"/><path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="#fff" stroke-width="2.4" fill="none"/></svg></div>
-    <div><div style="font-size:26px;font-weight:600">One secure place</div><div style="font-size:17px;color:#6d6c67">Private · Encrypted · Yours</div></div>
+    <div><div style="font-size:26px;font-weight:600">One secure place</div><div style="font-size:17px;color:#6a6778">Private · Encrypted · Yours</div></div>
   </div>
 </div>
 
 <!-- ============ BRAND ============ -->
 <div id="brand" class="scene paperbg">
-  <div id="br_logo" class="abs" style="left:50%; top:50%; width:1232px; height:310px; margin-left:-616px; margin-top:-175px">
+  <div id="br_logo" class="abs" style="left:50%; top:50%; width:1232px; height:310px; margin-left:-616px; margin-top:-205px">
     <img id="br_mark" src="assets/logo_mark.png" class="abs" style="left:0;top:0;width:1232px">
     <img id="br_word" src="assets/logo_word.png" class="abs" style="left:0;top:0;width:1232px">
     <img id="br_tag"  src="assets/logo_tag.png"  class="abs" style="left:0;top:0;width:1232px">
+  </div>
+  <div id="br_pow" class="abs" style="left:0; width:1920px; top:690px; text-align:center; display:flex; justify-content:center; align-items:baseline; gap:14px">
+    <span class="serif" style="font-size:40px; font-style:italic; color:#6a6778">powered by</span>
+    <span style="font-size:46px; font-weight:600; color:var(--ink)">Big<span style="color:var(--green)">O</span>Health</span>
   </div>
 </div>
 
@@ -143,7 +147,7 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
   <div id="k_id"  class="kline serif" style="top:300px">Identifies.</div>
   <div id="k_cat" class="kline serif" style="top:392px">Categorizes.</div>
   <div id="k_org" class="kline serif" style="top:484px"><em>Organizes.</em></div>
-  <div id="k_tl"  class="kline serif" style="top:680px; font-size:46px; color:#4a4a45">Into one clear, <em>chronological</em> timeline.</div>
+  <div id="k_tl"  class="kline serif" style="top:680px; font-size:46px; color:#4a4858">Into one clear, <em>chronological</em> timeline.</div>
   <div id="features"></div>
   <div id="k_pic" class="kline serif" style="left:0; width:1920px; text-align:center; top:930px; font-size:64px">A complete picture of <em>your journey.</em></div>
   <div id="k_one" class="kline serif" style="left:0; width:1920px; text-align:center; top:930px; font-size:64px">All in <em>one place.</em></div>
@@ -157,7 +161,7 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
   <div class="sbar" id="se_bar" style="top:300px">
     <svg width="34" height="34" viewBox="0 0 34 34"><circle cx="14" cy="14" r="10" stroke="#1B1D1C" stroke-width="3" fill="none"/><path d="M22 22l9 9" stroke="#1B1D1C" stroke-width="3.2" stroke-linecap="round"/></svg>
     <span id="se_txt"></span><span class="caret" id="se_caret"></span>
-    <span id="se_ph" style="color:#b3b0a8">Search your reports</span>
+    <span id="se_ph" style="color:#aeaabb">Search your reports</span>
     <span id="se_time" style="margin-left:auto; font-size:18px; color:var(--green); font-weight:600"></span>
   </div>
   <div id="se_res"></div>
@@ -166,10 +170,10 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
 <!-- ============ UNDER 60 SECONDS ============ -->
 <div id="sixty" class="scene paperbg">
   <svg class="abs" id="sx_ring" width="620" height="620" style="left:650px; top:230px" viewBox="0 0 620 620">
-    <circle cx="310" cy="310" r="286" stroke="rgba(31,107,80,0.13)" stroke-width="6" fill="none"/>
-    <circle id="sx_arc" cx="310" cy="310" r="286" stroke="#1F6B50" stroke-width="6" fill="none" stroke-linecap="round" transform="rotate(-90 310 310)" stroke-dasharray="1797" stroke-dashoffset="1797"/>
+    <circle cx="310" cy="310" r="286" stroke="rgba(74,43,142,0.13)" stroke-width="6" fill="none"/>
+    <circle id="sx_arc" cx="310" cy="310" r="286" stroke="#4A2B8E" stroke-width="6" fill="none" stroke-linecap="round" transform="rotate(-90 310 310)" stroke-dasharray="1797" stroke-dashoffset="1797"/>
   </svg>
-  <div class="caps abs" id="sx_a" style="left:0; width:1920px; text-align:center; top:372px; color:var(--green); font-size:22px">Years of history, in under</div>
+  <div class="caps abs" id="sx_a" style="left:0; width:1920px; text-align:center; top:372px; color:var(--green); font-size:22px">In under</div>
   <div class="serif abs" id="sx_n" style="left:0; width:1920px; text-align:center; top:400px; font-size:300px; line-height:1; color:var(--ink)">60</div>
   <div class="caps abs" id="sx_b" style="left:0; width:1920px; text-align:center; top:716px; color:var(--green); font-size:26px; font-weight:600">seconds</div>
 </div>
@@ -182,12 +186,12 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
     <img id="en_tag"  src="assets/logo_tag.png"  class="abs" style="left:0;top:0;width:1080px">
   </div>
   <div id="en_pow" class="abs" style="left:0; width:1920px; top:640px; text-align:center; display:flex; justify-content:center; align-items:baseline; gap:14px">
-    <span class="serif" style="font-size:36px; font-style:italic; color:#6b6a64">powered by</span>
+    <span class="serif" style="font-size:36px; font-style:italic; color:#6a6778">powered by</span>
     <span style="font-size:40px; font-weight:600; color:var(--ink)">BigOHealth</span>
   </div>
-  <div id="en_rule" class="abs" style="left:50%; top:736px; height:1.5px; width:0; background:rgba(31,107,80,0.4)"></div>
+  <div id="en_rule" class="abs" style="left:50%; top:736px; height:1.5px; width:0; background:rgba(74,43,142,0.4)"></div>
   <div class="abs serif" style="left:0; width:1920px; top:772px; text-align:center; font-size:64px; color:var(--green)">
-    <span id="en_f">Faster Care.</span>&nbsp;&nbsp;<span id="en_t" style="font-style:italic">Trusted Care.</span></div>
+    <span id="en_f" style="color:var(--teal)">Faster Care.</span>&nbsp;&nbsp;<span id="en_t" style="font-style:italic">Trusted Care.</span></div>
 </div>
 
 <script>
@@ -215,15 +219,15 @@ const STATUS = dark => `<div class="status ${dark ? 'dark' : ''}"><span>9:41</sp
   <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 11.5l2.6-3a3.6 3.6 0 0 0-5.2 0zM3.6 6.4a7 7 0 0 1 9.8 0l1.5-1.6a9.2 9.2 0 0 0-12.8 0zM.6 3.3a11.3 11.3 0 0 1 15.8 0L17.9 1.7a13.5 13.5 0 0 0-18.8 0z" fill="currentColor"/></svg>
   <span class="batt"><i></i></span></span></div>`;
 const ICON = {
-  lab: `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M7 2v6L3 16a2 2 0 0 0 1.8 2.8h10.4A2 2 0 0 0 17 16l-4-8V2" stroke="#1F6B50" stroke-width="1.7" fill="none"/><path d="M6 2h8" stroke="#1F6B50" stroke-width="1.7"/><circle cx="9" cy="14" r="1.3" fill="#1F6B50"/></svg>`,
-  drip: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="5" y="2" width="10" height="11" rx="2" stroke="#1F6B50" stroke-width="1.7" fill="none"/><path d="M10 13v3a2 2 0 0 0 2 2h3" stroke="#1F6B50" stroke-width="1.7" fill="none"/><path d="M8 6h4M8 9h4" stroke="#1F6B50" stroke-width="1.5"/></svg>`,
-  scan: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="2.5" y="2.5" width="15" height="15" rx="3" stroke="#1F6B50" stroke-width="1.7" fill="none"/><circle cx="10" cy="10" r="3.4" stroke="#1F6B50" stroke-width="1.6" fill="none"/></svg>`,
-  micro: `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M6 17h10M9 17v-3M7 3l4 7M5.5 4.5l3-1.5M11 10a4 4 0 0 1 3 6" stroke="#1F6B50" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>`,
-  rx: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="4" y="2.5" width="12" height="15" rx="2" stroke="#1F6B50" stroke-width="1.7" fill="none"/><path d="M7 7h6M7 10h6M7 13h3" stroke="#1F6B50" stroke-width="1.5"/></svg>`,
+  lab: `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M7 2v6L3 16a2 2 0 0 0 1.8 2.8h10.4A2 2 0 0 0 17 16l-4-8V2" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><path d="M6 2h8" stroke="#4A2B8E" stroke-width="1.7"/><circle cx="9" cy="14" r="1.3" fill="#4A2B8E"/></svg>`,
+  drip: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="5" y="2" width="10" height="11" rx="2" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><path d="M10 13v3a2 2 0 0 0 2 2h3" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><path d="M8 6h4M8 9h4" stroke="#4A2B8E" stroke-width="1.5"/></svg>`,
+  scan: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="2.5" y="2.5" width="15" height="15" rx="3" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><circle cx="10" cy="10" r="3.4" stroke="#4A2B8E" stroke-width="1.6" fill="none"/></svg>`,
+  micro: `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M6 17h10M9 17v-3M7 3l4 7M5.5 4.5l3-1.5M11 10a4 4 0 0 1 3 6" stroke="#4A2B8E" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>`,
+  rx: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="4" y="2.5" width="12" height="15" rx="2" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><path d="M7 7h6M7 10h6M7 13h3" stroke="#4A2B8E" stroke-width="1.5"/></svg>`,
 };
 const NAV = act => `<div class="navbar">
   <svg width="26" height="26" viewBox="0 0 26 26"><path d="M3 12L13 3l10 9v10a1 1 0 0 1-1 1h-6v-7h-6v7H4a1 1 0 0 1-1-1z" fill="${act==='home'?'#fff':'#1B1D1C'}"/></svg>
-  <div class="act" style="${act==='home'?'position:absolute;left:16px;':''}"><svg width="28" height="26" viewBox="0 0 28 26"><path d="M14 24S2 16.5 2 8.5A6 6 0 0 1 14 5a6 6 0 0 1 12 3.5C26 16.5 14 24 14 24z" fill="#fff"/><path d="M14 9v7M10.5 12.5h7" stroke="#1F6B50" stroke-width="2.2"/></svg></div>
+  <div class="act" style="${act==='home'?'position:absolute;left:16px;':''}"><svg width="28" height="26" viewBox="0 0 28 26"><path d="M14 24S2 16.5 2 8.5A6 6 0 0 1 14 5a6 6 0 0 1 12 3.5C26 16.5 14 24 14 24z" fill="#fff"/><path d="M14 9v7M10.5 12.5h7" stroke="#4A2B8E" stroke-width="2.2"/></svg></div>
   <div class="fab">+</div>
   <svg width="26" height="26" viewBox="0 0 26 26"><path d="M6 3v7a5 5 0 0 0 10 0V3M11 15v3a5 5 0 0 0 10 0v-3" stroke="#1B1D1C" stroke-width="2.2" fill="none"/><circle cx="21" cy="12" r="2.6" stroke="#1B1D1C" stroke-width="2" fill="none"/></svg>
   <svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="8" r="5" fill="#1B1D1C"/><path d="M3 24c0-6 4.5-9 10-9s10 3 10 9z" fill="#1B1D1C"/></svg></div>`;
@@ -241,21 +245,21 @@ function uploadScreen() {
      <div style="flex:1; min-width:0"><div class="rname">${f[0]}</div>
        <div class="rsub" id="up_s${i}">${f[1]}</div><div class="tag" id="up_t${i}" style="display:none">${f[3]} · ${f[4]}</div>
        <div class="pbar"><i id="up_p${i}"></i></div></div>
-     <div id="up_c${i}" style="width:26px;height:26px;border-radius:13px;border:2px solid #E3E0D9;flex:none;display:flex;align-items:center;justify-content:center"></div></div>`).join('');
+     <div id="up_c${i}" style="width:26px;height:26px;border-radius:13px;border:2px solid #E2DEEA;flex:none;display:flex;align-items:center;justify-content:center"></div></div>`).join('');
   return `<div class="screen" id="scr_up">${STATUS(false)}
    <div class="hdr" style="height:198px; padding:62px 26px 0">
      <div style="display:flex; align-items:center; gap:14px"><svg width="14" height="24"><path d="M12 2L3 12l9 10" stroke="#fff" stroke-width="2.4" fill="none"/></svg>
        <div><div style="font-size:26px;font-weight:600">Upload reports</div><div style="font-size:15px;opacity:.8;margin-top:3px" id="up_sel">0 reports selected</div></div></div>
-     <div style="display:flex;align-items:center;gap:14px;margin-top:22px"><div style="flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,0.22)"><div id="up_bar" style="height:100%;width:0;border-radius:4px;background:#BFE3CF"></div></div><span id="up_n" style="font-size:15px">0/5</span></div>
+     <div style="display:flex;align-items:center;gap:14px;margin-top:22px"><div style="flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,0.22)"><div id="up_bar" style="height:100%;width:0;border-radius:4px;background:#D5C6F4"></div></div><span id="up_n" style="font-size:15px">0/5</span></div>
    </div>
    <div id="up_chips" class="chips" style="position:absolute; left:18px; top:212px; opacity:0">
      <span class="chip on">ALL</span><span class="chip">Lab Reports</span><span class="chip">Imaging</span><span class="chip">Biopsy &amp; Pathology</span></div>
    <div style="position:absolute; left:18px; right:18px; top:222px" id="up_list">
      <div style="font-size:19px;font-weight:600;margin:6px 4px 14px" id="up_h">Processing <span style="font-size:14px;color:var(--mute);font-weight:400;margin-left:6px" id="up_hn">in progress</span></div>
      ${rows}</div>
-   <div id="up_scanline" style="position:absolute;left:0;right:0;height:90px;top:0;opacity:0;background:linear-gradient(180deg,rgba(46,139,103,0),rgba(46,139,103,0.22),rgba(46,139,103,0));"></div>
+   <div id="up_scanline" style="position:absolute;left:0;right:0;height:90px;top:0;opacity:0;background:linear-gradient(180deg,rgba(107,70,193,0),rgba(107,70,193,0.22),rgba(107,70,193,0));"></div>
    <div style="position:absolute;left:0;right:0;bottom:30px;text-align:center;font-size:14px;color:var(--green);font-weight:500">
-     <svg width="14" height="16" viewBox="0 0 14 16" style="vertical-align:-2px;margin-right:6px"><path d="M7 1l6 2.5V8c0 3.5-2.6 6-6 7-3.4-1-6-3.5-6-7V3.5z" fill="#1F6B50"/></svg>Your data is safe with us</div>
+     <svg width="14" height="16" viewBox="0 0 14 16" style="vertical-align:-2px;margin-right:6px"><path d="M7 1l6 2.5V8c0 3.5-2.6 6-6 7-3.4-1-6-3.5-6-7V3.5z" fill="#4A2B8E"/></svg>Your data is safe with us</div>
   </div>`;
 }
 const TL = [
@@ -295,24 +299,24 @@ function overviewScreen() {
     <div id="ov_scroll" style="position:absolute;left:16px;right:16px;top:0">
      <div class="sec" id="ov_s0"><h5>${ICON.lab} Tumour marker trend</h5>
        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-         <div><div style="font-size:15px;font-weight:600">CA 15-3</div><div style="display:flex;align-items:baseline;gap:8px;margin-top:2px"><b style="font-size:40px;color:#3F51B5;font-weight:600">24.1</b><span style="font-size:13px;color:#555">U/mL</span><span class="tag" style="margin:0">Normal</span></div>
+         <div><div style="font-size:15px;font-weight:600">CA 15-3</div><div style="display:flex;align-items:baseline;gap:8px;margin-top:2px"><b style="font-size:40px;color:#1E7A80;font-weight:600">24.1</b><span style="font-size:13px;color:#555">U/mL</span><span class="tag" style="margin:0">Normal</span></div>
          <div style="font-size:11.5px;color:var(--mute)">4 readings · Normal &lt; 30</div></div>
-         <div style="border:1.5px solid #E6EFE9;border-radius:14px;padding:8px 10px;text-align:center;font-size:11px;color:var(--mute)">Trend<br><b style="color:var(--green);font-size:13px">Decreasing</b></div></div>
+         <div style="border:1.5px solid #EAE4F6;border-radius:14px;padding:8px 10px;text-align:center;font-size:11px;color:var(--mute)">Trend<br><b style="color:var(--green);font-size:13px">Decreasing</b></div></div>
        <svg width="326" height="150" viewBox="0 0 326 150" style="margin-top:6px">
-         <defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1F6B50" stop-opacity=".22"/><stop offset="1" stop-color="#1F6B50" stop-opacity="0"/></linearGradient>
+         <defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A2B8E" stop-opacity=".22"/><stop offset="1" stop-color="#4A2B8E" stop-opacity="0"/></linearGradient>
          <clipPath id="ov_clip"><rect id="ov_cliprect" x="0" y="0" width="0" height="150"/></clipPath></defs>
-         <g stroke="#E7E3DB" stroke-dasharray="4 5"><line x1="10" x2="320" y1="20" y2="20"/><line x1="10" x2="320" y1="62" y2="62"/><line x1="10" x2="320" y1="104" y2="104"/></g>
-         <line x1="10" x2="320" y1="84" y2="84" stroke="#9FD1B6" stroke-width="1.2"/><text x="318" y="80" font-size="9" fill="#6aa98a" text-anchor="end">30</text>
+         <g stroke="#E6E2EE" stroke-dasharray="4 5"><line x1="10" x2="320" y1="20" y2="20"/><line x1="10" x2="320" y1="62" y2="62"/><line x1="10" x2="320" y1="104" y2="104"/></g>
+         <line x1="10" x2="320" y1="84" y2="84" stroke="#BBA7EC" stroke-width="1.2"/><text x="318" y="80" font-size="9" fill="#7B5CC4" text-anchor="end">30</text>
          <g clip-path="url(#ov_clip)"><path d="M18 22 C 70 30, 90 52, 118 56 S 190 70, 214 78 S 280 96, 306 104 L306 140 L18 140 Z" fill="url(#gA)"/>
-         <path d="M18 22 C 70 30, 90 52, 118 56 S 190 70, 214 78 S 280 96, 306 104" stroke="#1F6B50" stroke-width="3" fill="none"/></g>
-         <g id="ov_pts" fill="#fff" stroke="#3F51B5" stroke-width="2.4"><circle cx="18" cy="22" r="6"/><circle cx="118" cy="56" r="6"/><circle cx="214" cy="78" r="6"/><circle cx="306" cy="104" r="6"/></g>
+         <path d="M18 22 C 70 30, 90 52, 118 56 S 190 70, 214 78 S 280 96, 306 104" stroke="#4A2B8E" stroke-width="3" fill="none"/></g>
+         <g id="ov_pts" fill="#fff" stroke="#1E7A80" stroke-width="2.4"><circle cx="18" cy="22" r="6"/><circle cx="118" cy="56" r="6"/><circle cx="214" cy="78" r="6"/><circle cx="306" cy="104" r="6"/></g>
          <g font-size="11" fill="#1B1D1C" font-weight="600" text-anchor="middle" id="ov_vals"><text x="26" y="12">52.4</text><text x="118" y="44">41.0</text><text x="214" y="66">33.0</text><text x="300" y="92">24.1</text></g>
-         <g font-size="10" fill="#8A8984" text-anchor="middle"><text x="22" y="146">Nov'24</text><text x="118" y="146">Mar'25</text><text x="214" y="146">May'25</text><text x="300" y="146">Aug'25</text></g></svg></div>
+         <g font-size="10" fill="#8A8796" text-anchor="middle"><text x="22" y="146">Nov'24</text><text x="118" y="146">Mar'25</text><text x="214" y="146">May'25</text><text x="300" y="146">Aug'25</text></g></svg></div>
      <div class="sec" id="ov_s1"><h5>♥ Vital signs</h5><div class="vit">
-       <div><small>Blood pressure</small><b>118/76</b> <small style="display:inline">mmHg</small>${spark([122,120,124,119,118],120,20,'#2E8B67')}</div>
-       <div><small>Pulse</small><b>78</b> <small style="display:inline">bpm</small>${spark([84,80,82,79,78],120,20,'#2E8B67')}</div>
-       <div><small>SpO₂</small><b>98</b> <small style="display:inline">%</small>${spark([97,98,97,98,98],120,20,'#2E8B67')}</div>
-       <div><small>Weight</small><b>61.2</b> <small style="display:inline">kg</small>${spark([63,62.4,61.8,61.5,61.2],120,20,'#2E8B67')}</div></div></div>
+       <div><small>Blood pressure</small><b>118/76</b> <small style="display:inline">mmHg</small>${spark([122,120,124,119,118],120,20,'#6B46C1')}</div>
+       <div><small>Pulse</small><b>78</b> <small style="display:inline">bpm</small>${spark([84,80,82,79,78],120,20,'#6B46C1')}</div>
+       <div><small>SpO₂</small><b>98</b> <small style="display:inline">%</small>${spark([97,98,97,98,98],120,20,'#6B46C1')}</div>
+       <div><small>Weight</small><b>61.2</b> <small style="display:inline">kg</small>${spark([63,62.4,61.8,61.5,61.2],120,20,'#6B46C1')}</div></div></div>
      <div class="sec" id="ov_s2"><h5>${ICON.drip} Treatment history</h5>
        <div class="tr"><b>Feb 2024</b><span>Diagnosis → core biopsy, IDC Grade 2</span></div>
        <div class="tr"><b>Mar–Jun 2024</b><span>AC × 4 cycles → Paclitaxel × 12</span></div>
@@ -347,23 +351,23 @@ function biomarkerScreen() {
      <div class="card" style="padding:16px;display:flex;gap:14px;align-items:center"><div class="fic"><b>PDF</b></div><div><div style="font-size:16px;font-weight:600;line-height:1.3">Histopathology &amp; IHC Panel</div><div class="rsub">21 Feb 2024 · Sunrise Diagnostics</div></div></div>
      <div class="sec" style="margin-top:14px"><h5>✦ Key biomarkers</h5><div class="bm"><span>ER +</span><span>PR +</span><span>HER2 −</span><span>Ki-67 18%</span><span>BRCA1/2 neg</span></div></div>
      <div class="sec"><h5>${ICON.micro} Findings</h5><div style="font-size:13px;color:#555;line-height:1.5">Invasive ductal carcinoma, Grade 2. Tumour size 2.1 cm. Margins clear. Lymphovascular invasion absent.</div></div>
-     <div class="sec"><h5>${ICON.lab} Trend · CA 15-3</h5>${spark([52.4,41,33,24.1],320,60,'#1F6B50')}</div></div></div>`;
+     <div class="sec"><h5>${ICON.lab} Trend · CA 15-3</h5>${spark([52.4,41,33,24.1],320,60,'#4A2B8E')}</div></div></div>`;
 }
 function secScreen() {
   const cats = [['Lab reports', 11, 'lab'], ['Imaging', 6, 'scan'], ['Biopsy & Pathology', 3, 'micro'], ['Prescriptions', 4, 'rx']];
-  return `<div class="screen" id="scr_sec" style="background:linear-gradient(160deg,#2F7F63 0%,#1F6B50 45%,#164A38 100%)">${STATUS(false)}
+  return `<div class="screen" id="scr_sec" style="background:linear-gradient(160deg,#5A38A8 0%,#4A2B8E 45%,#2D1B63 100%)">${STATUS(false)}
    <div style="position:absolute;left:0;right:0;top:92px;text-align:center;color:#fff">
      <div style="font-size:15px;opacity:.75;font-weight:300">Anita Verma</div>
      <div style="font-size:26px;font-weight:600;margin-top:4px">Health Records</div></div>
    <div id="sec_ring" style="position:absolute;left:50%;top:190px;width:190px;height:190px;margin-left:-95px;border-radius:95px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center">
      <div style="width:120px;height:120px;border-radius:60px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center">
        <svg width="58" height="70" viewBox="0 0 58 70"><path id="sec_shackle" d="M14 32V20a15 15 0 0 1 30 0v12" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
-       <rect x="5" y="30" width="48" height="36" rx="9" fill="#fff"/><circle cx="29" cy="46" r="5" fill="#1F6B50"/><rect x="27" y="48" width="4" height="9" rx="2" fill="#1F6B50"/></svg></div></div>
-   <div id="sec_state" style="position:absolute;left:0;right:0;top:398px;text-align:center;color:#CFE8DA;font-size:14px;font-weight:500;letter-spacing:.14em;text-transform:uppercase">Securing…</div>
+       <rect x="5" y="30" width="48" height="36" rx="9" fill="#fff"/><circle cx="29" cy="46" r="5" fill="#4A2B8E"/><rect x="27" y="48" width="4" height="9" rx="2" fill="#4A2B8E"/></svg></div></div>
+   <div id="sec_state" style="position:absolute;left:0;right:0;top:398px;text-align:center;color:#DCD0F6;font-size:14px;font-weight:500;letter-spacing:.14em;text-transform:uppercase">Securing…</div>
    <div style="position:absolute;left:18px;right:18px;top:444px">
      ${cats.map((c, i) => `<div id="sec_c${i}" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.14);border-radius:16px;padding:12px 14px;margin-bottom:10px;color:#fff">
        <div style="width:38px;height:38px;border-radius:19px;background:#fff;display:flex;align-items:center;justify-content:center">${ICON[c[2]]}</div>
-       <div style="flex:1;font-size:15.5px;font-weight:500">${c[0]}</div><div id="sec_n${i}" style="font-size:16px;font-weight:600;color:#BFE3CF">0</div></div>`).join('')}</div>
+       <div style="flex:1;font-size:15.5px;font-weight:500">${c[0]}</div><div id="sec_n${i}" style="font-size:16px;font-weight:600;color:#D5C6F4">0</div></div>`).join('')}</div>
    <div style="position:absolute;left:0;right:0;bottom:34px;text-align:center;color:rgba(255,255,255,0.75);font-size:13px">Private · Encrypted · Shared only with your doctor</div>
   </div>`;
 }
@@ -379,8 +383,8 @@ $('phones').innerHTML =
 // the side phones show the finished upload state
 document.querySelectorAll('#p3 .pbar i').forEach(e => e.style.width = '100%');
 
-const FEATS = [['Tumour marker trends', 53.18, ICON.lab], ['Vital signs', 54.39, '<b style="color:#1F6B50">♥</b>'], ['Treatment history', 55.36, ICON.drip],
-               ['Scans', 56.30, ICON.scan], ['Pathology', 56.97, ICON.micro], ['Key biomarkers', 58.16, '<b style="color:#1F6B50">✦</b>']];
+const FEATS = [['Tumour marker trends', 53.18, ICON.lab], ['Vital signs', 54.39, '<b style="color:#4A2B8E">♥</b>'], ['Treatment history', 55.36, ICON.drip],
+               ['Scans', 56.30, ICON.scan], ['Pathology', 56.97, ICON.micro], ['Key biomarkers', 58.16, '<b style="color:#4A2B8E">✦</b>']];
 $('features').innerHTML = FEATS.map((f, i) => `<div class="feat" id="ft${i}" style="top:${205 + i * 112}px"><div class="dot">${f[2].replace(/width="20" height="20"/, 'width="26" height="26"')}</div><span>${f[0]}</span></div>`).join('');
 const RCH = [['Blood report', 'lab', -470, -250], ['CT scan', 'scan', -520, 30], ['Pathology', 'micro', -430, 300], ['Prescription', 'rx', 400, -290],
              ['Discharge summary', 'drip', 470, 10], ['PET-CT', 'scan', 380, 300]];
@@ -393,7 +397,7 @@ $('se_res').innerHTML = RES.map((r, i) => `<div class="res" id="sr${i}" style="t
 /* ---------------- scene timings (film seconds; narration + 1.0 s) ---------------- */
 const SC = {
   s_lead: [28.85, 32.55], s_pow: [32.6, 34.2], s_sec: [0, 0],
-  brand: [26.2, 28.75], prod: [35.2, 63.7], search: [65.6, 67.6], sixty: [70.7, 72.35], endc: [72.35, 80.0],
+  brand: [26.2, 28.75], prod: [35.2, 63.7], search: [0, 0], sixty: [70.7, 72.35], endc: [72.35, 80.0],
 };
 window.META = { SC };
 
@@ -475,7 +479,7 @@ function drawProd(t) {
     const done = p >= 1;
     if (done) n++;
     const c = $('up_c' + i);
-    c.style.background = done ? '#2E8B67' : 'transparent'; c.style.borderColor = done ? '#2E8B67' : '#E3E0D9';
+    c.style.background = done ? '#6B46C1' : 'transparent'; c.style.borderColor = done ? '#6B46C1' : '#E2DEEA';
     c.innerHTML = done ? '<svg width="12" height="10"><path d="M1 5l3.5 3.5L11 1.5" stroke="#fff" stroke-width="2" fill="none"/></svg>' : '';
     // identifies: tag replaces file meta after the scan line passes
     const idt = 45.75 + i * 0.16;
@@ -529,7 +533,7 @@ function drawProd(t) {
   FEATS.forEach((f, i) => { const e = $('ft' + i); rise(e, t, f[1] - 0.15, 0.4, [59.2, 59.55], 20);
     const on = seg(t, f[1] - 0.1, f[1] + 0.2), nxt = i < FEATS.length - 1 ? seg(t, FEATS[i + 1][1] - 0.1, FEATS[i + 1][1] + 0.2) : 0;
     e.style.color = `rgba(27,29,28,${0.45 + 0.55 * on - 0.4 * nxt})`;
-    e.querySelector('.dot').style.background = on - nxt > 0.5 ? '#DCEBE3' : 'rgba(255,255,255,0.5)'; });
+    e.querySelector('.dot').style.background = on - nxt > 0.5 ? '#ECE6F8' : 'rgba(255,255,255,0.5)'; });
   rise($('k_pic'), t, 59.9, 0.6, [62.0, 62.3]); rise($('k_one'), t, 62.3, 0.6);
 }
 
@@ -566,6 +570,7 @@ function drawBrand(t) {
   const km = eo(seg(t, 26.35, 27.0)); show($('br_mark'), km, 0, (1 - km) * 14, 1);
   const kw = eio(seg(t, 26.75, 27.55)); $('br_word').style.clipPath = `inset(0 ${(1 - kw) * 100}% 0 0)`; $('br_word').style.opacity = clamp(kw * 3);
   $('br_tag').style.opacity = eo(seg(t, 27.35, 27.9));
+  rise($('br_pow'), t, 27.55, 0.55);
 }
 function drawSupers(t) {
   rise($('lead_a'), t, 28.95, 0.5, [32.15, 32.5]);

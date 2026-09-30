@@ -9,3 +9,4 @@ work/*
 out/*_HQ.mp4
 __pycache__/
 ui/
+!work/wm_tmpl.npy
