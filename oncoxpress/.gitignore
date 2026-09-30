@@ -6,6 +6,6 @@ work/*
 !work/wm_alpha.npy
 !work/wm_dil.npy
 !work/apple_mask.npy
-out/*_master.mp4
+out/*_HQ.mp4
 __pycache__/
 ui/
