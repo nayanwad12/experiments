@@ -19,7 +19,7 @@ and speed, frame-for-frame aligned for side-by-side comparison.
 | sound | `sound.py` | voice cut + time-stretched + compressed; original 128 BPM track (drops, sidechain pump, underwater filter, trailer percussion), ducked ~9 dB under the voice; SFX on the words |
 | picture | `render.py` | every effect, word-locked; `--stills <beat…>` renders check frames |
 | compare | `trim_raw.py` | raw take with the same cuts and speed-up, no effects |
-| reel | `reel.py` | 9:16 Instagram Reel: "Fully Edited by AI", ORIGINAL above VIBE EDITED, in sync → `out/comparison_reel.mp4` |
+| reel | `reel.py` | 9:16 Instagram Reel: "Fully Edited by AI", ORIGINAL above VIBE EDITED, in sync, inside the Reels safe zone (220 px top, 420 px bottom, 35 px left, 120 px right) → `out/comparison_reel.mp4` |
 
 ## The beats (each triggered by the spoken direction)
 

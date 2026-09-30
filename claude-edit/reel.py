@@ -1,4 +1,5 @@
 """9:16 Instagram Reel: the untouched take above the AI edit, frame-for-frame in sync, with the edit's sound.
+All content sits inside the Reels safe zone (220 px top, 420 px bottom, 35 px left, 120 px right).
 
     python3 reel.py  ->  out/comparison_reel.mp4 (1080x1920, 30 fps)
 """
@@ -13,12 +14,19 @@ import skia
 from common import FFMPEG, FONTS, FPS, OUT, H, W
 
 RW, RH = 1080, 1920
-CW = 984                                  # card width (48 px side margins)
-CH = round(CW * H / W)                    # 16:9 card -> 554
-CX = (RW - CW) // 2
-TOP = (CX, 400)                           # original
-BOT = (CX, 400 + CH + 44)                 # vibe edited; ends ~1552 -> bottom 19% stays clear for the Reels UI
-RAD = 34
+# Instagram Reels safe zone (1080x1920): 220 px clear at the top, 420 px at the bottom (caption/username),
+# 35 px at the left and 120 px at the right (like/comment/share column) -> content lives in x 35..960, y 220..1500
+SAFE_L, SAFE_R = 35, RW - 120
+SAFE_T, SAFE_B = 220, RH - 420
+ZX = (SAFE_L + SAFE_R) / 2                                # horizontal centre of the safe zone
+CW = SAFE_R - SAFE_L                                      # 925
+CH = round(CW * H / W)                                    # 16:9 card -> 520
+CX = SAFE_L
+GAP = 22
+BOT = (CX, SAFE_B - CH)                                   # vibe edited, ends exactly on the safe line
+TOP = (CX, BOT[1] - GAP - CH)                             # original
+HEAD = (SAFE_T, TOP[1])                                   # headline band 220 .. 438
+RAD = 30
 INK, YEL, WHITE = (17, 17, 20), (255, 210, 63), (255, 255, 255)
 
 
@@ -71,25 +79,29 @@ def background():
             c.drawCircle(x, y, 1.5, dot)
     # headline
     black = tf("Montserrat-Black")
-    w1 = skia.Font(black, 104).measureText("Fully Edited ")
-    w2 = skia.Font(black, 104).measureText("by AI")
-    y = 238
-    text(c, "Fully Edited", RW / 2, y - 112, black, 104, WHITE)
-    x0 = RW / 2 - skia.Font(black, 104).measureText("by AI") / 2
-    wb = skia.Font(black, 104).measureText("by ")
-    text(c, "by ", x0, y, black, 104, WHITE, "l")
-    hl = skia.RRect.MakeRectXY(skia.Rect(x0 + wb - 14, y - 86, x0 + wb + skia.Font(black, 104).measureText("AI") + 14, y + 16), 16, 16)
+    fs = 80
+    band0, band1 = HEAD
+    block = 58 + 92 + 50                                   # line1 cap + line gap + subtitle
+    top = band0 + (band1 - band0 - block) / 2              # centre the headline block in its band
+    y1 = top + 58
+    y = y1 + 92
+    text(c, "Fully Edited", ZX, y1, black, fs, WHITE)
+    fnt = skia.Font(black, fs)
+    x0 = ZX - fnt.measureText("by AI") / 2
+    wb = fnt.measureText("by ")
+    wai = fnt.measureText("AI")
+    text(c, "by ", x0, y, black, fs, WHITE, "l")
+    hl = skia.RRect.MakeRectXY(skia.Rect(x0 + wb - 11, y - 66, x0 + wb + wai + 11, y + 12), 12, 12)
     c.drawRRect(hl, skia.Paint(AntiAlias=True, Color4f=c4(YEL)))
-    text(c, "AI", x0 + wb, y, black, 104, INK, "l")
-    sparkle(c, x0 + wb + skia.Font(black, 104).measureText("AI") + 48, y - 78, 26, YEL)
-    sparkle(c, x0 - 40, y - 96, 15, WHITE)
-    text(c, "ONE TAKE  ·  ZERO TIMELINE", RW / 2, 330, tf("SpaceGrotesk-Bold"), 30, (185, 180, 215), track=0.08)
+    text(c, "AI", x0 + wb, y, black, fs, INK, "l")
+    sparkle(c, x0 + wb + wai + 36, y - 60, 20, YEL)
+    sparkle(c, x0 - 30, y - 74, 12, WHITE)
+    text(c, "ONE TAKE  ·  ZERO TIMELINE", ZX, y + 48, tf("SpaceGrotesk-Bold"), 24, (185, 180, 215), track=0.08)
     # card shadows
     for (x, yy) in (TOP, BOT):
         sh = skia.Paint(AntiAlias=True, Color4f=c4((0, 0, 0), 0.6))
         sh.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 24))
         c.drawRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(x, yy + 14, CW, CH), RAD, RAD), sh)
-    del w1, w2
     return arr[..., :3].copy()
 
 
