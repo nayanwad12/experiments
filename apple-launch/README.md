@@ -19,7 +19,7 @@ A 40 second 16:9 launch/promo film (1920×1080, 60 fps, AAC 320k audio) in a pre
 ## Build
 
 ```bash
-./build.sh                               # audio + frames + mux -> out/vibe_editing_launch.mp4 (~20 min on 4 cores; resumable)
+./build.sh                               # audio + frames + mux -> out/vibe_editing_launch.mp4 (~50 min on 4 cores; resumable)
 ./build.sh --fps 30 --mb 2               # fast draft
 node render.mjs --stills 11,19.5,26,38   # preview PNGs -> out/stills/
 ```
