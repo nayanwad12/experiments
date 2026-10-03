@@ -19,7 +19,10 @@ import v4
 HERE = os.path.dirname(os.path.abspath(__file__))
 WORK = os.path.join(HERE, "work")
 W, H, FPS = 1920, 1080, v4.FPS
-OLD = os.path.join(HERE, "out", "oncoxpress_brand_film.mp4")   # the v3 film
+OLD = os.path.join(WORK, "film_v3.mp4")   # the v3 film: git show 84d5dda:oncoxpress/out/oncoxpress_brand_film.mp4
+if not os.path.exists(OLD):
+    with open(OLD, "wb") as fh:
+        subprocess.run(["git", "show", "84d5dda:oncoxpress/out/oncoxpress_brand_film.mp4"], cwd=HERE, stdout=fh, check=True)
 
 
 # ---------------------------------------------------------------- v3 film, read sequentially
@@ -114,8 +117,8 @@ PHRASES = [
     "In cancer care, every appointment brings questions.", "Every report holds information.", "And every detail matters.",
     "But a patient's journey rarely lives in one place.", "Blood reports on the phone.", "Scans in hospital portals.",
     "Pathology reports in emails.", "Prescriptions and PDFs inside physical folders.", "Different records. Different places.",
-    "And they rarely speak to each other.", "That's why we created OncoXpress", "under the leadership of Dr Aditya Sarin",
-    "and Dr Shyam Aggarwal,", "powered by BigOHealth,", "to bring your entire cancer-care journey", "in one secure place.",
+    "And they rarely speak to each other.", "That's why we created OncoXpress", "under the leadership of Dr Shyam Aggarwal",
+    "and Dr Aditya Sarin,", "powered by BigOHealth,", "to bring your entire cancer-care journey", "in one secure place.",
     "Upload your medical records exactly as they are.", "No renaming. No sorting. No complicated folders.",
     "OncoXpress identifies, categorizes and organizes", "all your reports into one clear, chronological timeline.",
     "It tracks tumour marker trends, vital signs,", "treatment history, scans, pathology, and key biomarkers,",
@@ -146,6 +149,12 @@ def subtitle_cues():
         n = len(ph.split())
         cues.append([ph, soon[k]["s"] + v4.SOON_AT, soon[k + n - 1]["e"] + v4.SOON_AT])
         k += n
+    # the two names were re-ordered in the voice (v4.py): retime those two cues to the new audio
+    for c in cues:
+        if c[0] == "under the leadership of Dr Shyam Aggarwal":
+            c[2] = v4.SHYAM_AT + (v4.SHYAM_1 - v4.SHYAM_0) - 0.08
+        elif c[0] == "and Dr Aditya Sarin,":
+            c[1], c[2] = v4.AND_AT, v4.ADITYA_AT + v4.SNIP_LEN
     for i, c in enumerate(cues):            # start a touch early, hold a touch long, never overlap
         c[1] -= 0.08
         nxt = cues[i + 1][1] - 0.08 if i + 1 < len(cues) else c[2] + 1

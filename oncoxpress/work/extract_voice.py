@@ -13,6 +13,7 @@ sound.rng = np.random.default_rng(7)
 m = sound.score()
 fx = sound.design()
 m = m / (np.max(np.abs(m)) + 1e-9) * 10 ** (-9 / 20)
+# work/film_audio.wav: ffmpeg -i work/film_v3.mp4 -vn -ac 2 -ar 48000 work/film_audio.wav
 sr, y = wavfile.read("work/film_audio.wav")
 y = y.astype(np.float64) / 32767
 N = min(len(y), len(m))

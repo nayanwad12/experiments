@@ -73,8 +73,10 @@ def voice():
         put(out, x, at)
 
     piece(0, v4.CUT_A0, 0)
-    put(out, process_take(load_mono(os.path.join(HERE, "raw", "vo_aditya.mp3")), target), v4.CUT_A0)
-    piece(v4.CUT_A1, v4.PAUSE_AT, v4.CUT_A1 + v4.D1)
+    # "…of Dr Shyam Agrawal and Dr Aditya Sarin" — re-ordered so the voice follows the cards
+    piece(v4.SHYAM_0, v4.SHYAM_1, v4.SHYAM_AT)
+    piece(v4.AND_0, v4.AND_1, v4.AND_AT)
+    put(out, process_take(load_mono(os.path.join(HERE, "raw", "vo_aditya.mp3")), target), v4.ADITYA_AT)
     piece(v4.PAUSE_AT, v4.SPLIT_V, v4.PAUSE_AT + v4.D2)
     put(out, process_take(load_mono(os.path.join(HERE, "raw", "vo_comingsoon.mp3")), target), v4.SOON_AT)
     piece(v4.SPLIT_V, 80.0, v4.END_AT)
@@ -127,10 +129,10 @@ def new_fx():
     fx = np.zeros((N, 2))
     w, tick, pop = sound.whoosh, sound.tick, sound.pop
     # doctor cards
-    _place(fx, pan(w(0.6, 0.8, 300, 3500), 0), 30.0)
-    _place(fx, pan(tick(0.8, 1760), -0.3), 30.45)
-    _place(fx, pan(w(0.6, 0.8, 300, 3500), 0.2), 32.2)
-    _place(fx, pan(tick(0.8, 1976), 0.3), 32.6)
+    _place(fx, pan(w(0.6, 0.8, 300, 3500), 0), 29.55)
+    _place(fx, pan(tick(0.8, 1760), -0.3), 30.0)
+    _place(fx, pan(w(0.6, 0.8, 300, 3500), 0.2), 31.3)
+    _place(fx, pan(tick(0.8, 1976), 0.3), 31.7)
     _place(fx, pan(w(0.5, 0.6, 300, 3500), 0), 34.35)
     # coming soon
     _place(fx, sound.reverb(pan(sound.shimmer(2.2, 0.8, 86), 0), 0.5), 74.3)
