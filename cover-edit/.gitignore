@@ -13,3 +13,4 @@ work/*.log
 __pycache__/
 work/mm*/
 share/
+work/ff/
