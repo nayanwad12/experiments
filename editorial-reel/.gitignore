@@ -1,0 +1,4 @@
+__pycache__/
+out/*
+!out/two_editors_16x9.mp4
+work/*.wav

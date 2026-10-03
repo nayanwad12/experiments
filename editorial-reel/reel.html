@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Two Editors Reel</title>
+<style>
+  @font-face { font-family: "Inter Tight"; src: url(fonts/InterTight-VF.ttf); font-weight: 100 900; }
+  @font-face { font-family: "Instrument Serif"; src: url(fonts/InstrumentSerif-Italic.ttf); font-style: italic; }
+  @font-face { font-family: "Instrument Serif"; src: url(fonts/InstrumentSerif-Regular.ttf); font-style: normal; }
+  @font-face { font-family: "Mrs Saint Delafield"; src: url(fonts/MrsSaintDelafield-Regular.ttf); }
+  html, body { margin: 0; background: #111; overflow: hidden; }
+  #out { display: block; }
+  body:not(.render) { display: grid; place-items: center; height: 100vh; }
+  body:not(.render) #out { width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh; }
+  #hint { position: fixed; top: 10px; left: 12px; color: #888; font: 12px monospace; }
+  body.render #hint { display: none; }
+</style>
+</head>
+<body>
+<canvas id="out" width="1920" height="1080"></canvas>
+<div id="hint">space: play/pause (with work/narration.mp3) · ←/→: scrub 1 s</div>
+<script src="reel.js"></script>
+</body>
+</html>
