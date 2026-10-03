@@ -322,7 +322,7 @@ function leftContent(g, t, cx, w, s) {
   const top = 230;
   // label
   const lab = pop(t, T_.two);
-  at(g, cx, 150 - lab.dy, 1, lab.a * (1 - ease(t, T_.idea - .2, .2)), () => {
+  at(g, cx, 150 - lab.dy, 1, lab.a * (1 - ease(t, T_.six - .2, .2)), () => {
     g.font = SANS(700, 26); g.letterSpacing = '6px'; g.textAlign = 'center'; g.fillStyle = C.ink; g.fillText('EDITOR 01', 0, 0); g.letterSpacing = '0px';
   });
   // L0: "one."
@@ -334,8 +334,8 @@ function leftContent(g, t, cx, w, s) {
     const k = ease(t, T_.e1a, .55, E.outB);
     side(g, cx, s, a, () => {
       const cy = 650 + (1 - k) * 500;
-      spr(g, SP.computerDark, 0, cy, .95, 1);
-      const sr = screenRect(0, cy, .95), ox = sr.x, oy = sr.y;
+      spr(g, SP.computerDark, 0, cy + 40, .85, 1);
+      const sr = screenRect(0, cy + 40, .85), ox = sr.x, oy = sr.y;
       g.save(); g.beginPath(); g.rect(sr.x, sr.y, sr.w, sr.h); g.clip();
       g.fillStyle = '#3a3a3a'; g.fillRect(sr.x, sr.y, sr.w, sr.h);
       const ta = ease(t, T_.timeline - .05, .5);
@@ -349,8 +349,8 @@ function leftContent(g, t, cx, w, s) {
     });
     side(g, cx, s, a, () => {
       const p1 = pop(t, T_.opens1), p2 = pop(t, T_.timeline);
-      at(g, -400, top - p1.dy, p1.s, p1.a, () => txt(g, 'opens', 0, 0, 64));
-      at(g, -400, top + 150 - p2.dy, p2.s, p2.a, () => txt(g, 'the timeline.', 0, 0, 132));
+      at(g, -400, top + 70 - p1.dy, p1.s, p1.a, () => txt(g, 'opens', 0, 0, 64));
+      at(g, -400, top + 210 - p2.dy, p2.s, p2.a, () => txt(g, 'the timeline.', 0, 0, 132));
     });
   }
   // L2: clips raining into a pile + 200 counter
@@ -359,7 +359,7 @@ function leftContent(g, t, cx, w, s) {
     side(g, cx, s, a, () => {
       const R = rng(9);
       for (let i = 0; i < 70; i++) {
-        const t0 = T_.drags - .1 + i * .022 + R() * .1, tx = (R() - .5) * 760, ty = 760 + R() * 210 - Math.abs(tx) * .12, rot = (R() - .5) * 1.4, v = Math.floor(R() * 3);
+        const t0 = T_.e1b + .02 + i * .028 + R() * .1, tx = (R() - .5) * 760, ty = 760 + R() * 210 - Math.abs(tx) * .12, rot = (R() - .5) * 1.4, v = Math.floor(R() * 3);
         const k = ease(t, t0, .5, E.outB);
         if (k <= 0) continue;
         spr(g, SP.clips[v], tx * lerp(.6, 1, k), lerp(-300, ty, ease(t, t0, .45, E.inQ)), .95, 1, rot * k);
@@ -386,7 +386,7 @@ function leftContent(g, t, cx, w, s) {
         const k = ease(t, t0 - .05, .35, E.outB);
         const y = 600 + age * 125 * ease(t, (shown[i + 1] || [99])[0] - .05, .3) + (1 - k) * 60;
         const size = age === 0 ? 190 : 90;
-        at(g, 0, y, lerp(.7, 1, k), clamp(k * 2) * (age === 0 ? 1 : .35 - age * .07), () => {
+        at(g, 0, y, lerp(.7, 1, k), clamp(k * 2) * (age === 0 ? 1 : (.35 - age * .07) * (1 - ease(t, T_.export - .1, .25))), () => {
           if (age === 0) ghosts(g, s0, 0, 0, size, 2, -1, 1);
           txt(g, s0, 0, 0, size, { align: 'center', shadow: age === 0 });
         });
@@ -450,7 +450,7 @@ function leftContent(g, t, cx, w, s) {
           g.font = SANS(700, 30); g.fillText('♥ 3', 0, 60);
         });
         const po = pop(t, T_.posts);
-        at(g, 260, 990 - po.dy, po.s, po.a, () => txt(g, 'posts.', 0, 0, 80, { align: 'center' }));
+        at(g, 260, 890 - po.dy, po.s, po.a, () => txt(g, 'posts.', 0, 0, 80, { align: 'center' }));
       }
     });
   }
@@ -459,7 +459,7 @@ function leftContent(g, t, cx, w, s) {
 function rightContent(g, t, cx, w, s) {
   const top = 230;
   const lab = pop(t, T_.two + .08);
-  at(g, cx, 150 - lab.dy, 1, lab.a * (1 - ease(t, T_.idea - .2, .2)), () => {
+  at(g, cx, 150 - lab.dy, 1, lab.a * (1 - ease(t, T_.six - .2, .2)), () => {
     g.font = SANS(700, 26); g.letterSpacing = '6px'; g.textAlign = 'center'; g.fillStyle = C.ink; g.fillText('EDITOR 02', 0, 0); g.letterSpacing = '0px';
   });
   // R0: "two."
