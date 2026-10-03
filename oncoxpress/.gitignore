@@ -10,3 +10,5 @@ out/*_HQ.mp4
 __pycache__/
 ui/
 !work/wm_tmpl.npy
+!work/extract_voice.py
+!work/words_soon.json

@@ -1,10 +1,31 @@
 # OncoXpress, powered by BigOHealth — brand film
 
-80 s, 1920×1080 (16:9), 24 fps, stereo. Built from 10 AI-generated clips (Gemini/Veo) and the supplied narration,
-edited so it doesn't read as AI.
+96.6 s, 1920×1080 (16:9), 24 fps, stereo, with white subtitles. Built from 11 AI-generated clips (Gemini/Veo), the supplied
+narration, two later voice takes and the leadership photos, edited so it doesn't read as AI.
 
-**Deliverable:** `out/oncoxpress_brand_film.mp4` (8 Mbps). `encode.sh` also makes a 24 Mbps full-grain version,
-`out/oncoxpress_brand_film_HQ.mp4` (240 MB), which isn't committed.
+**Deliverable:** `out/oncoxpress_brand_film.mp4` (v4, 8 Mbps).
+
+## v4: re-edit of the finished film
+
+v4 was cut from the finished v3 film (`assemble_v4.py`), not re-rendered from the source clips:
+
+- **Narration recovered from the v3 mix.** The score and SFX are deterministic synthesis (`sound.py`), so
+  `work/extract_voice.py` regenerates them sample-exactly, undoes the soft limiter and fades, and solves for the voice under
+  the side-chain duck. What's left of the music sits at about −70 dB, so it's inaudible.
+- **"Dr Aditya Sarin"** is replaced with the corrected take (`raw/vo_aditya.mp3`), processed through the same voice chain
+  and level-matched to within 0.5 dB.
+- **Doctors** (29–35 s): the two-doctor shot runs about 1.5 s, cropped above the old lower-third. Then come photo cards,
+  first **Dr Shyam Aggarwal** (Chairman, Medical Oncology, Sir Ganga Ram Hospital, New Delhi), then **Dr Aditya Sarin**
+  (Vice President, Medical Oncology, Sir Ganga Ram Hospital, New Delhi). Portraits are cut out with U²-Net human
+  segmentation (`assets/doctors/`), and a 1.3 s pause after "…Dr Shyam Agrawal," gives the cards time to read.
+- **New paragraph** (74.3–89.0 s): "And this is just the beginning. Coming soon…", using the new voice take
+  (`raw/vo_comingsoon.mp3`) and clip 11. The pictures are the corridor walk, then a phone with coming-soon modules, then
+  the meal (diet & nutrition), the family (emotional well-being) and the scanner (diagnostics), each with a coming-soon tag,
+  then "All within the same platform".
+- **Subtitles**: white Lexend on a translucent plum pill, timed per phrase from forced alignment. They stay muted where the
+  same words are already typeset on screen.
+- **Music and SFX** are regenerated on the new timeline (`sound_v4.py`, every v3 cue moved through `v4.warp()`), with new
+  cues for the cards and the coming-soon section.
 
 ## What was done to the footage
 
@@ -38,7 +59,7 @@ The app screens (upload, timeline, health overview, case summary, report detail)
 screenshots with a **made-up patient, "Anita Verma"**, and invented values throughout. No real patient data, names or
 file names from the screenshots appear in the film.
 
-## Edit (film time; narration starts at 1.0 s)
+## Edit (v3 film time; see v4.py for how it maps to v4)
 
 | time | picture |
 | --- | --- |
@@ -65,11 +86,12 @@ impact, and a fast-running clock for "under 60 seconds". Music is side-chain duc
 ## Rebuild
 
 ```bash
-pip install imageio-ffmpeg opencv-python-headless numpy scipy pillow pocketsphinx
-# put clips as raw/clip1B.mp4 … raw/clip10B.mp4 and raw/narration.mp3
-python3 work/align.py            # word timings (pocketsphinx forced alignment of the script)
-node render_mg.mjs               # motion graphics -> work/mg/
-python3 sound.py                 # -> work/mix.wav
-python3 build.py                 # picture -> work/frames/  (--stills 12.5,40 for check frames)
-./encode.sh                      # -> out/
+pip install imageio-ffmpeg opencv-python-headless numpy scipy pillow pocketsphinx onnxruntime
+# v3 (needs the source clips): raw/clip1B.mp4 … raw/clip10B.mp4 and raw/narration.mp3
+python3 work/align.py && node render_mg.mjs && python3 sound.py && python3 build.py && ./encode.sh
+# v4 (re-edit of the v3 film in out/): raw/vo_aditya.mp3, raw/vo_comingsoon.mp3, raw/clip11B.mp4
+python3 work/extract_voice.py      # v3 mix -> clean narration stem
+python3 sound_v4.py                # -> work/mix_v4.wav
+node render_mg.mjs --v4            # doctor cards + coming-soon graphics -> work/mg4/
+python3 assemble_v4.py             # -> work/frames4/   (--stills 31,80 for check frames, --cues for subtitles)
 ```

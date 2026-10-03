@@ -10,7 +10,8 @@ try { ({ chromium } = await import('playwright')); } catch { ({ chromium } = awa
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const FPS = 24, WORKERS = +opt('workers', 4), STILLS = opt('stills', null), ONLY = opt('only', null);
-const URL = pathToFileURL(path.join(HERE, 'mg.html')).href;
+const V4 = args.includes('--v4');
+const URL = pathToFileURL(path.join(HERE, 'mg.html')).href + (V4 ? '?v4=1' : '');
 
 async function open() {
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
@@ -38,7 +39,7 @@ for (const [id, [a, b]] of Object.entries(SC)) {
   for (let f = Math.floor(a * FPS); f <= Math.ceil(b * FPS); f++) frames.add(f);
 }
 const list = [...frames].sort((a, b) => a - b);
-const dir = path.join(HERE, 'work', 'mg'); fs.mkdirSync(dir, { recursive: true });
+const dir = path.join(HERE, 'work', V4 ? 'mg4' : 'mg'); fs.mkdirSync(dir, { recursive: true });
 const todo = list.filter(f => !fs.existsSync(path.join(dir, `f${String(f).padStart(5, '0')}.png`)) || args.includes('--force'));
 console.log('frames', list.length, 'todo', todo.length);
 let done = 0;

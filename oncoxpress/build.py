@@ -79,7 +79,7 @@ def clip(c):
         ok, f = cap.read()
         if not ok:
             break
-        if c in (1, 2) or (c == 9 and has_sparkle(f)):
+        if c in (1, 2) or (c in (9, 11) and has_sparkle(f)):
             f = wm.clean(f)
         if c == 5 and f is not None and len(fr) < 50:
             f = cv2.inpaint(f, APPLE, 6, cv2.INPAINT_TELEA)

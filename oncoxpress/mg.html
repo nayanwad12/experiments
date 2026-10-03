@@ -95,6 +95,31 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
   box-shadow: 0 16px 40px rgba(30,20,60,0.10); }
 .res .t { font-size: 24px; font-weight: 500; } .res .s { font-size: 17px; color: var(--mute); margin-top: 4px; }
 .caret { display: inline-block; width: 3px; height: 38px; background: var(--green); vertical-align: -6px; margin-left: 3px; }
+
+/* ---------- v4: doctor cards, coming soon ---------- */
+.dcard { position: absolute; inset: 0; }
+.dpanel { position: absolute; left: 250px; top: 170px; width: 520px; height: 740px; border-radius: 260px 260px 36px 36px; overflow: hidden;
+  background: radial-gradient(420px 380px at 50% 30%, rgba(30,122,128,0.35), transparent 70%), linear-gradient(170deg, #5A38A8 0%, #452A8E 50%, #2D1B63 100%);
+  box-shadow: 0 50px 100px rgba(30,20,60,0.28), 0 14px 30px rgba(30,20,60,0.18); }
+.dpanel img { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); }
+.dtext { position: absolute; left: 880px; top: 330px; width: 900px; }
+.dname { font-family: Serif, serif; font-size: 96px; line-height: 1; color: var(--ink); margin-top: 18px; }
+.drole { font-size: 40px; font-weight: 600; color: var(--green); margin-top: 26px; }
+.dhosp { font-size: 31px; font-weight: 400; color: #6a6778; margin-top: 12px; }
+.drule { height: 3px; width: 0; background: var(--teal); margin-top: 30px; border-radius: 2px; }
+.mtile { background: #fff; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.mtile .mi { width: 38px; height: 38px; border-radius: 19px; background: var(--mint); display: flex; align-items: center; justify-content: center; }
+.mtile b { font-size: 13.5px; font-weight: 600; }
+.mtile.soon { background: #F3EFFB; border: 1.5px dashed #BBA7EC; }
+.badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: var(--teal); border-radius: 8px; padding: 3px 7px; }
+.chip4 { position: absolute; left: 120px; top: 110px; display: flex; align-items: center; gap: 18px; padding: 14px 28px 14px 14px; border-radius: 46px;
+  background: rgba(255,255,255,0.94); box-shadow: 0 24px 60px rgba(0,0,0,0.20); }
+.chip4 .ci { width: 62px; height: 62px; border-radius: 31px; background: linear-gradient(150deg,#5A38A8,#33206E); display: flex; align-items: center; justify-content: center; }
+.chip4 b { font-size: 30px; font-weight: 600; color: var(--ink); display: block; }
+.mcard { position: absolute; width: 400px; height: 250px; border-radius: 28px; background: #fff; padding: 30px; box-shadow: 0 30px 70px rgba(30,20,60,0.16);
+  display: flex; flex-direction: column; justify-content: space-between; }
+.mcard .mi { width: 76px; height: 76px; border-radius: 38px; background: linear-gradient(150deg,#5A38A8,#33206E); display: flex; align-items: center; justify-content: center; }
+.mcard b { font-size: 34px; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -192,6 +217,42 @@ html, body { width: 1920px; height: 1080px; overflow: hidden; background: transp
   <div id="en_rule" class="abs" style="left:50%; top:736px; height:1.5px; width:0; background:rgba(74,43,142,0.4)"></div>
   <div class="abs serif" style="left:0; width:1920px; top:772px; text-align:center; font-size:64px; color:var(--green)">
     <span id="en_f" style="color:var(--teal)">Faster Care.</span>&nbsp;&nbsp;<span id="en_t" style="font-style:italic">Trusted Care.</span></div>
+</div>
+
+<!-- ============ v4: DOCTOR CARDS ============ -->
+<div id="docs" class="scene paperbg">
+  <div class="dcard" id="dc0">
+    <div class="dpanel" id="dp0"><img id="di0" src="assets/doctors/shyam_aggarwal.png" style="width:640px"></div>
+    <div class="dtext"><div class="caps" id="dt0a" style="color:var(--teal); font-size:20px">OncoXpress Leadership</div>
+      <div class="dname" id="dt0b">Dr Shyam Aggarwal</div><div class="drule" id="dr0"></div>
+      <div class="drole" id="dt0c">Chairman, Medical Oncology</div><div class="dhosp" id="dt0d">Sir Ganga Ram Hospital, New Delhi</div></div>
+  </div>
+  <div class="dcard" id="dc1">
+    <div class="dpanel" id="dp1"><img id="di1" src="assets/doctors/aditya_sarin.png" style="width:600px"></div>
+    <div class="dtext"><div class="caps" id="dt1a" style="color:var(--teal); font-size:20px">OncoXpress Leadership</div>
+      <div class="dname" id="dt1b">Dr Aditya Sarin</div><div class="drule" id="dr1"></div>
+      <div class="drole" id="dt1c">Vice President, Medical Oncology</div><div class="dhosp" id="dt1d">Sir Ganga Ram Hospital, New Delhi</div></div>
+  </div>
+</div>
+
+<!-- ============ v4: COMING SOON ============ -->
+<div id="soon1" class="scene paperbg">
+  <div class="caps abs" id="sn_cap" style="left:150px; top:360px; color:var(--teal); font-size:22px">Coming soon</div>
+  <div class="kline serif" id="sn_t1" style="top:410px">Even more of your</div>
+  <div class="kline serif" id="sn_t2" style="top:500px"><em>journey, together.</em></div>
+  <div id="sn_phone" style="position:absolute; inset:0; perspective:2400px"></div>
+</div>
+<div id="soonchip" class="scene">
+  <div class="chip4" id="ch0"><div class="ci"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M8 24c0-9 6-16 16-17-1 10-8 16-16 17z" fill="#fff"/><path d="M8 24l9-9" stroke="#4A2B8E" stroke-width="2"/></svg></div><div><b>Diet &amp; Nutrition</b><span class="badge">Coming soon</span></div></div>
+  <div class="chip4" id="ch1"><div class="ci"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 26S3 18.5 3 10.5A6 6 0 0 1 15 7a6 6 0 0 1 12 3.5C27 18.5 15 26 15 26z" fill="#fff"/></svg></div><div><b>Emotional Well-being</b><span class="badge">Coming soon</span></div></div>
+  <div class="chip4" id="ch2"><div class="ci"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M12 4v8L5 23a2.5 2.5 0 0 0 2.2 3.6h15.6A2.5 2.5 0 0 0 25 23l-7-11V4" stroke="#fff" stroke-width="2.4" fill="none"/><path d="M10 4h10" stroke="#fff" stroke-width="2.4"/><path d="M8.5 19h13l3 5H5.5z" fill="#fff"/></svg></div><div><b>Diagnostics</b><span class="badge">Coming soon</span></div></div>
+</div>
+<div id="soon2" class="scene paperbg">
+  <div class="mcard" id="mc0"><div class="mi"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M8 24c0-9 6-16 16-17-1 10-8 16-16 17z" fill="#fff"/><path d="M8 24l9-9" stroke="#4A2B8E" stroke-width="2"/></svg></div><div><b>Diet &amp; Nutrition</b><br><span class="badge" style="margin-top:10px">Coming soon</span></div></div>
+  <div class="mcard" id="mc1"><div class="mi"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 26S3 18.5 3 10.5A6 6 0 0 1 15 7a6 6 0 0 1 12 3.5C27 18.5 15 26 15 26z" fill="#fff"/></svg></div><div><b>Emotional Well-being</b><br><span class="badge" style="margin-top:10px">Coming soon</span></div></div>
+  <div class="mcard" id="mc2"><div class="mi"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M12 4v8L5 23a2.5 2.5 0 0 0 2.2 3.6h15.6A2.5 2.5 0 0 0 25 23l-7-11V4" stroke="#fff" stroke-width="2.4" fill="none"/><path d="M10 4h10" stroke="#fff" stroke-width="2.4"/><path d="M8.5 19h13l3 5H5.5z" fill="#fff"/></svg></div><div><b>Diagnostics</b><br><span class="badge" style="margin-top:10px">Coming soon</span></div></div>
+  <div id="sn2_phone" style="position:absolute; inset:0; perspective:2400px"></div>
+  <div class="kline serif" id="sn_all" style="left:0; width:1920px; text-align:center; top:930px; font-size:64px">All within the <em>same platform.</em></div>
 </div>
 
 <script>
@@ -399,7 +460,7 @@ const SC = {
   s_lead: [28.85, 32.55], s_pow: [32.6, 34.2], s_sec: [0, 0],
   brand: [26.2, 28.75], prod: [35.2, 63.7], search: [0, 0], sixty: [70.7, 72.35], endc: [72.35, 80.0],
 };
-window.META = { SC };
+window.META = { SC: new URLSearchParams(location.search).has('v4') ? { docs: [30.30, 34.60], soon1: [76.95, 81.90], soonchip: [81.90, 86.40], soon2: [86.40, 89.0] } : SC };
 
 function phonePose(el, x, y, s, ry = 0, rx = 0, rz = 0, o = 1) {
   el.style.left = (x - 205) + 'px'; el.style.top = (y - 432) + 'px'; el.style.opacity = o;
@@ -580,8 +641,83 @@ function drawSupers(t) {
   rise($('secchip'), t, 36.0, 0.5, [37.9, 38.25]);
 }
 
+/* ---------------- v4 scenes ---------------- */
+function homeScreen() {
+  const tile = (ic, name) => `<div class="mtile"><div class="mi">${ic}</div><b>${name}</b></div>`;
+  const ICON2 = { diet: `<svg width="22" height="22" viewBox="0 0 30 30"><path d="M8 24c0-9 6-16 16-17-1 10-8 16-16 17z" fill="#4A2B8E"/></svg>`,
+    mind: `<svg width="22" height="22" viewBox="0 0 30 30"><path d="M15 26S3 18.5 3 10.5A6 6 0 0 1 15 7a6 6 0 0 1 12 3.5C27 18.5 15 26 15 26z" fill="#4A2B8E"/></svg>`,
+    diag: `<svg width="22" height="22" viewBox="0 0 30 30"><path d="M12 4v8L5 23a2.5 2.5 0 0 0 2.2 3.6h15.6A2.5 2.5 0 0 0 25 23l-7-11V4" stroke="#4A2B8E" stroke-width="2.4" fill="none"/><path d="M8.5 19h13l3 5H5.5z" fill="#4A2B8E"/></svg>` };
+  const soon = (ic, name, i) => `<div class="mtile soon" data-soon="${i}"><div style="display:flex;justify-content:space-between;align-items:center"><div class="mi">${ic}</div><span class="badge">Soon</span></div><b>${name}</b></div>`;
+  return `<div class="screen">${STATUS(false)}
+   <div class="hdr" style="height:190px; padding:66px 24px 0"><div class="hi">Good Evening</div><div class="nm">Anita Verma</div>
+     <div style="font-size:13px;opacity:.8;margin-top:10px">Your cancer-care journey, in one place</div></div>
+   <div style="position:absolute;left:18px;right:18px;top:206px">
+     <div style="font-size:17px;font-weight:600;margin:4px 2px 10px">Your records</div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${tile(ICON.drip,'Timeline')}${tile(ICON.rx,'Reports')}${tile(ICON.lab,'Trends')}${tile(ICON.micro,'Case Summary')}</div>
+     <div style="font-size:17px;font-weight:600;margin:18px 2px 10px;display:flex;align-items:center;gap:8px">Coming soon <span class="badge">New</span></div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${soon(ICON2.diet,'Diet &amp; Nutrition',0)}${soon(ICON2.mind,'Emotional Well-being',1)}${soon(ICON2.diag,'Diagnostics',2)}</div>
+   </div>${NAV('home')}</div>`;
+}
+const V4 = new URLSearchParams(location.search).has('v4');
+if (V4) {
+  $('sn_phone').innerHTML = phoneHTML('pS', homeScreen());
+  $('sn2_phone').innerHTML = phoneHTML('pS2', homeScreen());
+}
+const SC4 = { docs: [30.30, 34.60], soon1: [76.95, 81.90], soonchip: [81.90, 86.40], soon2: [86.40, 89.0] };
+
+function drawDocs(t) {
+  // card 1 (Dr Shyam Aggarwal) leaves completely before card 2 (Dr Aditya Sarin) arrives
+  [[0, 30.30, 32.15], [1, 32.50, 34.60]].forEach(([i, a, b]) => {
+    const c = $('dc' + i);
+    const kin = eo(seg(t, a, a + 0.6)), kout = i === 0 ? eio(seg(t, b, b + 0.35)) : 0;
+    const vis = t >= a - 0.01 && (i === 1 || t < b + 0.36);
+    c.style.display = vis ? 'block' : 'none';
+    c.style.opacity = clamp(kin * 2) * (1 - kout);
+    c.style.transform = `translateX(${(1 - kin) * (i ? 120 : 0) - kout * 140}px)`;
+    $('dp' + i).style.transform = `translateY(${(1 - kin) * 50}px)`;
+    $('di' + i).style.transform = `translateX(-50%) translateY(${(1 - eo(seg(t, a + 0.05, a + 0.8))) * 40}px) scale(${1.04 - 0.04 * eo(seg(t, a, b))})`;
+    rise($('dt' + i + 'a'), t, a + 0.10, 0.5); rise($('dt' + i + 'b'), t, a + 0.20, 0.6);
+    $('dr' + i).style.width = (eio(seg(t, a + 0.45, a + 1.0)) * 140) + 'px';
+    rise($('dt' + i + 'c'), t, a + 0.55, 0.5); rise($('dt' + i + 'd'), t, a + 0.70, 0.5);
+  });
+}
+function drawSoon1(t) {
+  const P = $('pS'), k = eo(seg(t, 76.95, 77.7));
+  phonePose(P, 1270, 548 + (1 - k) * 140, 0.97, -9 + Math.sin(t * 0.5) * 1.5, 3, 0, clamp(k * 3));
+  rise($('sn_cap'), t, 77.05, 0.5); rise($('sn_t1'), t, 77.2, 0.6); rise($('sn_t2'), t, 77.55, 0.6);
+  P.querySelectorAll('[data-soon]').forEach(e => { const i = +e.dataset.soon, a = eback(seg(t, 78.0 + i * 0.35, 78.45 + i * 0.35));
+    e.style.opacity = clamp(seg(t, 78.0 + i * 0.35, 78.2 + i * 0.35)); e.style.transform = `scale(${0.85 + 0.15 * a})`;
+    e.style.boxShadow = `0 0 0 ${4 * Math.max(0, Math.sin((t - 79.2) * 3 + i))}px rgba(107,70,193,0.18)`; });
+}
+function drawChips(t) {
+  [[0, 82.40, 83.75], [1, 83.80, 85.30], [2, 85.40, 86.40]].forEach(([i, a, b]) => {
+    const e = $('ch' + i); e.style.display = (t >= a - 0.05 && t < b) ? 'flex' : 'none'; rise(e, t, a, 0.45, null, 20); });
+}
+function drawSoon2(t) {
+  const conv = eio(seg(t, 87.15, 87.85));
+  const P = $('pS2'), kp = eo(seg(t, 86.9, 87.6));
+  phonePose(P, 960, 470, 0.70 + 0.04 * conv, 0, 0, 0, kp);
+  P.querySelectorAll('[data-soon]').forEach(e => { e.style.opacity = conv; });
+  [[0, 330], [1, 760], [2, 1190]].forEach(([i, x]) => {
+    const e = $('mc' + i), a = 86.45 + i * 0.12, k = eback(seg(t, a, a + 0.5));
+    const sx = x, sy = 380, tx = 960 - 200 + (i - 1) * 90, ty = 610 - 125;
+    e.style.left = lerp(sx, tx, conv) + 'px'; e.style.top = (lerp(sy, ty, conv) + (1 - k) * 60) + 'px';
+    e.style.opacity = clamp(seg(t, a, a + 0.3)) * (1 - seg(t, 87.35, 87.7));
+    e.style.transform = `scale(${lerp(1, 0.3, conv)})`; e.style.zIndex = 20;
+  });
+  rise($('sn_all'), t, 87.3, 0.6);
+}
+
 window.renderFrame = function (fi) {
   const t = fi / FPS;
+  if (V4) {
+    for (const [id, [a, b]] of Object.entries(SC4)) $(id).style.display = (t >= a && t < b) ? 'block' : 'none';
+    if (t >= SC4.docs[0] && t < SC4.docs[1]) drawDocs(t);
+    if (t >= SC4.soon1[0] && t < SC4.soon1[1]) drawSoon1(t);
+    if (t >= SC4.soonchip[0] && t < SC4.soonchip[1]) drawChips(t);
+    if (t >= SC4.soon2[0] && t < SC4.soon2[1]) drawSoon2(t);
+    return true;
+  }
   for (const [id, [a, b]] of Object.entries(SC)) $(id).style.display = (t >= a && t < b) ? 'block' : 'none';
   if (t >= SC.prod[0] && t < SC.prod[1]) drawProd(t);
   if (t >= SC.search[0] && t < SC.search[1]) drawSearch(t);
