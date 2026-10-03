@@ -1,0 +1,5 @@
+__pycache__/
+out/*
+!out/vibe_editing_reel.mp4
+!out/vibe_editing_reel_caption.mp4
+work/*.wav
