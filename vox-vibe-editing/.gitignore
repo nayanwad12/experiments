@@ -1,0 +1,4 @@
+out/*
+!out/vibe_editing_vox.mp4
+models/
+__pycache__/
