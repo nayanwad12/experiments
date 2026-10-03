@@ -12,3 +12,4 @@ work/nframes.txt
 work/*.log
 __pycache__/
 work/mm*/
+share/
