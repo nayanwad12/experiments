@@ -14,3 +14,4 @@ __pycache__/
 work/mm*/
 share/
 work/ff/
+!out/comparison_reel_white.mp4

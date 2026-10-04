@@ -12,6 +12,7 @@ Dead air is cut and the edit plays 1.05× faster (voice time-stretched, pitch ke
 | --- | --- |
 | `out/final.mp4` | the edit |
 | `out/trimmed_raw.mp4` | the untouched take with the same cuts and speed, frame-for-frame aligned |
+| `out/comparison_reel_white.mp4` | the same reel on a white stage (`python3 reel.py --white`) |
 | `out/comparison_reel.mp4` | Instagram Reel, "Fully Edited by AI": ORIGINAL (small, tilted, behind) vs VIBE EDITED (big, front), in sync, inside the Reels safe zone (220 px top, 420 px bottom, 35 px left, 120 px right) |
 
 ## Pipeline
