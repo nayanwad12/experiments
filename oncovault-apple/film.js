@@ -183,38 +183,6 @@ function tile(g, kind, i, x, y, s, shadow = true) {
   glyph(g, kind, x, y, s * 0.36);
 }
 
-// ------------------------------------------------------------------ OncoVault mark: 8 awareness ribbons around a keyhole
-function ribbonsMark(g, x, y, R, prog = 1, col = C.green, hole = '#FFFFFF') {
-  g.save(); g.translate(x, y);
-  const core = E.out(clamp(prog / 0.25));
-  if (core > 0) {
-    g.save(); g.scale(core, core);
-    g.fillStyle = col; g.beginPath(); g.arc(0, 0, R * 0.19, 0, TAU); g.fill();
-    g.fillStyle = hole;
-    g.beginPath(); g.arc(0, -R * 0.03, R * 0.045, 0, TAU); g.fill();
-    g.beginPath(); g.moveTo(-R * 0.022, -R * 0.02); g.lineTo(R * 0.022, -R * 0.02); g.lineTo(R * 0.03, R * 0.085); g.lineTo(-R * 0.03, R * 0.085); g.closePath(); g.fill();
-    g.restore();
-  }
-  for (let k = 0; k < 8; k++) {
-    const kp = E.out(clamp((prog - 0.15 - k * 0.055) / 0.3));
-    if (kp <= 0) continue;
-    g.save(); g.rotate(k * TAU / 8 + (1 - kp) * 0.6); g.scale(kp, kp);
-    g.strokeStyle = col; g.lineWidth = R * 0.088; g.lineCap = 'butt';
-    const ly = -R * 0.47, lr = R * 0.112;
-    g.beginPath(); g.arc(0, ly, lr, 0, TAU); g.stroke();
-    const cy = ly - lr * 1.05, L = R * 0.39, sa = 0.74;
-    g.lineWidth = R * 0.1;
-    g.beginPath();
-    g.moveTo(Math.sin(sa) * R * 0.05, cy + Math.cos(sa) * R * 0.05); g.lineTo(-Math.sin(sa) * L, cy - Math.cos(sa) * L);
-    g.moveTo(-Math.sin(sa) * R * 0.05, cy + Math.cos(sa) * R * 0.05); g.lineTo(Math.sin(sa) * L, cy - Math.cos(sa) * L);
-    g.stroke();
-    const dp = E.out(clamp((prog - 0.55 - k * 0.04) / 0.25));
-    if (dp > 0) { g.fillStyle = col; g.beginPath(); g.arc(0, -R * 0.99, R * 0.072 * dp, 0, TAU); g.fill(); }
-    g.restore();
-  }
-  g.restore();
-}
-
 // ================================================================== SCENES
 // 01 (0–6): Something big is coming. from BigOHealth. / Under the mentorship of Dr. Nitesh Rohatgi
 function sOpen(g, t) {
@@ -344,8 +312,8 @@ function drawApp(t) {
   text(g, '9:41', 44, 40, { size: 17, w: 650, track: 0 });
   g.fillStyle = C.ink; rr(g, SWP - 62, 27, 30, 14, 4); g.fill(); g.fillRect(SWP - 30, 31, 2.5, 6);
   g.fillStyle = '#000'; rr(g, SWP / 2 - 62, 12, 124, 36, 18); g.fill();
-  ribbonsMark(g, 46, 98, 17, 1, C.green, C.soft);
-  text(g, 'OncoVault', 72, 106, { size: 22, w: 700, align: 'left', track: -0.3 });
+  text(g, 'Onco', 26, 106, { size: 22, w: 700, align: 'left', track: -0.3 });
+  text(g, 'Vault', 26 + g.measureText('Onco').width, 106, { size: 22, w: 700, align: 'left', track: -0.3, col: C.green });
   text(g, 'Your Timeline', 26, 168, { size: 36, w: 700, align: 'left' });
   text(g, 'One patient · Every treatment', 26, 196, { size: 16, w: 500, col: C.grey, align: 'left', track: 0 });
   const y0 = 222, rh = 80, gap = 10;
@@ -406,36 +374,36 @@ function sOne(g, t) {
   words(g, 'timeline.', 200, 730, t, 22.25, { size: 120, align: 'l', stagger: 0.12, grad: (t - 22) * 0.05 + 0.2 });
 }
 
-// 05 (28–40): OncoVault mark + wordmark, then Coming soon / closing line
+// 05 (28–40): OncoVault wordmark in an intelligence-glow capsule, then Coming soon / closing line
 function sBrand(g, t) {
   const lift = E.io(inv(32.6, 33.7, t));
-  const my = lerp(430, 230, lift), R = lerp(175, 96, lift);
-  aurora(g, t, 0.14 * P(t, 28.0, 1.6, E.io) * (1 - 0.5 * lift), W / 2, my, 0.9, 0.7);
-  const gk = P(t, 28.4, 0.8) * (1 - 0.8 * P(t, 30.3, 1.6, E.io));
-  glowCircle(g, W / 2, my, R * 1.45, t, gk, lerp(1, 0.6, lift));
-  const fill = g.createLinearGradient(W / 2 - R, my - R, W / 2 + R, my + R);
-  fill.addColorStop(0, '#2CC796'); fill.addColorStop(0.5, '#13A878'); fill.addColorStop(1, '#0B7A55');
-  ribbonsMark(g, W / 2, my, R, inv(28.0, 29.8, t), fill, '#FFFFFF');
-  // wordmark: Onco (ink) + Vault (green)
-  const ws = lerp(150, 96, lift), wy = lerp(805, 430, lift);
+  const ws = lerp(210, 120, lift), wy = lerp(610, 340, lift);
+  aurora(g, t, 0.14 * P(t, 28.0, 1.6, E.io) * (1 - 0.5 * lift), W / 2, wy - ws * 0.35, 1.0, 0.6);
   font(g, ws, 700);
   const s = 'OncoVault', tw = g.measureText(s).width, x0 = W / 2 - tw / 2;
+  // capsule glow traces the word, then settles
+  const gk = P(t, 28.0, 0.7) * (1 - 0.85 * P(t, 30.6, 1.6, E.io));
+  const padX = ws * 0.42, capH = ws * 1.25, capW = tw + padX * 2;
+  const cw = capW * E.io(inv(28.0, 28.9, t));
+  glowRect(g, W / 2 - cw / 2, wy - ws * 0.36 - capH / 2, cw, capH, capH / 2, t, gk, lerp(1.1, 0.7, lift));
   g.textAlign = 'left'; g.textBaseline = 'alphabetic';
   for (let i = 0; i < s.length; i++) {
-    const p = P(t, 29.3 + i * 0.045, 1.0);
+    const p = P(t, 28.25 + i * 0.05, 1.1);
     if (p <= 0) continue;
     const xi = x0 + g.measureText(s.slice(0, i + 1)).width - g.measureText(s[i]).width;
-    g.save(); g.globalAlpha = clamp(p * 1.4); blur(g, (1 - p) * 12);
-    g.fillStyle = i < 4 ? C.ink : gradX(g, x0, x0 + tw, (t - 29) * 0.04);
-    g.fillText(s[i], xi, wy + (1 - p) * ws * 0.3);
+    g.save();
+    g.beginPath(); g.rect(xi - 40, wy - ws * 1.05, ws * 1.4, ws * 1.35); g.clip();
+    g.globalAlpha = clamp(p * 1.5);
+    g.fillStyle = i < 4 ? C.ink : gradX(g, x0, x0 + tw, (t - 28) * 0.04);
+    g.fillText(s[i], xi, wy + (1 - p) * ws);
     g.restore();
   }
-  words(g, 'by BigOHealth', W / 2, 890, t, 30.4, { size: 40, w: 500, col: C.grey, dy: 16, bl: 10, out: P(t, 32.3, 0.5, E.io) });
+  words(g, 'by BigOHealth', W / 2, 740, t, 29.6, { size: 40, w: 500, col: C.grey, dy: 16, bl: 10, out: P(t, 32.3, 0.5, E.io) });
   // Coming soon pill
   const cp = spring(t - 34.0, 1.3, 0.7), ca = clamp((t - 34.0) / 0.3);
   if (ca > 0) {
     font(g, 30, 600, 0);
-    const label = 'Coming soon', lw = g.measureText(label).width, pw = lw + 86, ph = 64, px = W / 2 - pw / 2, py = 522;
+    const label = 'Coming soon', lw = g.measureText(label).width, pw = lw + 86, ph = 64, px = W / 2 - pw / 2, py = 440;
     g.save(); g.globalAlpha = ca;
     g.translate(W / 2, py + ph / 2); g.scale(lerp(0.85, 1, cp), lerp(0.85, 1, cp)); g.translate(-W / 2, -(py + ph / 2));
     g.fillStyle = C.soft; rr(g, px, py, pw, ph, ph / 2); g.fill();
@@ -445,8 +413,8 @@ function sBrand(g, t) {
     font(g, 30, 600, 0); g.fillStyle = C.ink; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(label, px + 58, py + ph / 2 + 1);
     g.restore();
   }
-  words(g, 'Because every cancer journey deserves', W / 2, 715, t, 34.6, { size: 78, stagger: 0.08 });
-  words(g, 'one complete story.', W / 2, 815, t, 35.6, { size: 78, stagger: 0.12, grad: (t - 35.6) * 0.05 });
+  words(g, 'Because every cancer journey deserves', W / 2, 660, t, 34.6, { size: 78, stagger: 0.08 });
+  words(g, 'one complete story.', W / 2, 765, t, 35.6, { size: 78, stagger: 0.12, grad: (t - 35.6) * 0.05 });
   const fa = P(t, 36.8, 1.0);
   if (fa > 0) {
     g.save(); g.globalAlpha = fa;

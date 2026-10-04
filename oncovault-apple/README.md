@@ -16,10 +16,10 @@ A 40 second 16:9 promo (1920×1080, 60 fps, AAC 320k audio) in an Apple keynote 
 | 6–10 s | **Journey** | "The entire / cancer journey." (per-letter mask rise, slow push-in) |
 | 10–20 s | **Timeline** | Three big-type beats: *From diagnosis to surgery, / radiation to chemotherapy, / molecular to targeted therapy.* Six green app-icon tiles drop onto one track as the progress line fills, then "Together in a single / **longitudinal timeline.**" with a luminous pass along the track |
 | 20–28 s | **One** | "One patient. / **One treatment timeline.**" beside a phone running the OncoVault timeline app (rows spring in, a 60-second summary button, and a green intelligence-glow pass) |
-| 28–33 s | **Brand** | The ribbon mark assembles inside a green glow ring, then the **Onco**Vault wordmark and "by BigOHealth" |
+| 28–33 s | **Brand** | The **Onco**Vault wordmark rises letter by letter inside a green intelligence-glow capsule, then "by BigOHealth" |
 | 33–40 s | **Coming soon** | A Coming soon pill, "Because every cancer journey deserves / **one complete story.**", and a footer: BigOHealth · Under the mentorship of Dr. Nitesh Rohatgi |
 
-The OncoVault mark is a vector **recreation** of the logo made from the website screenshot (`ribbonsMark()` in `film.js`). The dates and treatment details in the phone UI are illustrative.
+No logo artwork is used: the brand appears as a typeset wordmark only. The dates and treatment details in the phone UI are illustrative.
 
 ## Build
 
