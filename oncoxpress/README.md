@@ -1,6 +1,6 @@
 # OncoXpress, powered by BigOHealth — brand film
 
-96.6 s, 1920×1080 (16:9), 24 fps, stereo, with white subtitles. Built from 11 AI-generated clips (Gemini/Veo), the supplied
+About 88 s (cut at 96.6 s, delivered at 1.1× speed with pitch preserved), 1920×1080 (16:9), 24 fps, stereo, with white subtitles. Built from 11 AI-generated clips (Gemini/Veo), the supplied
 narration, two later voice takes and the leadership photos, edited so it doesn't read as AI.
 
 **Deliverable:** `out/oncoxpress_brand_film.mp4` (v4, 8 Mbps).
@@ -14,11 +14,13 @@ v4 was cut from the finished v3 film (`assemble_v4.py`), not re-rendered from th
   the side-chain duck. What's left of the music sits at about −70 dB, so it's inaudible.
 - **"Dr Aditya Sarin"** is replaced with the corrected take (`raw/vo_aditya.mp3`), processed through the same voice chain
   and level-matched to within 0.5 dB.
-- **Doctors** (29–35 s): the two-doctor shot runs about 1.1 s, cropped above the old lower-third. Then come photo cards,
-  first **Dr Shyam Aggarwal** (Chairman, Medical Oncology, Sir Ganga Ram Hospital, New Delhi), then **Dr Aditya Sarin**
-  (Vice President, Medical Oncology, Sir Ganga Ram Hospital, New Delhi). Portraits are cut out with U²-Net human
-  segmentation (`assets/doctors/`). The narration is re-ordered to match the cards: "…of Dr Shyam Agrawal and
-  Dr Aditya Sarin", cut at natural breaths, with a 1.3 s pause after the names so the cards can be read.
+- **Doctors** (29–35 s): the two-doctor shot runs about 1.1 s, cropped above the old lower-third. Then one screen with
+  both photo cards side by side: **Dr. Shyam Aggarwal** (Chairman, Medical Oncology, Sir Ganga Ram Hospital, New Delhi)
+  arrives on his name, and **Dr. Aditya Sarin** (Vice President, Medical Oncology, Sir Ganga Ram Hospital, New Delhi) on his.
+  Names are set in Lexend, matching the job titles. Portraits are cut out with U²-Net human segmentation
+  (`assets/doctors/`). The narration is re-ordered to match the cards ("…of Dr Shyam Agrawal and Dr Aditya Sarin"),
+  cut at natural breaths.
+- **"powered by BigOHealth"** (34.6–37.1 s): BigOHealth's surgeon clip (clip 12), lightly graded, with the title.
 - **New paragraph** (74.3–89.0 s): "And this is just the beginning. Coming soon…", using the new voice take
   (`raw/vo_comingsoon.mp3`) and clip 11. The pictures are the corridor walk, then a phone with coming-soon modules, then
   the meal (diet & nutrition), the family (emotional well-being) and the scanner (diagnostics), each with a coming-soon tag,
@@ -95,4 +97,5 @@ python3 work/extract_voice.py      # v3 mix -> clean narration stem
 python3 sound_v4.py                # -> work/mix_v4.wav
 node render_mg.mjs --v4            # doctor cards + coming-soon graphics -> work/mg4/
 python3 assemble_v4.py             # -> work/frames4/   (--stills 31,80 for check frames, --cues for subtitles)
+# encode at 1.1x: -filter_complex '[0:v]setpts=PTS/1.1,fps=24[v];[1:a]atempo=1.1[a]'
 ```

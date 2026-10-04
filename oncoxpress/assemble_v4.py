@@ -65,13 +65,14 @@ SOON_SHOTS = [  # new t0, t1, src from, src to, zoom in, zoom out, focus
     (85.30, 86.40, 112, 138, 1.03, 1.08, (680, 400)),   # the scanner — diagnostics
 ]
 MG_FULL = [v4.DOCS, (76.95, 81.90), (86.40, 89.0)]
+POW_SHOT = (34.60, 37.10, 90, 150, 1.02, 1.08, (640, 330))   # surgeon + circuit tree, src frames 90-150
 
 
 def soon_shot(t):
-    for (t0, t1, a, b, z0, z1, (cx, cy)) in SOON_SHOTS:
+    for c, (t0, t1, a, b, z0, z1, (cx, cy)) in [(11, s) for s in SOON_SHOTS] + [(12, POW_SHOT)]:
         if t0 <= t < t1:
             k = (t - t0) / (t1 - t0)
-            return build.reframe(build.src_frame(11, a + k * (b - a)), z0 + (z1 - z0) * build.ease(k), cx, cy)
+            return build.reframe(build.src_frame(c, a + k * (b - a)), z0 + (z1 - z0) * build.ease(k), cx, cy)
     return None
 
 
@@ -86,7 +87,7 @@ def mg4(fi):
     return (im[..., 2::-1].astype(np.float32) / 255, a) if a.max() > 0.004 else None
 
 
-build.LEAKS = [(74.30, 1.0, 0.35), (89.0, 1.1, 0.35)]   # flash in and out of the new section
+build.LEAKS = [(34.60, 0.8, 0.25), (74.30, 1.0, 0.35), (89.0, 1.1, 0.35)]   # flash in and out of the new section
 
 
 def new_frame(fi):
@@ -97,14 +98,14 @@ def new_frame(fi):
         x[:] = build.PAPER
     else:
         x = soon_shot(t)[..., ::-1].astype(np.float32) / 255
-        x = look.grade(x, 1.0)
+        x = look.grade(x, 0.35 if v4.POW[0] <= t < v4.POW[1] else 1.0)   # BigOHealth's own clip keeps its look
     ml = mg4(fi)
     if ml is not None:
         rgb, a = ml
         if full:
             rgb = look.grade(rgb, 0.10)
         x = x * (1 - a) + rgb * a
-    if v4.SOON[0] <= t < v4.SOON[1]:
+    if v4.SOON[0] <= t < v4.SOON[1] or v4.POW[0] <= t < v4.POW[1]:
         lk = build.leak(t, fi)
         if lk is not None:
             x = 1 - (1 - x) * (1 - np.clip(lk * 0.85, 0, 1))
@@ -117,8 +118,8 @@ PHRASES = [
     "In cancer care, every appointment brings questions.", "Every report holds information.", "And every detail matters.",
     "But a patient's journey rarely lives in one place.", "Blood reports on the phone.", "Scans in hospital portals.",
     "Pathology reports in emails.", "Prescriptions and PDFs inside physical folders.", "Different records. Different places.",
-    "And they rarely speak to each other.", "That's why we created OncoXpress", "under the leadership of Dr Shyam Aggarwal",
-    "and Dr Aditya Sarin,", "powered by BigOHealth,", "to bring your entire cancer-care journey", "in one secure place.",
+    "And they rarely speak to each other.", "That's why we created OncoXpress", "under the leadership of Dr. Shyam Aggarwal",
+    "and Dr. Aditya Sarin,", "powered by BigOHealth,", "to bring your entire cancer-care journey", "in one secure place.",
     "Upload your medical records exactly as they are.", "No renaming. No sorting. No complicated folders.",
     "OncoXpress identifies, categorizes and organizes", "all your reports into one clear, chronological timeline.",
     "It tracks tumour marker trends, vital signs,", "treatment history, scans, pathology, and key biomarkers,",
@@ -130,7 +131,7 @@ PHRASES = [
 SOON_PHRASES = ["And this is just the beginning.", "Coming soon, OncoXpress will bring even more",
                 "of the cancer-care journey together,", "including diet and nutrition,", "emotional well-being, and diagnostics,",
                 "all within the same platform."]
-QUIET = [(34.5, 36.05), (61.2, 65.6), (86.4, 99.0)]   # the same words are already typeset on screen there
+QUIET = [(34.4, 36.1), (61.2, 65.6), (86.4, 99.0)]   # the same words are already typeset on screen there
 
 
 def subtitle_cues():
@@ -151,9 +152,9 @@ def subtitle_cues():
         k += n
     # the two names were re-ordered in the voice (v4.py): retime those two cues to the new audio
     for c in cues:
-        if c[0] == "under the leadership of Dr Shyam Aggarwal":
+        if c[0] == "under the leadership of Dr. Shyam Aggarwal":
             c[2] = v4.SHYAM_AT + (v4.SHYAM_1 - v4.SHYAM_0) - 0.08
-        elif c[0] == "and Dr Aditya Sarin,":
+        elif c[0] == "and Dr. Aditya Sarin,":
             c[1], c[2] = v4.AND_AT, v4.ADITYA_AT + v4.SNIP_LEN
     for i, c in enumerate(cues):            # start a touch early, hold a touch long, never overlap
         c[1] -= 0.08

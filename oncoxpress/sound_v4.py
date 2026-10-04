@@ -88,6 +88,8 @@ _place = sound.place
 
 
 def warped_place(buf, x, t, g=1.0):
+    if abs(t - 33.2) < 1e-6:            # paper rustle on the old desk shot, now the surgeon clip
+        return
     if abs(t - 71.4) < 1e-6:            # the reverse whoosh that leads into the end card
         t2 = v4.END_AT - 1.0
     else:
@@ -131,9 +133,10 @@ def new_fx():
     # doctor cards
     _place(fx, pan(w(0.6, 0.8, 300, 3500), 0), 29.55)
     _place(fx, pan(tick(0.8, 1760), -0.3), 30.0)
-    _place(fx, pan(w(0.6, 0.8, 300, 3500), 0.2), 31.3)
-    _place(fx, pan(tick(0.8, 1976), 0.3), 31.7)
+    _place(fx, pan(w(0.6, 0.7, 300, 3500), 0.3), 30.95)
+    _place(fx, pan(tick(0.8, 1976), 0.3), 31.4)
     _place(fx, pan(w(0.5, 0.6, 300, 3500), 0), 34.35)
+    _place(fx, sound.reverb(pan(sound.shimmer(2.0, 0.7, 81), 0), 0.5), 34.6)    # into the BigOHealth clip
     # coming soon
     _place(fx, sound.reverb(pan(sound.shimmer(2.2, 0.8, 86), 0), 0.5), 74.3)
     _place(fx, pan(sound.roomtone(2.8, 0.6), 0), 74.3)
