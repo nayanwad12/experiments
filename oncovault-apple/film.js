@@ -2,9 +2,9 @@
 // ONCOVAULT by BigOHealth: 23.3 s promo in an Apple keynote style. White canvas, Inter Tight display type,
 // blur-up word reveals, spring physics, soft cards, and the "intelligence" glow tinted in OncoVault greens.
 // Every frame is a pure function of time t. Cues are cut to the supplied track (audio_src/linkedin_audio.mp3,
-// ~97 BPM): first hit 1.0 s, groove 7.85 s, second phrase 12.77 s, climax 17.9 s, outro from 20.5 s.
+// extended to 30 s by make_audio.py): first hit 1.06 s, groove 8.34 s, 'Together' phrase 18.8 s, peak 24.24 s, outro from 27 s.
 
-const W = 1920, H = 1080, DUR = 23.34;
+const W = 1920, H = 1080, DUR = 30.0;
 const Q = new URLSearchParams(location.search);
 const RENDER = Q.has('render');
 const FPS = +(Q.get('fps') || 60);
@@ -184,24 +184,24 @@ function tile(g, kind, i, x, y, s, shadow = true) {
 }
 
 // ================================================================== SCENES
-// 01 (0–4.7): Something big is coming. from BigOHealth (on the 1.0 s hit) / Under the mentorship of Dr. Nitesh Rohatgi & Dr. Swarupa Mitra
+// 01 (0–5.4): Something big is coming. from BigOHealth (on the 1.06 s hit) / Under the mentorship of Dr. Nitesh Rohatgi & Dr. Swarupa Mitra
 function sOpen(g, t) {
   const z = 1 + t * 0.006;
   g.save(); g.translate(W / 2, H / 2); g.scale(z, z); g.translate(-W / 2, -H / 2);
-  aurora(g, t, 0.10 * P(t, 0.9, 1.6, E.io), W / 2, 560, 1.1, 0.6);
-  const up = E.io(inv(0.85, 1.55, t));
-  words(g, 'Something big is coming.', W / 2, lerp(560, 470, up), t, 0.15, { size: 124, stagger: 0.08, dur: 0.75 });
-  words(g, 'from BigOHealth.', W / 2, 610, t, 1.0, { size: 124, stagger: 0.1, dur: 0.8, gradFor: i => i === 1, grad: (t - 1) * 0.05, colFor: () => C.grey });
-  words(g, 'Under the mentorship of', W / 2, 780, t, 2.2, { size: 40, w: 500, col: C.grey2, stagger: 0.05, dy: 16, bl: 10, dur: 0.75 });
-  words(g, 'Dr. Nitesh Rohatgi & Dr. Swarupa Mitra', W / 2, 852, t, 2.55, { size: 56, w: 650, stagger: 0.07, dy: 18, dur: 0.8, colFor: i => i === 3 ? C.grey2 : C.ink });
+  aurora(g, t, 0.10 * P(t, 1.0, 2.0, E.io), W / 2, 560, 1.1, 0.6);
+  const up = E.io(inv(0.55, 1.3, t));
+  words(g, 'Something big is coming.', W / 2, lerp(560, 470, up), t, 0.1, { size: 124, stagger: 0.1, dur: 0.95 });
+  words(g, 'from BigOHealth.', W / 2, 610, t, 1.06, { size: 124, stagger: 0.12, dur: 1.0, gradFor: i => i === 1, grad: (t - 1) * 0.05, colFor: () => C.grey });
+  words(g, 'Under the mentorship of', W / 2, 780, t, 2.6, { size: 40, w: 500, col: C.grey2, stagger: 0.06, dy: 16, bl: 10, dur: 0.9 });
+  words(g, 'Dr. Nitesh Rohatgi & Dr. Swarupa Mitra', W / 2, 852, t, 3.05, { size: 56, w: 650, stagger: 0.08, dy: 18, dur: 1.0, colFor: i => i === 3 ? C.grey2 : C.ink });
   g.restore();
 }
 
-// 02 (4.3–7.9): The entire / cancer journey.
+// 02 (5.0–8.4): The entire / cancer journey.
 function sJourney(g, t) {
-  const z = 1 + (t - 4.4) * 0.014;
+  const z = 1 + (t - 5.0) * 0.012;
   g.save(); g.translate(W / 2, H / 2); g.scale(z, z); g.translate(-W / 2, -H / 2);
-  words(g, 'The entire', W / 2, 430, t, 4.5, { size: 64, w: 600, col: C.grey, dy: 20, bl: 10 });
+  words(g, 'The entire', W / 2, 430, t, 5.2, { size: 64, w: 600, col: C.grey, dy: 20, bl: 10 });
   // per-letter mask rise for the big line
   const title = 'cancer journey.', size = 210;
   font(g, size, 700);
@@ -209,7 +209,7 @@ function sJourney(g, t) {
   g.textAlign = 'left';
   for (let i = 0; i < title.length; i++) {
     const xi = x0 + g.measureText(title.slice(0, i)).width;
-    const p = P(t, 4.8 + i * 0.03, 1.0);
+    const p = P(t, 5.5 + i * 0.035, 1.15);
     if (p <= 0) continue;
     g.save();
     g.beginPath(); g.rect(xi - 40, base - size * 1.05, 400, size * 1.35); g.clip();
@@ -220,24 +220,24 @@ function sJourney(g, t) {
   g.restore();
 }
 
-// 03 (7.85–17.7): on the groove, pairs in big type, six app tiles land on one timeline, then "together in a single longitudinal timeline."
+// 03 (8.34–23.9): on the groove, pairs in big type, six app tiles land on one timeline, then "together in a single longitudinal timeline."
 const STAGES = [
   { k: 'diagnosis', name: 'Diagnosis' }, { k: 'surgery', name: 'Surgery' }, { k: 'radiation', name: 'Radiation' },
   { k: 'chemo', name: 'Chemotherapy' }, { k: 'molecular', name: 'Molecular' }, { k: 'targeted', name: 'Targeted therapy' },
 ];
-const PAIRS = [[7.85, 'From', 'diagnosis', 'surgery,'], [9.36, '', 'radiation', 'chemotherapy,'], [10.87, '', 'molecular', 'targeted therapy.']];
-const TILE_T = [8.1, 8.5, 9.6, 10.0, 11.1, 11.5];
-const TOGETHER = 12.77;
+const PAIRS = [[8.34, 'From', 'diagnosis', 'surgery,'], [11.55, '', 'radiation', 'chemotherapy,'], [15.17, '', 'molecular', 'targeted therapy.']];
+const TILE_T = [8.7, 9.6, 11.9, 12.8, 15.5, 16.4];
+const TOGETHER = 18.8;
 const TX0 = 300, TX1 = 1620, TY = 760;
 const tileX = i => lerp(TX0, TX1, i / 5);
 function sTimeline(g, t) {          // slow push-in while "Together…" holds
-  const z = 1 + 0.05 * E.io(inv(TOGETHER, 17.4, t));
+  const z = 1 + 0.05 * E.io(inv(TOGETHER, 23.6, t));
   g.save(); g.translate(W / 2, 560); g.scale(z, z); g.translate(-W / 2, -560);
   timelineBody(g, t);
   g.restore();
 }
 function timelineBody(g, t) {
-  const sceneOut = P(t, 16.85, 0.7, E.io);
+  const sceneOut = P(t, 23.05, 0.8, E.io);
   // pair lines roll through one slot
   for (let k = 0; k < PAIRS.length; k++) {
     const [t0, pre, a, b] = PAIRS[k];
@@ -257,22 +257,22 @@ function timelineBody(g, t) {
   words(g, 'longitudinal timeline.', W / 2, 525, t, TOGETHER + 0.5, { size: 112, stagger: 0.12, grad: (t - TOGETHER) * 0.06, out: sceneOut });
 
   // the timeline: hairline track, green progress, tiles
-  const ta = P(t, 7.55, 0.7) * (1 - sceneOut);
+  const ta = P(t, 8.0, 0.8) * (1 - sceneOut);
   if (ta <= 0.002) return;
   const lift = E.io(inv(TOGETHER, TOGETHER + 1.0, t)) * 40;
   g.save(); g.globalAlpha = ta; g.translate(0, lift);
-  const drawn = E.io(inv(7.55, 8.3, t));
+  const drawn = E.io(inv(8.0, 8.9, t));
   g.fillStyle = C.line; g.fillRect(lerp(W / 2, TX0, drawn), TY - 1.5, (TX1 - TX0) * drawn, 3);
   let done = -1; TILE_T.forEach((tt, i) => { if (t >= tt) done = i; });
   const prog = done < 0 ? 0 : lerp(tileX(Math.max(0, done - 1)), tileX(done), E.io(clamp((t - TILE_T[done]) / 0.5))) - TX0;
   const full = E.io(inv(TOGETHER + 0.3, TOGETHER + 1.3, t));
   const pw = lerp(prog, TX1 - TX0, full);
   if (pw > 0) {
-    const gr = gradX(g, TX0, TX1, (t - 7.85) * 0.05);
+    const gr = gradX(g, TX0, TX1, (t - 8.34) * 0.05);
     g.fillStyle = gr; g.fillRect(TX0, TY - 2.5, pw, 5);
   }
   // glow along the finished timeline
-  const gk = P(t, TOGETHER + 0.8, 0.6) * (1 - P(t, 16.4, 0.6, E.io));
+  const gk = P(t, TOGETHER + 0.8, 0.6) * (1 - P(t, 22.4, 0.7, E.io));
   if (gk > 0.002) {             // luminous pass along the finished track
     g.save();
     for (const [lw, b, a] of [[26, 18, 0.45], [10, 6, 0.7]]) {
@@ -304,58 +304,58 @@ function timelineBody(g, t) {
   g.restore();
 }
 
-// 04 (17.9–23.3): OncoVault wordmark in an intelligence-glow capsule, then Coming soon / closing line
+// 04 (24.2–30): OncoVault wordmark in an intelligence-glow capsule, then Coming soon / closing line
 function sBrand(g, t) {
-  const lift = E.io(inv(19.65, 20.4, t));
+  const lift = E.io(inv(26.0, 26.9, t));
   const ws = lerp(210, 120, lift), wy = lerp(610, 340, lift);
-  aurora(g, t, 0.14 * P(t, 17.9, 1.2, E.io) * (1 - 0.5 * lift), W / 2, wy - ws * 0.35, 1.0, 0.6);
+  aurora(g, t, 0.14 * P(t, 24.2, 1.4, E.io) * (1 - 0.5 * lift), W / 2, wy - ws * 0.35, 1.0, 0.6);
   font(g, ws, 700);
   const s = 'OncoVault', tw = g.measureText(s).width, x0 = W / 2 - tw / 2;
   // capsule glow traces the word, then settles
-  const gk = P(t, 17.85, 0.5) * (1 - 0.85 * P(t, 19.3, 1.1, E.io));
+  const gk = P(t, 24.15, 0.6) * (1 - 0.85 * P(t, 25.6, 1.2, E.io));
   const padX = ws * 0.42, capH = ws * 1.25, capW = tw + padX * 2;
-  const cw = capW * E.io(inv(17.85, 18.6, t));
+  const cw = capW * E.io(inv(24.15, 25.0, t));
   glowRect(g, W / 2 - cw / 2, wy - ws * 0.36 - capH / 2, cw, capH, capH / 2, t, gk, lerp(1.1, 0.7, lift));
   g.textAlign = 'left'; g.textBaseline = 'alphabetic';
   for (let i = 0; i < s.length; i++) {
-    const p = P(t, 17.95 + i * 0.045, 0.9);
+    const p = P(t, 24.25 + i * 0.05, 1.05);
     if (p <= 0) continue;
     const xi = x0 + g.measureText(s.slice(0, i + 1)).width - g.measureText(s[i]).width;
     g.save();
     g.beginPath(); g.rect(xi - 40, wy - ws * 1.05, ws * 1.4, ws * 1.35); g.clip();
     g.globalAlpha = clamp(p * 1.5);
-    g.fillStyle = i < 4 ? C.ink : gradX(g, x0, x0 + tw, (t - 18) * 0.04);
+    g.fillStyle = i < 4 ? C.ink : gradX(g, x0, x0 + tw, (t - 24.2) * 0.04);
     g.fillText(s[i], xi, wy + (1 - p) * ws);
     g.restore();
   }
-  words(g, 'by BigOHealth', W / 2, 740, t, 18.6, { size: 40, w: 500, col: C.grey, dy: 16, bl: 10, dur: 0.7, out: P(t, 19.45, 0.4, E.io) });
+  words(g, 'by BigOHealth', W / 2, 740, t, 25.0, { size: 40, w: 500, col: C.grey, dy: 16, bl: 10, dur: 0.9, out: P(t, 25.75, 0.45, E.io) });
   // Coming soon pill
-  const cp = spring(t - 20.15, 1.5, 0.7), ca = clamp((t - 20.15) / 0.25);
+  const cp = spring(t - 26.55, 1.3, 0.7), ca = clamp((t - 26.55) / 0.3);
   if (ca > 0) {
     font(g, 30, 600, 0);
     const label = 'Coming soon', lw = g.measureText(label).width, pw = lw + 86, ph = 64, px = W / 2 - pw / 2, py = 440;
     g.save(); g.globalAlpha = ca;
     g.translate(W / 2, py + ph / 2); g.scale(lerp(0.85, 1, cp), lerp(0.85, 1, cp)); g.translate(-W / 2, -(py + ph / 2));
     g.fillStyle = C.soft; rr(g, px, py, pw, ph, ph / 2); g.fill();
-    const pulse = ((t - 20.15) % 1.0) / 1.0;
+    const pulse = ((t - 26.55) % 1.0) / 1.0;
     g.fillStyle = rgba(C.green, 0.35 * (1 - pulse)); g.beginPath(); g.arc(px + 36, py + ph / 2, 7 + pulse * 11, 0, TAU); g.fill();
     g.fillStyle = C.green; g.beginPath(); g.arc(px + 36, py + ph / 2, 7, 0, TAU); g.fill();
     font(g, 30, 600, 0); g.fillStyle = C.ink; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(label, px + 58, py + ph / 2 + 1);
     g.restore();
   }
-  words(g, 'Because every cancer journey deserves', W / 2, 660, t, 20.45, { size: 78, stagger: 0.06, dur: 0.75 });
-  words(g, 'one complete story.', W / 2, 765, t, 21.05, { size: 78, stagger: 0.1, dur: 0.8, grad: (t - 21) * 0.05 });
-  const fo = P(t, 22.85, 0.48, E.io);
+  words(g, 'Because every cancer journey deserves', W / 2, 660, t, 26.9, { size: 78, stagger: 0.07, dur: 0.9 });
+  words(g, 'one complete story.', W / 2, 765, t, 27.6, { size: 78, stagger: 0.11, dur: 1.0, grad: (t - 27.6) * 0.05 });
+  const fo = P(t, 29.45, 0.55, E.io);
   if (fo > 0) { g.fillStyle = `rgba(255,255,255,${fo})`; g.fillRect(0, 0, W, H); }
 }
 
 // ================================================================== composition
 // [start, end, fn, exitStart, exitEnd, exitScale]
 const SCENES = [
-  [0, 4.7, sOpen, 3.95, 4.65, 0.95],
-  [4.3, 7.9, sJourney, 7.15, 7.85, 1.12],
-  [7.45, 17.7, sTimeline, 99, 99, 1],
-  [17.7, 23.35, sBrand, 99, 99, 1],
+  [0, 5.45, sOpen, 4.7, 5.4, 0.95],
+  [4.95, 8.45, sJourney, 7.65, 8.4, 1.12],
+  [7.9, 23.95, sTimeline, 99, 99, 1],
+  [23.9, 30.01, sBrand, 99, 99, 1],
 ];
 const layer = mk();
 function drawAt(g, t) {
