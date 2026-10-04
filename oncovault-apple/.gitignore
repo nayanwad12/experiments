@@ -1,0 +1,3 @@
+out/*
+!out/oncovault_promo.mp4
+__pycache__/
