@@ -184,26 +184,26 @@ function tile(g, kind, i, x, y, s, shadow = true) {
 }
 
 // ================================================================== SCENES
-// 01 (0–5.4): Something big is coming. from BigOHealth (on the 1.06 s hit) / Under the mentorship of Dr. Nitesh Rohatgi & Dr. Swarupa Mitra
+// 01 (0–5.4): A new way to see your cancer journey / is coming from BigOHealth (on the 1.06 s hit) / Under the mentorship of Dr. Nitesh Rohatgi and Dr. Swarupa Mitra
 function sOpen(g, t) {
   const z = 1 + t * 0.006;
   g.save(); g.translate(W / 2, H / 2); g.scale(z, z); g.translate(-W / 2, -H / 2);
   aurora(g, t, 0.10 * P(t, 1.0, 2.0, E.io), W / 2, 560, 1.1, 0.6);
   const up = E.io(inv(0.55, 1.3, t));
-  words(g, 'Something big is coming.', W / 2, lerp(560, 470, up), t, 0.1, { size: 124, stagger: 0.1, dur: 0.95 });
-  words(g, 'from BigOHealth.', W / 2, 610, t, 1.06, { size: 124, stagger: 0.12, dur: 1.0, gradFor: i => i === 1, grad: (t - 1) * 0.05, colFor: () => C.grey });
-  words(g, 'Under the mentorship of', W / 2, 780, t, 2.6, { size: 40, w: 500, col: C.grey2, stagger: 0.06, dy: 16, bl: 10, dur: 0.9 });
-  words(g, 'Dr. Nitesh Rohatgi & Dr. Swarupa Mitra', W / 2, 852, t, 3.05, { size: 56, w: 650, stagger: 0.08, dy: 18, dur: 1.0, colFor: i => i === 3 ? C.grey2 : C.ink });
+  words(g, 'A new way to see your cancer journey', W / 2, lerp(560, 470, up), t, 0.1, { size: 100, stagger: 0.07, dur: 0.95 });
+  words(g, 'is coming from BigOHealth.', W / 2, 595, t, 1.06, { size: 100, stagger: 0.1, dur: 1.0, gradFor: i => i === 3, grad: (t - 1) * 0.05, colFor: () => C.grey });
+  words(g, 'Under the mentorship of', W / 2, 770, t, 2.6, { size: 40, w: 500, col: C.grey2, stagger: 0.06, dy: 16, bl: 10, dur: 0.9 });
+  words(g, 'Dr. Nitesh Rohatgi and Dr. Swarupa Mitra', W / 2, 842, t, 3.05, { size: 56, w: 650, stagger: 0.08, dy: 18, dur: 1.0, colFor: i => i === 3 ? C.grey2 : C.ink });
   g.restore();
 }
 
-// 02 (5.0–8.4): The entire / cancer journey.
+// 02 (5.0–8.4): Turning fragmented / oncology journeys
 function sJourney(g, t) {
   const z = 1 + (t - 5.0) * 0.012;
   g.save(); g.translate(W / 2, H / 2); g.scale(z, z); g.translate(-W / 2, -H / 2);
-  words(g, 'The entire', W / 2, 430, t, 5.2, { size: 64, w: 600, col: C.grey, dy: 20, bl: 10 });
+  words(g, 'Turning fragmented', W / 2, 430, t, 5.2, { size: 64, w: 600, col: C.grey, dy: 20, bl: 10 });
   // per-letter mask rise for the big line
-  const title = 'cancer journey.', size = 210;
+  const title = 'oncology journeys', size = 196;
   font(g, size, 700);
   const tw = g.measureText(title).width, x0 = W / 2 - tw / 2, base = 640;
   g.textAlign = 'left';
@@ -220,7 +220,7 @@ function sJourney(g, t) {
   g.restore();
 }
 
-// 03 (8.34–23.9): on the groove, pairs in big type, six app tiles land on one timeline, then "together in a single longitudinal timeline."
+// 03 (8.34–23.9): on the groove, pairs in big type, six app tiles land on one timeline, then "together in a single connected timeline."
 const STAGES = [
   { k: 'diagnosis', name: 'Diagnosis' }, { k: 'surgery', name: 'Surgery' }, { k: 'radiation', name: 'Radiation' },
   { k: 'chemo', name: 'Chemotherapy' }, { k: 'molecular', name: 'Molecular' }, { k: 'targeted', name: 'Targeted therapy' },
@@ -254,7 +254,7 @@ function timelineBody(g, t) {
     g.restore();
   }
   words(g, 'Together in a single', W / 2, 400, t, TOGETHER, { size: 112, stagger: 0.1, out: sceneOut });
-  words(g, 'longitudinal timeline.', W / 2, 525, t, TOGETHER + 0.5, { size: 112, stagger: 0.12, grad: (t - TOGETHER) * 0.06, out: sceneOut });
+  words(g, 'connected timeline.', W / 2, 525, t, TOGETHER + 0.5, { size: 112, stagger: 0.12, grad: (t - TOGETHER) * 0.06, out: sceneOut });
 
   // the timeline: hairline track, green progress, tiles
   const ta = P(t, 8.0, 0.8) * (1 - sceneOut);

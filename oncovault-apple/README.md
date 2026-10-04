@@ -12,10 +12,10 @@ A 30 second 16:9 promo (1920×1080, 60 fps) in an Apple keynote style:
 
 | Time | Track | Scene |
 |---|---|---|
-| 0–5.4 s | fade-in, first hit at **1.06 s** | "Something big is coming." then "from **BigOHealth**." lands on the hit. Then "Under the mentorship of / Dr. Nitesh Rohatgi & Dr. Swarupa Mitra" |
-| 5–8.4 s | calm section | "The entire / cancer journey." (per-letter mask rise, push-in) |
+| 0–5.4 s | fade-in, first hit at **1.06 s** | "A new way to see your cancer journey" then "is coming from **BigOHealth**." lands on the hit. Then "Under the mentorship of / Dr. Nitesh Rohatgi and Dr. Swarupa Mitra" |
+| 5–8.4 s | calm section | "Turning fragmented / oncology journeys" (per-letter mask rise, push-in) |
 | 8.34–18.8 s | groove (two phrases) | *From diagnosis to surgery,* (8.34) / *radiation to chemotherapy,* (11.55) / *molecular to targeted therapy.* (15.17). Six green app-icon tiles drop onto one timeline |
-| 18.8–23.9 s | next phrase | "Together in a single / **longitudinal timeline.**" with a luminous pass along the track and a slow push-in |
+| 18.8–23.9 s | next phrase | "Together in a single / **connected timeline.**" with a luminous pass along the track and a slow push-in |
 | 24.2–26.5 s | the track's peak | The **Onco**Vault wordmark rises inside a green glow capsule, then "by BigOHealth" |
 | 26.5–30 s | outro | A Coming soon pill, "Because every cancer journey deserves / **one complete story.**", fade to white |
 
