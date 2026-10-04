@@ -1,8 +1,8 @@
-# Vibe Editing: a 60 s Vox-style explainer
+# Vibe Editing: a high-energy Vox-style explainer
 
-A 60-second vertical (1080×1920, 30 fps) narrated motion-graphics explainer: **"The cut is becoming a sentence."**
+A ~50-second vertical (1080×1920, 30 fps) narrated motion-graphics explainer: **"The cut is becoming a sentence."**
 Built entirely in code, in the Vox "mixed media" editorial collage style learned from the `vox-animation` skill:
-6 scenes × 10 s, scene *N*'s narration lands on scene *N*'s picture, with one through-line object (the film strip and the
+6 scenes, scene *N*'s narration lands on scene *N*'s picture, and each scene's length snaps to the 128 BPM beat grid, with one through-line object (the film strip and the
 cut) that escalates from scissors on celluloid to a sentence typed on a phone.
 
 ## Design system
@@ -23,8 +23,25 @@ cut) that escalates from scissors on celluloid to a sentence typed on a phone.
   Torn-edge paper tags carry typewriter labels (Space Mono), plus tape strips.
 - **Marker annotations:** circles, underlines, arrows, a check mark and a question mark that draw themselves.
 - **Type:** Montserrat Black for headline words, Space Mono for archival labels and typed prompts. Text stays short.
-- **Motion:** quick ease-out entrances with overshoot, slow push-ins, and one loud thing at a time. Every scene boundary is a
+- **Motion:** quick ease-out entrances with overshoot, and one loud thing at a time. Every scene boundary is a fast
   whip-pan in which the outgoing and incoming scenes travel together under directional motion blur (the fake one-shot).
+- **Energy layer (`render.py`):** a camera punch on every beat (bigger on the downbeat, none in the breakdown), shakes and
+  flash frames on impacts, an RGB-split glitch on hits and whips, paper-confetti bursts on the drops, and a drifting
+  background with a 12 fps "paper boil".
+
+## Energy map (`timeline.py`, shared by picture and music)
+
+| Section | From → to | Music |
+|---|---|---|
+| Intro | start → "The cut." | filtered kick + hats, snare roll and riser, then silence just before the drop |
+| Drop 1 | "The cut." → the prompt in scene 4 | full 128 BPM groove: rolling bass, stabs, claps, pumping sidechain |
+| Build | prompt typing → "It happens." | accelerating snare roll and riser |
+| Drop 2 | "It happens." → scene 5 | full groove + lead plucks, confetti |
+| Breakdown | "But here's the catch." | kick out, pads, ticking tension, roll and riser into scene 6 |
+| Drop 3 | scene 6 → end | full groove + lead, peak on "YOU", final chord hit |
+
+Every scene change also gets a riser, a reverse cymbal, a whoosh and an impact, and every pop-in gets a small swish. The
+music ducks about 12 dB under the narration and surges back between lines.
 
 ## Script (narrator: Kokoro `am_michael`)
 
@@ -49,11 +66,11 @@ python3 render.py stills 4.3 37.6   # preview PNGs
 ```
 
 - `script.py`: the narration lines (split into phrases), the voice settings and the sources.
-- `voice.py`: Kokoro TTS, voiced phrase by phrase. It writes `out/cues.json` with each phrase's start time, and every visual
-  hit in `scenes.py` keys off those cues, so re-voicing re-syncs the picture automatically. If a take overruns, it re-voices
-  the take slightly faster.
-- `scenes.py`: the six scenes and their SFX cue lists. `render.py`: frames and whip-pans. `audio.py`: an original
-  84 BPM score, paper and marker foley, narration ducking. `build.py` muxes and normalises to -14 LUFS.
+- `voice.py`: Kokoro TTS at a brisk 1.16× read, voiced phrase by phrase. It writes `out/cues.json` with each scene's
+  start and beat-snapped length plus each phrase's start time; every visual hit in `scenes.py` and every drop in the music
+  keys off those cues, so re-voicing re-syncs everything automatically.
+- `scenes.py`: the six scenes and their SFX cue lists. `timeline.py`: the shared energy map. `render.py`: frames,
+  whip-pans and the energy FX. `audio.py`: an original 128 BPM score, paper and marker foley, transition FX, ducking. `build.py` muxes and normalises to -14 LUFS.
 
 ## Sources
 

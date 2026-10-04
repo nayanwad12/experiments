@@ -76,10 +76,10 @@ def typed_lines(c, lines_full, shown, x, y, f, lh, color=INK, t=0.0, show_cursor
 
 # ===================================================================== scene 1
 # "For a hundred years, editing a video meant one gesture. | The cut. | Now the cut is becoming a sentence."
-def s1(c, t, q):
+def s1(c, t, q, L=10.0):
     a, cut, sent = q
     draw_bg(c, YELLOW, 1)
-    camera(c, 1.0 + 0.05 * smooth(t / 10) + punch(t, cut, 0.06) + 0.10 * eic(prog(t, 8.6, 1.4)))
+    camera(c, 1.0 + 0.05 * smooth(t / L) + punch(t, cut, 0.06) + 0.10 * eic(prog(t, L - 1.2, 1.2)))
     strip = K.film_strip()
     cy = 900
     k_in = eoc(prog(t, 0.0, 1.1))
@@ -128,7 +128,7 @@ def s1(c, t, q):
         with Cam(c)(540, cy, -1.5 * k, (k, k)):
             paper_rect(c, 0, 0, 800, 150, WHITE, 7, 1.4)
             tape(c, -380, -66, 120, 40, -20, 3)
-            sh = typed(s_, t, sent + 0.5, 15)
+            sh = typed(s_, t, sent + 0.4, 20)
             text(c, sh, -355, 17, f, INK, "left")
             cursor(c, -355 + f.measureText(sh), 17, 50, t)
             marker_underline(c, -345, 345, 58, prog(t, sent + 2.3, 0.6), 4, 9, CORAL)
@@ -139,18 +139,18 @@ def sfx1(q):
     ev = [(0.05, "whoosh", 0.8), (0.95, "pop", 0.8), (1.2, "marker", 0.7), (2.3, "whoosh", 0.6),
           (cut, "snip", 1.2), (cut, "impact", 0.5), (cut + 0.6, "whoosh", 0.5), (sent + 0.15, "pop", 0.9)]
     s_ = "cut right after the laugh"
-    ev += [(sent + 0.5 + i / 15, "type", 0.55) for i in range(len(s_)) if s_[i] != " "]
+    ev += [(sent + 0.4 + i / 20, "type", 0.55) for i in range(len(s_)) if s_[i] != " "]
     ev += [(sent + 2.3, "marker", 0.6)]
     return ev
 
 
 # ===================================================================== scene 2
 # "In nineteen twenty-four, editors cut film by hand on a Moviola. | In nineteen eighty-nine, Avid moved the cut onto screens."
-def s2(c, t, q):
+def s2(c, t, q, L=10.0):
     a, b = q
     draw_bg(c, NAVY, 2)
     pan = 260 * smooth(prog(t, b - 0.4, 1.4))
-    camera(c, 1.03 + 0.03 * smooth(t / 10), 0, -pan + 60)
+    camera(c, 1.03 + 0.03 * smooth(t / L), 0, -pan + 60)
     # 1924 machine
     k = eoc(prog(t, 0.05, 0.6))
     mx = lerp(-300, 330, k)
@@ -240,10 +240,10 @@ def _calendar(c, cx, cy, top, big, rot, sc, seed, color=CORAL):
             c.drawCircle(-180 + i * 60, -232, 9, gpaint(color=rgb(0x2B2B2B)))
 
 
-def s3(c, t, q):
+def s3(c, t, q, L=10.0):
     a, b, d = q
     draw_bg(c, CREAM, 3)
-    camera(c, 1.02 + 0.04 * smooth(t / 10) + punch(t, 0.45, 0.04))
+    camera(c, 1.02 + 0.04 * smooth(t / L) + punch(t, 0.45, 0.04))
     up = smooth(prog(t, d - 0.3, 0.8))
     # calendar: 1989 page rips away, FEB 2025 underneath
     cal_y = lerp(780, -400, up) + lerp(0, -330, smooth(prog(t, b - 0.1, 0.6))) * (1 - up)
@@ -293,7 +293,7 @@ def s3(c, t, q):
             r = R("code")
             cols = [YELLOW, CORAL, TEAL, CREAM, 0x8FA2D6]
             for i in range(13):
-                t0 = d + 1.6 + i * 0.16
+                t0 = d + 1.3 + i * 0.11
                 kl = eoc(prog(t, t0, 0.25))
                 if kl <= 0:
                     break
@@ -314,7 +314,7 @@ def sfx3(q):
           (b, "pop", 0.9), (b + 0.4, "marker", 0.5), (b + 1.2, "marker", 0.7),
           (d - 0.4, "whoosh", 0.7), (d + 0.2, "pop", 0.6)]
     ev += [(d + 0.4 + i / 16, "type", 0.45) for i in range(17)]
-    ev += [(d + 1.6 + i * 0.16, "tick", 0.5) for i in range(13)]
+    ev += [(d + 1.3 + i * 0.11, "tick", 0.5) for i in range(13)]
     return ev
 
 
@@ -323,10 +323,10 @@ def sfx3(q):
 PROMPT = "cut the pauses, add captions, make it punchy"
 
 
-def s4(c, t, q):
+def s4(c, t, q, L=10.0):
     a, b, d = q
     draw_bg(c, YELLOW, 4)
-    camera(c, 1.0 + 0.03 * smooth(t / 10) + punch(t, d, 0.07, 0.16))
+    camera(c, 1.0 + 0.03 * smooth(t / L) + punch(t, d, 0.07, 0.16))
     # headline: vibe c̶o̶d̶i̶n̶g̶ editing
     fb = font("black", 150)
     text(c, "vibe", 330, 330, fb, INK, alpha=int(255 * clamp(pop(t, 0.1))))
@@ -387,7 +387,7 @@ def s4(c, t, q):
                 bh = 44 + 40 * len(lines)
                 with Cam(c)(x0 + sw / 2 + 10, y0 + 590 + bh / 2, 0, kb):
                     paper_rrect(c, 0, 0, sw - 60, bh, 22, WHITE, 0.6)
-                    typed_lines(c, lines, typed(PROMPT, t, b, 13.5), -(sw - 60) / 2 + 24, -bh / 2 + 48, f, 40,
+                    typed_lines(c, lines, typed(PROMPT, t, b, 16), -(sw - 60) / 2 + 24, -bh / 2 + 48, f, 40,
                                 INK, t, t < d)
             # input bar
             c.drawRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(x0 + 24, y0 + sh - 110, sw - 48, 64), 32, 32),
@@ -411,7 +411,7 @@ def sfx4(q):
     a, b, d = q
     ev = [(0.1, "pop", 0.7), (0.35, "pop", 0.6), (0.9, "marker", 0.9), (1.35, "stamp", 0.7),
           (1.7, "whoosh", 0.7), (b - 0.2, "pop", 0.6)]
-    ev += [(b + i / 13.5, "type", 0.5) for i in range(len(PROMPT)) if PROMPT[i] != " "]
+    ev += [(b + i / 16, "type", 0.5) for i in range(len(PROMPT)) if PROMPT[i] != " "]
     ev += [(d - 0.3, "tick", 0.8), (d, "impact", 0.8), (d, "sparkle", 0.9), (d + 0.15, "pop", 0.8),
            (d + 0.35, "marker", 0.8)]
     return ev
@@ -429,12 +429,12 @@ def _count(t, t0, t1):
     return 0 if t < t0 else int(round(10 ** (3 * eic(p) ** 0.7)))
 
 
-def s5(c, t, q):
+def s5(c, t, q, L=10.0):
     a, b, d = q
     draw_bg(c, NAVY, 5)
     pick_x = GX0 + PICK[0] * CELL + CELL / 2
     pick_y = GY0 + PICK[1] * CELL + CELL / 2
-    z = smooth(prog(t, d + 0.4, 5.0))
+    z = smooth(prog(t, d + 0.4, 3.6))
     camera(c, 1.0 + 0.55 * z, (W / 2 - pick_x) * z * 1.2, (H / 2 - pick_y) * z * 1.2)
     # the catch
     kt = pop(t, 0.3)
@@ -447,7 +447,7 @@ def s5(c, t, q):
             text(c, "THE CATCH", 0, 34, font("black", 92), INK, alpha=int(255 * fade))
         marker_underline(c, 260, 820, 1010, prog(t, 0.8, 0.5), 3, 11, CORAL)
     # a thousand cuts
-    n = _count(t, b + 0.2, b + 2.3)
+    n = _count(t, b + 0.2, b + 1.9)
     r = R("grid")
     dim = smooth(prog(t, d, 0.5))
     for i in range(min(n, COLS * ROWS)):
@@ -483,8 +483,8 @@ def sfx5(q):
     ev = [(0.3, "stamp", 0.7), (0.8, "marker", 0.6), (b + 0.2, "pop", 0.6)]
     last = 0
     tt = b + 0.2
-    while tt < b + 2.3:   # ticks accelerate with the count
-        n = _count(tt, b + 0.2, b + 2.3)
+    while tt < b + 1.9:   # ticks accelerate with the count
+        n = _count(tt, b + 0.2, b + 1.9)
         if n != last:
             ev.append((tt, "tick", 0.45))
             last = n
@@ -495,11 +495,11 @@ def sfx5(q):
 
 # ===================================================================== scene 6
 # "So the cut didn't disappear. | It moved, from your hands, to your words. | The editor is still you."
-def s6(c, t, q):
+def s6(c, t, q, L=10.0):
     a, b, d = q
     draw_bg(c, CREAM, 6)
     out = smooth(prog(t, d - 0.2, 0.7))
-    camera(c, 1.0 + 0.04 * smooth(t / 10) + punch(t, d + 1.0, 0.05, 0.14))
+    camera(c, 1.0 + 0.04 * smooth(t / L) + punch(t, d + 1.0, 0.05, 0.14))
     with Cam(c)(0, -1500 * out):
         # cut line + scissors
         dashed_cut(c, -40, 760, 1120, 760, prog(t, 0.4, 0.8), CORAL, 8, 30, 18, -t * 40)

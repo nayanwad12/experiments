@@ -141,8 +141,16 @@ def bg_image(color, seed=0):
     return _BG[key]
 
 
+CLOCK = [0.0]   # global time, set by the renderer each frame (drives background drift + paper boil)
+
+
 def draw_bg(c, color, seed=0):
-    c.drawImage(bg_image(color, seed), -200, -200)
+    t = CLOCK[0]
+    step = int(t * 12)   # 12 fps stop-motion boil
+    r = R("boil", seed, step)
+    dx = 90 * math.sin(t * 0.9 + seed) + r.uniform(-3, 3)
+    dy = 90 * math.cos(t * 0.7 + seed * 2) + r.uniform(-3, 3)
+    c.drawImage(bg_image(color, seed), -200 + dx, -200 + dy)
 
 
 def _tex_shader():

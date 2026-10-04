@@ -1,11 +1,17 @@
-"""The script: 6 scenes x 10 s. Each line is split into phrases so the voice can be synthesised
-phrase by phrase, which gives exact cue times for the visuals (see voice.py -> out/cues.json)."""
+"""The script: 6 scenes. Each line is split into phrases so the voice can be synthesised phrase by
+phrase, which gives exact cue times for the visuals. voice.py writes out/cues.json: per scene its start,
+its length (the take plus a tail, snapped up to the beat grid so every cut lands on the music) and the
+phrase start times."""
 
-SCENE = 10.0          # seconds per scene
 N = 6
-VOICE_IN = 0.25       # narration starts this far into each scene
-VOICE = "am_michael"  # Kokoro voice: deep US male, documentary register
-SPEED = 1.0
+BPM = 128
+BEAT = 60 / BPM
+GRID = BEAT * 2       # scene lengths snap up to half bars
+VOICE_IN = 0.12       # narration starts this far into each scene
+VOICE = "am_michael"  # Kokoro voice: deep US male
+SPEED = 1.16          # brisk read
+PAUSE = 0.5           # scale on the written pauses below
+TAIL = [0.55, 0.75, 0.75, 1.25, 0.9, 3.4]   # breathing room after each take (scene 6 holds the ending)
 
 # (phrase, pause after in seconds). Names are respelled for the TTS (Movie-ola, Kar-PATHY).
 LINES = [
