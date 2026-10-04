@@ -462,7 +462,7 @@ def s_magic(c, t, f):
         look = (clamp((bx - SHEEP_X) / 500, -1, 1), clamp((by - 450) / 300, -1, 1))
     if BALL_HOP[0] <= t < BALL_HOP[0] + 0.5:
         look = (-1, 0.6)
-    mouth = "o" if surprise or (BAA_HAPPY <= t < BAA_HAPPY + 0.5) else "grin" if t > 19 else "smile"
+    mouth = "o" if surprise else "grin" if t > 19 else "smile"
     lean, bob, hands = (-6 if surprise else 0), 0, [(-62, -86), (62, -86)]
     if dance:
         side = 1 if int(t / BEAT) % 2 else -1

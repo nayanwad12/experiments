@@ -1,0 +1,404 @@
+[
+ {
+  "file": "line_00.wav",
+  "t": 0.25,
+  "dur": 2.956,
+  "text": "Ever spent a whole night editing... one video?",
+  "speed": 1.164,
+  "words": [
+   [
+    "Ever",
+    0.0
+   ],
+   [
+    "spent",
+    0.288
+   ],
+   [
+    "a",
+    0.628
+   ],
+   [
+    "whole",
+    0.759
+   ],
+   [
+    "night",
+    1.099
+   ],
+   [
+    "editing...",
+    1.439
+   ],
+   [
+    "one",
+    2.004
+   ],
+   [
+    "video?",
+    2.24
+   ]
+  ]
+ },
+ {
+  "file": "line_01.wav",
+  "t": 4.25,
+  "dur": 2.82,
+  "text": "Meet Woolly. Woolly's been editing since lunch.",
+  "speed": 1.05,
+  "words": [
+   [
+    "Meet",
+    0.0
+   ],
+   [
+    "Woolly.",
+    0.274
+   ],
+   [
+    "Woolly's",
+    0.649
+   ],
+   [
+    "been",
+    1.093
+   ],
+   [
+    "editing",
+    1.367
+   ],
+   [
+    "since",
+    1.791
+   ],
+   [
+    "lunch.",
+    2.116
+   ]
+  ]
+ },
+ {
+  "file": "line_02.wav",
+  "t": 7.55,
+  "dur": 1.925,
+  "text": "Click. Cut. Drag. Repeat.",
+  "speed": 1.201,
+  "words": [
+   [
+    "Click.",
+    0.0
+   ],
+   [
+    "Cut.",
+    0.5
+   ],
+   [
+    "Drag.",
+    0.846
+   ],
+   [
+    "Repeat.",
+    1.269
+   ]
+  ]
+ },
+ {
+  "file": "line_03.wav",
+  "t": 9.6,
+  "dur": 1.129,
+  "text": "Three a.m.",
+  "speed": 1.3,
+  "words": [
+   [
+    "Three",
+    0.0
+   ],
+   [
+    "a.m.",
+    0.669
+   ]
+  ]
+ },
+ {
+  "file": "line_04.wav",
+  "t": 12.95,
+  "dur": 1.611,
+  "text": "Then... a bright idea!",
+  "speed": 1.3,
+  "words": [
+   [
+    "Then...",
+    0.0
+   ],
+   [
+    "a",
+    0.325
+   ],
+   [
+    "bright",
+    0.472
+   ],
+   [
+    "idea!",
+    0.915
+   ]
+  ]
+ },
+ {
+  "file": "line_05.wav",
+  "t": 14.6,
+  "dur": 2.075,
+  "text": "What if you could just say the vibe?",
+  "speed": 1.246,
+  "words": [
+   [
+    "What",
+    0.0
+   ],
+   [
+    "if",
+    0.282
+   ],
+   [
+    "you",
+    0.462
+   ],
+   [
+    "could",
+    0.694
+   ],
+   [
+    "just",
+    1.027
+   ],
+   [
+    "say",
+    1.31
+   ],
+   [
+    "the",
+    1.541
+   ],
+   [
+    "vibe?",
+    1.772
+   ]
+  ]
+ },
+ {
+  "file": "line_06.wav",
+  "t": 18.45,
+  "dur": 0.695,
+  "text": "Ta-da!",
+  "speed": 1.293,
+  "words": [
+   [
+    "Ta-da!",
+    0.0
+   ]
+  ]
+ },
+ {
+  "file": "line_07.wav",
+  "t": 19.3,
+  "dur": 1.797,
+  "text": "Clips? Sorted. Mess? Gone.",
+  "speed": 1.3,
+  "words": [
+   [
+    "Clips?",
+    0.0
+   ],
+   [
+    "Sorted.",
+    0.447
+   ],
+   [
+    "Mess?",
+    0.963
+   ],
+   [
+    "Gone.",
+    1.342
+   ]
+  ]
+ },
+ {
+  "file": "line_08.wav",
+  "t": 21.35,
+  "dur": 1.839,
+  "text": "Every cut lands on the beat.",
+  "speed": 1.258,
+  "words": [
+   [
+    "Every",
+    0.0
+   ],
+   [
+    "cut",
+    0.323
+   ],
+   [
+    "lands",
+    0.546
+   ],
+   [
+    "on",
+    0.869
+   ],
+   [
+    "the",
+    1.043
+   ],
+   [
+    "beat.",
+    1.267
+   ]
+  ]
+ },
+ {
+  "file": "line_09.wav",
+  "t": 24.2,
+  "dur": 1.629,
+  "text": "That's vibe editing!",
+  "speed": 1.155,
+  "words": [
+   [
+    "That's",
+    0.0
+   ],
+   [
+    "vibe",
+    0.466
+   ],
+   [
+    "editing!",
+    0.86
+   ]
+  ]
+ },
+ {
+  "file": "line_10.wav",
+  "t": 25.95,
+  "dur": 2.345,
+  "text": "You bring the vibe. AI does the clicking.",
+  "speed": 1.173,
+  "words": [
+   [
+    "You",
+    0.0
+   ],
+   [
+    "bring",
+    0.188
+   ],
+   [
+    "the",
+    0.46
+   ],
+   [
+    "vibe.",
+    0.648
+   ],
+   [
+    "AI",
+    0.938
+   ],
+   [
+    "does",
+    1.085
+   ],
+   [
+    "the",
+    1.315
+   ],
+   [
+    "clicking.",
+    1.503
+   ]
+  ]
+ },
+ {
+  "file": "line_11.wav",
+  "t": 28.9,
+  "dur": 1.791,
+  "text": "Even the flock is hooked.",
+  "speed": 1.124,
+  "words": [
+   [
+    "Even",
+    0.0
+   ],
+   [
+    "the",
+    0.308
+   ],
+   [
+    "flock",
+    0.56
+   ],
+   [
+    "is",
+    0.924
+   ],
+   [
+    "hooked.",
+    1.12
+   ]
+  ]
+ },
+ {
+  "file": "line_12.wav",
+  "t": 34.35,
+  "dur": 2.064,
+  "text": "Vibe Editing... just say the vibe.",
+  "speed": 1.241,
+  "words": [
+   [
+    "Vibe",
+    0.0
+   ],
+   [
+    "Editing...",
+    0.294
+   ],
+   [
+    "just",
+    0.749
+   ],
+   [
+    "say",
+    1.044
+   ],
+   [
+    "the",
+    1.285
+   ],
+   [
+    "vibe.",
+    1.526
+   ]
+  ]
+ },
+ {
+  "file": "line_13.wav",
+  "t": 36.5,
+  "dur": 1.814,
+  "text": "From Ideabro Studio.",
+  "speed": 1.3,
+  "words": [
+   [
+    "From",
+    0.0
+   ],
+   [
+    "Ideabro",
+    0.373
+   ],
+   [
+    "Studio.",
+    0.951
+   ]
+  ]
+ }
+]

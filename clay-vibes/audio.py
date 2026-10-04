@@ -403,6 +403,151 @@ def thud_wood():
     return y
 
 
+# ================================================================ ambience beds
+def breeze(d, seed=1):
+    r = np.random.default_rng(seed)
+    n = int(d * SR)
+    t = T(n)
+    x = filt(r.standard_normal(n), "bandpass", [180, 900])
+    gust = 0.55 + 0.45 * np.sin(2 * np.pi * 0.23 * t + r.uniform(0, 6)) * np.sin(2 * np.pi * 0.11 * t + 1)
+    return x * gust * 0.35
+
+
+def chirp(f0=3200, seed=0):
+    r = np.random.default_rng(seed)
+    out = []
+    for _ in range(r.integers(2, 5)):        # a little phrase of 2-4 tweets
+        d = r.uniform(0.05, 0.11)
+        n = int(d * SR)
+        t = T(n)
+        u = t / d
+        f = f0 * r.uniform(0.85, 1.2) * (1 + r.uniform(-0.35, 0.45) * u + 0.08 * np.sin(2 * np.pi * 35 * t))
+        y = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * u) ** 2
+        out += [y, np.zeros(int(r.uniform(0.03, 0.09) * SR))]
+    return np.concatenate(out) * 0.3
+
+
+def birds(bus, t0, t1, rate=1.6, seed=3, g=1.0, muffled=False):
+    r = np.random.default_rng(seed)
+    t = t0
+    while t < t1:
+        x = chirp(r.uniform(2600, 4200), int(r.integers(0, 1 << 30)))
+        if muffled:
+            x = filt(x, "lp", 1800) * 1.6
+        bus.add(x, t, g * r.uniform(0.4, 1.0), r.uniform(-0.8, 0.8))
+        t += r.exponential(1 / rate)
+
+
+def crickets(d, seed=4):
+    r = np.random.default_rng(seed)
+    n = int(d * SR)
+    t = T(n)
+    out = np.zeros(n)
+    for k in range(3):
+        f = r.uniform(4200, 5200)
+        rate = r.uniform(2.2, 3.2)
+        gate = (np.sin(2 * np.pi * rate * t + r.uniform(0, 6)) > 0.55).astype(float)
+        trill = 0.5 + 0.5 * np.sin(2 * np.pi * 55 * t)
+        out += np.sin(2 * np.pi * f * t) * filt(gate, "lp", 60) * trill * r.uniform(0.6, 1.0)
+    return out * 0.07
+
+
+def snore(d, period=1.6):
+    """Hen snoozing: a soft wheezy in-breath then a whistly out-breath."""
+    n = int(d * SR)
+    t = T(n)
+    ph = (t / period) % 1.0
+    inb = filt(ns(n), "bandpass", [500, 1600]) * np.clip(np.sin(np.pi * ph / 0.45), 0, None) * (ph < 0.45)
+    wh = np.sin(2 * np.pi * np.cumsum(900 + 500 * (ph - 0.5)) / SR) * np.clip(np.sin(np.pi * (ph - 0.55) / 0.35), 0, None) * \
+        ((ph > 0.55) & (ph < 0.9))
+    return (inb * 0.25 + wh * 0.12)
+
+
+def projector(d):
+    n = int(d * SR)
+    t = T(n)
+    motor = filt(ns(n), "bandpass", [90, 400]) * 0.4 + np.sin(2 * np.pi * 120 * t) * 0.05
+    clat = np.zeros(n)
+    step = SR // 24
+    for i in range(0, n - 400, step):       # 24 fps film-gate clatter
+        clat[i:i + 300] += filt(ns(300), "hp", 2500) * np.exp(-T(300) / 0.002)
+    return (motor + clat * 0.35) * 0.35
+
+
+def munch():
+    out = np.zeros(int(0.32 * SR))
+    for k in range(3):
+        n = int(0.06 * SR)
+        y = crackle(0.06, 900, 1500, 0.002) * np.sin(np.pi * T(n) / 0.06)
+        i = int(k * 0.1 * SR)
+        out[i:i + n] += y
+    return out * 0.6
+
+
+def rooster():
+    """Cock-a-doodle-doo: four formant-filtered sung syllables."""
+    segs = [(0.12, 620, 700), (0.1, 700, 760), (0.13, 760, 820), (0.55, 900, 640)]
+    out = []
+    for d, fa, fb in segs:
+        n = int(d * SR)
+        t = T(n)
+        f = np.linspace(fa, fb, n) * (1 + 0.025 * np.sin(2 * np.pi * 9 * t))
+        ph = (np.cumsum(f) / SR) % 1.0
+        src = 2 * ph - 1
+        y = filt(src, "bandpass", [700, 1300]) + 0.6 * filt(src, "bandpass", [1900, 2900])
+        out += [y * env_adsr(n, 0.01, 0.2, 0.8, 0.03), np.zeros(int(0.03 * SR))]
+    return np.concatenate(out) * 1.2
+
+
+def far_baa(seed):
+    return filt(baa(0.7, 380, "happy", seed), "lp", 1800) * 0.5
+
+
+def swish():
+    return whoosh(0.22) * 0.9
+
+
+def squish():
+    n = int(0.12 * SR)
+    t = T(n)
+    return filt(ns(n), "bandpass", [300, 1400]) * np.exp(-t / 0.025) * 0.5 + \
+        np.sin(2 * np.pi * np.cumsum(140 + 300 * np.exp(-t / 0.02)) / SR) * np.exp(-t / 0.04) * 0.4
+
+
+def spring(f0=150, d=0.8):
+    n = int(d * SR)
+    t = T(n)
+    f = f0 * (1 + 0.5 * np.exp(-t * 3) * np.sin(2 * np.pi * 9 * t))
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.3) * 0.5
+
+
+def bulb_buzz(d=0.6):
+    n = int(d * SR)
+    t = T(n)
+    return (np.sign(np.sin(2 * np.pi * 100 * t)) * 0.3 + np.sin(2 * np.pi * 200 * t) * 0.3) * \
+        filt(ns(n), "lp", 30) * 3 * np.exp(-t / 0.25) * 0.4
+
+
+def load_narration():
+    """voice/lines.json + wavs (24 kHz Kokoro takes) -> mono narration track at SR."""
+    import json
+    import soundfile as sf
+    from scipy.signal import resample_poly
+    p = os.path.join(HERE, "voice", "lines.json")
+    out = np.zeros(N)
+    if not os.path.exists(p):
+        return out
+    for ln in json.load(open(p)):
+        y, sr = sf.read(os.path.join(HERE, "voice", ln["file"]))
+        y = resample_poly(y, SR // 100, sr // 100) if sr != SR else y
+        y = filt(y, "hp", 90)
+        y = y + 0.35 * filt(y, "bandpass", [2500, 5000])       # a little presence
+        y = np.tanh(2.2 * y) / np.tanh(2.2)                     # gentle compression
+        i = int(ln["t"] * SR)
+        out[i:i + len(y)] += y[: N - i]
+    return out
+
+
 # ================================================================ score
 CH = {"F": [53, 57, 60], "Dm": [50, 53, 57], "Bb": [46, 50, 53], "C": [48, 52, 55], "Am": [45, 48, 52],
       "A": [45, 49, 52], "Gm": [43, 46, 50]}
@@ -550,7 +695,6 @@ def build():
     sfx.add(slide_whistle(1400, 500, 0.4), BLOCK_FALL, 0.4, 0.5)
     sfx.add(plop(0.6), BLOCK_LAND, 0.8, 0.4)
     sfx.add(woodblock(500, 1.0), BLOCK_LAND, 0.4, 0.4)
-    vox.add(baa(0.3, 470, "surprised", 2), BLOCK_FALL + 0.05, 0.65, 0)
     vox.add(baa(0.55, 330, "grumble", 3), GRUMBLE, 0.85, -0.1)
 
     sfx.add(boing(380, 0.35), WAKE, 0.4)
@@ -575,7 +719,6 @@ def build():
     vox.add(cluck(), HEN_WAKE + 1.5, 0.35, 0.65)
     sfx.add(whoosh(0.35), PLAYHEAD[0], 0.3, 0.3)
     sfx.add(bell(m("C7"), 0.8), PLAYHEAD[0], 0.25, 0.4)
-    vox.add(baa(0.6, 470, "happy", 4), BAA_HAPPY, 0.85)
 
     for i, tm in enumerate(POPS):
         sfx.add(pop(1300 + rng.uniform(-200, 300), 0.6), tm, 0.55, rng.uniform(-0.2, 0.2))
@@ -595,6 +738,38 @@ def build():
     vox.add(baa(0.55, 470, "happy", 5), BAA2, 0.9, 0.3)
     sfx.add(slide_whistle(1600, 300, IRIS[1] - IRIS[0] + 0.05), IRIS[0], 0.55)
 
+
+    # ---- ambience beds, so every location sounds like a place
+    amb = Bus()
+    amb.add(breeze(4.0, 1), 0.0, 0.8)
+    birds(amb, 0.2, 4.0, 2.2, 3, 0.8)
+    amb.add(far_baa(21), 1.4, 0.35, -0.8)
+    birds(amb, 4.0, 8.5, 1.0, 5, 0.55, muffled=True)
+    x = crickets(8.0, 4)
+    x *= np.clip((T(len(x)) - 4.5) / 2.0, 0, 1)                 # crickets creep in as night falls
+    amb.add(x, 4.0, 1.0)
+    amb.add(crickets(6.0, 6), 12.0, 1.0)
+    amb.add(snore(8.0), 4.0, 0.35, 0.65)
+    birds(amb, 19.0, 28.0, 1.8, 7, 0.6, muffled=True)
+    amb.add(rooster(), ROOSTER_CROW, 0.45, 0.75)
+    amb.add(projector(6.0), 28.0, 0.8, 0.1)
+    for k, tm in enumerate((29.4, 30.7, 33.1)):
+        amb.add(munch(), tm, 0.5, [-0.5, 0.4, 0.7][k])
+    amb.add(breeze(6.0, 2), 34.0, 0.7)
+    birds(amb, 34.0, 38.8, 1.4, 9, 0.6)
+    amb.add(crickets(6.0, 8) * 0.6, 34.0, 1.0)
+    amb.add(far_baa(22), 35.6, 0.25, 0.8)
+
+    # ---- extra cartoon foley
+    for tc in (4.0, 12.0, 14.5, 28.0, 34.0):                   # a swish on every cut
+        sfx.add(swish(), tc - 0.12, 0.45)
+    sfx.add(bulb_buzz(0.5), DING - 0.05, 0.5)
+    sfx.add(spring(140, 0.8), SIGN + 0.27, 0.45, -0.5)
+    sfx.add(boing(300, 0.4), POPUP2 + 0.05, 0.35, 0.3)
+    for b in range(int((28.0 - DANCE) / BEAT)):                 # clay squish on every dance step
+        sfx.add(squish(), DANCE + b * BEAT, 0.35, 0.25 * (1 if b % 2 else -1))
+    sfx.add(pop(600), IRIS[1], 0.6)
+
     # ---- mix: a small room for the music, a touch on foley
     def verb(bus, wet, length=1.1, tau=0.28):
         n = int(length * SR)
@@ -611,8 +786,22 @@ def build():
     pL, pR = verb(perc, 0.2)
     sL, sR = verb(sfx, 0.12, 0.6, 0.12)
     vL, vR = verb(vox, 0.18, 0.8, 0.15)
-    L = 0.8 * mL + 0.75 * pL + 0.9 * sL + 1.0 * vL
-    R = 0.8 * mR + 0.75 * pR + 0.9 * sR + 1.0 * vR
+    aL, aR = verb(amb, 0.25, 1.0, 0.2)
+    nar = load_narration()
+    ir = filt(ns(int(0.4 * SR)), "lp", 4000) * np.exp(-T(int(0.4 * SR)) / 0.06)
+    nar = nar + 0.12 * fftconvolve(nar, ir / np.sqrt((ir ** 2).sum()))[:N]     # small booth
+    # duck music + ambience under the narrator (fast attack, slow release)
+    k = int(0.03 * SR)
+    lvl = np.convolve(np.abs(nar), np.ones(k) / k, "same") > 0.02
+    duck = np.zeros(N)
+    a, r_ = np.exp(-1 / (0.04 * SR)), np.exp(-1 / (0.35 * SR))
+    from scipy.signal import lfilter
+    target = lvl.astype(float)
+    duck = lfilter([1 - r_], [1, -r_], target)
+    duck = np.maximum(duck, lfilter([1 - a], [1, -a], target))
+    g_mus = 1 - 0.65 * np.clip(duck, 0, 1)
+    L = (0.8 * mL + 0.75 * pL) * g_mus + 0.85 * sL + 0.9 * vL + 0.6 * aL * g_mus + 1.35 * nar
+    R = (0.8 * mR + 0.75 * pR) * g_mus + 0.85 * sR + 0.9 * vR + 0.6 * aR * g_mus + 1.35 * nar
     st = np.stack([L, R], 1)
     st = filt(st.T, "hp", 30).T
     st /= np.abs(st).max()

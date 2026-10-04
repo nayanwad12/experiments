@@ -14,6 +14,7 @@ import time
 import numpy as np
 import skia
 
+import captions
 import scenes
 from lib import FPS, H, W, texture
 from timeline import DUR
@@ -57,7 +58,12 @@ def render_frame(f):
     c = surf.getCanvas()
     g = scenes.draw(c, t, f)
     rgba = surf.makeImageSnapshot().toarray(colorType=skia.kRGBA_8888_ColorType)
-    return post(rgba, g, f)
+    rgb = post(rgba, g, f)
+    out = np.ascontiguousarray(np.dstack([rgb, np.full(rgb.shape[:2], 255, np.uint8)]))
+    cs = skia.Surface(out)               # captions go on after the grade so they stay crisp
+    with cs as cc:
+        captions.draw(cc, t)
+    return out[..., :3]
 
 
 def _init():
