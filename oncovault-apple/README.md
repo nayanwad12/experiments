@@ -1,32 +1,30 @@
-# OncoVault by BigOHealth: 40 s Apple-style promo
+# OncoVault by BigOHealth: Apple-style promo (23.3 s)
 
 **Watch:** [`out/oncovault_promo.mp4`](out/oncovault_promo.mp4)
 
-A 40 second 16:9 promo (1920×1080, 60 fps, AAC 320k audio) in an Apple keynote style. It uses the same engine as the original Vibe Editing launch film: a white canvas, Inter Tight display type, blur-up word reveals, spring physics and soft-shadow cards, with the "intelligence" glow re-tinted in OncoVault greens. Every frame is generated in code: an HTML Canvas engine rendered headlessly with Playwright (4-sample motion blur, dithered against banding), plus an original soundtrack synthesised in numpy.
+A 23.3 second 16:9 promo (1920×1080, 60 fps) in an Apple keynote style:
+- **Look:** a white canvas, Inter Tight display type, blur-up word reveals, spring physics and soft-shadow app tiles.
+- **Glow:** the "intelligence" glow, tinted in OncoVault greens.
+- **Logo:** none; the brand appears as a typeset wordmark only.
+- **Rendering:** every frame is generated in code by an HTML Canvas engine, rendered headlessly with Playwright (4-sample motion blur, dithered against banding).
 
-**Music:** uplifting, at 120 BPM (20 bars of 2 s) in D major (Dmaj9 → Bm9 → Gmaj9 → A6/9):
-- **Opening:** felt piano on the opening lines.
-- **Timeline:** a marimba note as each stage tile lands, over a half-time pulse.
-- **"One patient":** a riser and lift into the full groove.
-- **Brand:** an impact and shimmer as the wordmark rises, then a resolving Dmaj9 under the closing line.
+**Soundtrack:** the supplied track `audio_src/linkedin_audio.mp3` (~97 BPM, 23.3 s). The cut follows the track's structure:
 
-| Time | Scene | Copy |
+| Time | Track | Scene |
 |---|---|---|
-| 0–6 s | **Open** | "Something big is coming. / from **BigOHealth**." then "Under the mentorship of / Dr. Nitesh Rohatgi" |
-| 6–10 s | **Journey** | "The entire / cancer journey." (per-letter mask rise, slow push-in) |
-| 10–20 s | **Timeline** | Three big-type beats: *From diagnosis to surgery, / radiation to chemotherapy, / molecular to targeted therapy.* Six green app-icon tiles drop onto one track as the progress line fills, then "Together in a single / **longitudinal timeline.**" with a luminous pass along the track |
-| 20–28 s | **One** | "One patient. / **One treatment timeline.**" beside a phone running the OncoVault timeline app (rows spring in, a 60-second summary button, and a green intelligence-glow pass) |
-| 28–33 s | **Brand** | The **Onco**Vault wordmark rises letter by letter inside a green intelligence-glow capsule, then "by BigOHealth" |
-| 33–40 s | **Coming soon** | A Coming soon pill, "Because every cancer journey deserves / **one complete story.**", and a footer: BigOHealth · Under the mentorship of Dr. Nitesh Rohatgi |
-
-No logo artwork is used: the brand appears as a typeset wordmark only. The dates and treatment details in the phone UI are illustrative.
+| 0–4.7 s | fade-in, first hit at **1.0 s** | "Something big is coming." then "from **BigOHealth**." lands on the hit. Then "Under the mentorship of / Dr. Nitesh Rohatgi & Dr. Swarupa Mitra" |
+| 4.3–7.85 s | calm section | "The entire / cancer journey." (per-letter mask rise, push-in) |
+| 7.85–12.77 s | groove enters | *From diagnosis to surgery,* (7.85) / *radiation to chemotherapy,* (9.36) / *molecular to targeted therapy.* (10.87). Six green app-icon tiles drop onto one timeline on the beats in between |
+| 12.77–17.6 s | second phrase | "Together in a single / **longitudinal timeline.**" with a luminous pass along the track and a slow push-in |
+| 17.9–20 s | the track's peak | The **Onco**Vault wordmark rises inside a green glow capsule, then "by BigOHealth" |
+| 20–23.3 s | outro | A Coming soon pill, "Because every cancer journey deserves / **one complete story.**", fade to white |
 
 ## Build
 
 ```bash
-./build.sh                               # audio + frames + mux -> out/oncovault_promo.mp4 (~45 min on 4 cores; resumable)
-./build.sh --fps 30 --mb 2               # fast draft
-node render.mjs --stills 11,17.4,23,36   # preview PNGs -> out/stills/
+./build.sh                                # frames + mux with the supplied audio -> out/oncovault_promo.mp4 (~30 min on 4 cores; resumable)
+./build.sh --fps 30 --mb 2                # fast draft
+node render.mjs --stills 1.4,9.9,18.4,22  # preview PNGs -> out/stills/
 ```
 
-Requires Node with `playwright` (Chromium) and Python with `numpy`, `scipy` and `imageio-ffmpeg`. Delete `out/segs_*` after you change the visuals, because rendering resumes from finished segments. If you change a cue time in `film.js`, update the matching constant at the top of `audio.py`. Font: Inter Tight (OFL).
+Requires Node with `playwright` (Chromium) and Python with `imageio-ffmpeg`. Delete `out/segs_*` after you change the visuals, because rendering resumes from finished segments. To swap the track, replace `audio_src/linkedin_audio.mp3` and move the cue times in `film.js` (scene table at the top of the scene section, `PAIRS`, `TILE_T`, `TOGETHER`, and the `sBrand` times). Font: Inter Tight (OFL).
