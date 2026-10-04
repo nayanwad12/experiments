@@ -1,0 +1,738 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OncoXpress MG</title>
+<style>
+@font-face { font-family: Lexend; src: url(fonts/Lexend[wght].ttf); font-weight: 100 900; }
+@font-face { font-family: Serif; src: url(fonts/InstrumentSerif-Regular.ttf); }
+@font-face { font-family: Serif; src: url(fonts/InstrumentSerif-Italic.ttf); font-style: italic; }
+:root {
+  --green: #4A2B8E; --green2: #6B46C1; --deep: #2D1B63; --mint: #ECE6F8; --paper: #F4F2F8; --paper2: #F8F7FB;
+  --teal: #1E7A80; --ink: #1B1D1C; --mute: #8A8796; --line: #E6E2EE; --red: #E2463F; --pink: #FDE9E7;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent; font-family: Lexend, sans-serif; color: var(--ink); }
+.scene { position: absolute; inset: 0; display: none; overflow: hidden; }
+.abs { position: absolute; }
+.paperbg { background:
+  radial-gradient(900px 700px at 78% 55%, rgba(107,70,193,0.16), transparent 70%),
+  radial-gradient(800px 600px at 12% 20%, rgba(30,122,128,0.10), transparent 70%),
+  linear-gradient(180deg, #F8F6FC, #ECE8F5); }
+.serif { font-family: Serif, serif; font-weight: 400; letter-spacing: -0.01em; }
+.caps { text-transform: uppercase; letter-spacing: 0.28em; font-size: 17px; font-weight: 500; }
+
+/* ---------- phone ---------- */
+.phone { position: absolute; width: 410px; height: 864px; border-radius: 66px; background: linear-gradient(145deg, #3a3d40, #16181a 40%, #2a2c2f);
+  padding: 10px; box-shadow: 0 60px 120px rgba(30,20,60,0.30), 0 18px 40px rgba(30,20,60,0.22), inset 0 0 0 1.5px rgba(255,255,255,0.10); }
+.phone .scr { position: relative; width: 390px; height: 844px; border-radius: 56px; overflow: hidden; background: #F5F3F9; }
+.phone .island { position: absolute; left: 50%; top: 11px; width: 118px; height: 34px; margin-left: -59px; border-radius: 20px; background: #0b0b0c; z-index: 50; }
+.phone .glare { position: absolute; inset: 0; border-radius: 56px; z-index: 60; pointer-events: none;
+  background: linear-gradient(115deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.0) 32%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.06) 100%); }
+.screen { position: absolute; inset: 0; background: #F5F3F9; }
+.status { position: absolute; top: 0; left: 0; right: 0; height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 6px 30px 0 38px; font-size: 16px; font-weight: 600; color: #fff; z-index: 40; }
+.status.dark { color: var(--ink); }
+.status .ico { display: flex; gap: 6px; align-items: center; }
+.bars { display: flex; gap: 2px; align-items: flex-end; } .bars i { display: block; width: 3.5px; background: currentColor; border-radius: 1px; }
+.batt { width: 26px; height: 13px; border-radius: 4px; border: 1.5px solid currentColor; padding: 1.5px; } .batt i { display: block; height: 100%; width: 70%; background: currentColor; border-radius: 2px; }
+.hdr { position: absolute; left: 0; right: 0; top: 0; border-radius: 0 0 30px 30px; color: #fff;
+  background: linear-gradient(135deg, #5A38A8 0%, #452A8E 55%, #33206E 100%); }
+.hdr .hi { font-size: 15px; opacity: 0.8; font-weight: 300; }
+.hdr .nm { font-size: 25px; font-weight: 600; margin-top: 4px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; border: 1.5px solid rgba(255,255,255,0.35); border-radius: 22px; padding: 8px 14px; font-size: 14px; }
+.tabs { display: flex; gap: 10px; margin-top: 16px; font-size: 16px; }
+.tabs span { padding: 10px 18px; border-radius: 24px; }
+.tabs .on { background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.25); font-weight: 500; }
+.chips { display: flex; gap: 8px; white-space: nowrap; }
+.chip { padding: 9px 15px; border-radius: 22px; background: #ECE9F2; color: #5a5866; font-size: 13.5px; }
+.chip.on { background: var(--mint); color: var(--green); font-weight: 600; }
+.card { background: #fff; border-radius: 20px; box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
+.row { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 18px; padding: 12px 14px; margin-bottom: 10px; }
+.fic { width: 50px; height: 56px; border-radius: 12px; background: var(--pink); display: flex; align-items: center; justify-content: center; flex: none; }
+.fic b { font-size: 11px; color: #fff; background: var(--red); border-radius: 3px; padding: 3px 4px; font-weight: 700; }
+.fic.img { background: #E3EEF6; } .fic.img b { background: #3E7FB5; }
+.rname { font-size: 14.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rsub { font-size: 12px; color: var(--mute); margin-top: 3px; white-space: nowrap; }
+.pbar { height: 5px; border-radius: 3px; background: #ECE9F1; margin-top: 7px; overflow: hidden; } .pbar i { display: block; height: 100%; background: var(--green2); width: 0; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px; background: var(--mint); color: var(--green); margin-top: 4px; }
+.navbar { position: absolute; left: 16px; right: 16px; bottom: 22px; height: 72px; border-radius: 36px; background: rgba(236,233,243,0.96);
+  display: flex; align-items: center; justify-content: space-around; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 30; }
+.navbar .fab { width: 60px; height: 60px; border-radius: 30px; background: var(--green2); color: #fff; font-size: 34px; display: flex; align-items: center; justify-content: center; font-weight: 300; }
+.navbar .act { width: 88px; height: 56px; border-radius: 28px; background: var(--green); display: flex; align-items: center; justify-content: center; }
+.month { background: #fff; border-radius: 20px; padding: 18px 18px 16px; margin-bottom: 14px; }
+.month h4 { font-size: 20px; font-weight: 600; } .month h4 small { font-size: 16px; color: var(--mute); font-weight: 400; margin-left: 6px; }
+.ev { display: flex; gap: 12px; margin-top: 12px; align-items: stretch; }
+.ev .d { width: 42px; text-align: center; flex: none; } .ev .d b { display: block; font-size: 19px; } .ev .d span { font-size: 13px; color: var(--mute); }
+.ev .box { flex: 1; border: 1.5px solid #ECE9F1; border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; }
+.ev .ic { width: 40px; height: 40px; border-radius: 20px; background: #EFEAF9; flex: none; display: flex; align-items: center; justify-content: center; }
+.ev .t { font-size: 14.5px; font-weight: 600; } .ev .s { font-size: 11.5px; color: var(--mute); line-height: 1.35; margin-top: 3px; }
+.sec { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; }
+.sec h5 { font-size: 13px; color: var(--mute); font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.vit { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.vit div { background: #F6F4FA; border-radius: 14px; padding: 10px 12px; } .vit b { font-size: 20px; } .vit small { font-size: 11px; color: var(--mute); display: block; }
+.tr { display: flex; gap: 10px; font-size: 12.5px; padding: 9px 0; border-top: 1px solid #EFECF4; } .tr b { width: 92px; flex: none; font-weight: 600; } .tr span { color: #444; }
+.scans { display: flex; gap: 8px; }
+.scan { flex: 1; height: 96px; border-radius: 12px; background: #111; position: relative; overflow: hidden; }
+.scan small { position: absolute; left: 8px; bottom: 6px; font-size: 10px; color: #ddd; }
+.bm { display: flex; flex-wrap: wrap; gap: 7px; } .bm span { font-size: 13px; padding: 7px 11px; border-radius: 16px; background: var(--mint); color: var(--green); font-weight: 600; }
+
+/* ---------- left kinetic text ---------- */
+.kline { position: absolute; left: 150px; font-size: 76px; line-height: 1.02; color: var(--ink); white-space: nowrap; }
+.kline em { font-style: italic; color: var(--teal); }
+.chk { display: inline-flex; width: 46px; height: 46px; border-radius: 23px; background: var(--green); align-items: center; justify-content: center; margin-right: 22px; vertical-align: 10px; }
+.feat { position: absolute; left: 150px; display: flex; align-items: center; gap: 24px; font-size: 48px; font-weight: 400; color: var(--ink); }
+.feat .dot { width: 66px; height: 66px; border-radius: 33px; border: 1.5px solid rgba(74,43,142,0.35); display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.5); }
+
+/* ---------- supers ---------- */
+.super { position: absolute; color: #F8F6FC; text-shadow: 0 2px 18px rgba(0,0,0,0.35); }
+.gline { height: 2px; background: #D5C6F4; }
+.fcard { position: absolute; display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 18px; padding: 12px 20px 12px 12px;
+  box-shadow: 0 24px 50px rgba(30,20,60,0.16), 0 4px 12px rgba(30,20,60,0.08); }
+.fcard .rname { font-size: 18px; } .fcard .rsub { font-size: 14px; }
+.sbar { position: absolute; left: 510px; width: 900px; height: 92px; border-radius: 46px; background: #fff; box-shadow: 0 30px 60px rgba(30,20,60,0.14);
+  display: flex; align-items: center; padding: 0 34px; gap: 20px; font-size: 32px; }
+.res { position: absolute; left: 510px; width: 900px; height: 104px; border-radius: 24px; background: #fff; display: flex; align-items: center; gap: 20px; padding: 0 24px;
+  box-shadow: 0 16px 40px rgba(30,20,60,0.10); }
+.res .t { font-size: 24px; font-weight: 500; } .res .s { font-size: 17px; color: var(--mute); margin-top: 4px; }
+.caret { display: inline-block; width: 3px; height: 38px; background: var(--green); vertical-align: -6px; margin-left: 3px; }
+
+/* ---------- v4: doctor cards, coming soon ---------- */
+.dcard { position: absolute; inset: 0; }
+.dpanel { position: absolute; left: 50%; top: 0; width: 380px; height: 500px; margin-left: -190px; border-radius: 190px 190px 30px 30px; overflow: hidden;
+  background: radial-gradient(320px 300px at 50% 30%, rgba(30,122,128,0.35), transparent 70%), linear-gradient(170deg, #5A38A8 0%, #452A8E 50%, #2D1B63 100%);
+  box-shadow: 0 44px 90px rgba(30,20,60,0.26), 0 12px 26px rgba(30,20,60,0.16); }
+.dpanel img { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); }
+.dcol { position: absolute; top: 150px; width: 760px; height: 820px; }
+.dtext { position: absolute; left: 0; right: 0; top: 540px; text-align: center; }
+.dname { font-family: Lexend, sans-serif; font-weight: 600; font-size: 54px; line-height: 1.1; color: var(--ink); letter-spacing: -0.01em; }
+.drole { font-size: 32px; font-weight: 600; color: var(--green); margin-top: 18px; }
+.dhosp { font-size: 25px; font-weight: 400; color: #6a6778; margin-top: 8px; }
+.drule { height: 3px; width: 0; background: var(--teal); margin: 20px auto 0; border-radius: 2px; }
+.mtile { background: #fff; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.mtile .mi { width: 38px; height: 38px; border-radius: 19px; background: var(--mint); display: flex; align-items: center; justify-content: center; }
+.mtile b { font-size: 13.5px; font-weight: 600; }
+.mtile.soon { background: #F3EFFB; border: 1.5px dashed #BBA7EC; }
+.badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: var(--teal); border-radius: 8px; padding: 3px 7px; }
+.chip4 { position: absolute; left: 120px; top: 110px; display: flex; align-items: center; gap: 18px; padding: 14px 28px 14px 14px; border-radius: 46px;
+  background: rgba(255,255,255,0.94); box-shadow: 0 24px 60px rgba(0,0,0,0.20); }
+.chip4 .ci { width: 62px; height: 62px; border-radius: 31px; background: linear-gradient(150deg,#5A38A8,#33206E); display: flex; align-items: center; justify-content: center; }
+.chip4 b { font-size: 30px; font-weight: 600; color: var(--ink); display: block; }
+.mcard { position: absolute; width: 400px; height: 250px; border-radius: 28px; background: #fff; padding: 30px; box-shadow: 0 30px 70px rgba(30,20,60,0.16);
+  display: flex; flex-direction: column; justify-content: space-between; }
+.mcard .mi { width: 76px; height: 76px; border-radius: 38px; background: linear-gradient(150deg,#5A38A8,#33206E); display: flex; align-items: center; justify-content: center; }
+.mcard b { font-size: 34px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- ============ SUPERS over live action ============ -->
+<div id="s_lead" class="scene">
+  <div class="super" style="left:120px; bottom:118px">
+    <div class="caps" id="lead_a" style="font-size:18px; color:#EEE8FA">Under the leadership of</div>
+    <div class="gline" id="lead_l" style="width:0; margin:16px 0 18px"></div>
+    <div class="serif" id="lead_b" style="font-size:66px; line-height:1">Dr. Aditya Sarin <span style="font-style:italic; opacity:.8">&amp;</span> Dr. Shyam Agrawal</div>
+  </div>
+</div>
+<div id="s_pow" class="scene">
+  <div class="super" id="pow" style="left:120px; bottom:118px; display:flex; align-items:baseline; gap:18px">
+    <span class="serif" style="font-size:44px; font-style:italic">powered by</span>
+    <span style="font-size:48px; font-weight:600; letter-spacing:-0.01em">BigOHealth</span>
+  </div>
+</div>
+<div id="s_sec" class="scene">
+  <div id="secchip" class="abs" style="left:120px; bottom:118px; display:flex; align-items:center; gap:16px; padding:16px 26px 16px 18px; border-radius:40px;
+      background:rgba(246,244,250,0.88); backdrop-filter: blur(10px); box-shadow:0 20px 50px rgba(0,0,0,0.18)">
+    <div style="width:52px;height:52px;border-radius:26px;background:var(--green);display:flex;align-items:center;justify-content:center">
+      <svg width="24" height="26" viewBox="0 0 24 26"><rect x="3" y="11" width="18" height="13" rx="3" fill="#fff"/><path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="#fff" stroke-width="2.4" fill="none"/></svg></div>
+    <div><div style="font-size:26px;font-weight:600">One secure place</div><div style="font-size:17px;color:#6a6778">Private · Encrypted · Yours</div></div>
+  </div>
+</div>
+
+<!-- ============ BRAND ============ -->
+<div id="brand" class="scene paperbg">
+  <div id="br_logo" class="abs" style="left:50%; top:50%; width:1232px; height:310px; margin-left:-616px; margin-top:-205px">
+    <img id="br_mark" src="assets/logo_mark.png" class="abs" style="left:0;top:0;width:1232px">
+    <img id="br_word" src="assets/logo_word.png" class="abs" style="left:0;top:0;width:1232px">
+    <img id="br_tag"  src="assets/logo_tag.png"  class="abs" style="left:0;top:0;width:1232px">
+  </div>
+  <div id="br_pow" class="abs" style="left:0; width:1920px; top:690px; text-align:center; display:flex; justify-content:center; align-items:baseline; gap:14px">
+    <span class="serif" style="font-size:40px; font-style:italic; color:#6a6778">powered by</span>
+    <span style="font-size:46px; font-weight:600; color:var(--ink)">Big<span style="color:var(--green)">O</span>Health</span>
+  </div>
+</div>
+
+<!-- ============ PRODUCT SEQUENCE ============ -->
+<div id="prod" class="scene paperbg">
+  <div id="k_sec1" class="kline serif" style="top:360px">Your entire journey,</div>
+  <div id="k_sec2" class="kline serif" style="top:452px"><em>one secure place.</em></div>
+  <div id="rchips"></div>
+  <div id="k_exact" class="kline serif" style="top:330px">Exactly<br><em>as they are.</em></div>
+  <div id="k_no1" class="kline" style="top:560px; font-size:52px; font-weight:400"><span class="chk"><svg width="22" height="18"><path d="M2 9l6 6L20 3" stroke="#fff" stroke-width="3" fill="none"/></svg></span>No renaming.</div>
+  <div id="k_no2" class="kline" style="top:650px; font-size:52px; font-weight:400"><span class="chk"><svg width="22" height="18"><path d="M2 9l6 6L20 3" stroke="#fff" stroke-width="3" fill="none"/></svg></span>No sorting.</div>
+  <div id="k_no3" class="kline" style="top:740px; font-size:52px; font-weight:400"><span class="chk"><svg width="22" height="18"><path d="M2 9l6 6L20 3" stroke="#fff" stroke-width="3" fill="none"/></svg></span>No complicated folders.</div>
+  <div id="k_id"  class="kline serif" style="top:300px">Identifies.</div>
+  <div id="k_cat" class="kline serif" style="top:392px">Categorizes.</div>
+  <div id="k_org" class="kline serif" style="top:484px"><em>Organizes.</em></div>
+  <div id="k_tl"  class="kline serif" style="top:680px; font-size:46px; color:#4a4858">Into one clear, <em>chronological</em> timeline.</div>
+  <div id="features"></div>
+  <div id="k_pic" class="kline serif" style="left:0; width:1920px; text-align:center; top:930px; font-size:64px">A complete picture of <em>your journey.</em></div>
+  <div id="k_one" class="kline serif" style="left:0; width:1920px; text-align:center; top:930px; font-size:64px">All in <em>one place.</em></div>
+  <div id="fcards"></div>
+  <div id="phones" style="position:absolute; inset:0; perspective:2400px"></div>
+</div>
+
+<!-- ============ SEARCH ============ -->
+<div id="search" class="scene paperbg">
+  <div class="caps abs" id="se_cap" style="left:510px; top:250px; color:var(--green)">Less time searching</div>
+  <div class="sbar" id="se_bar" style="top:300px">
+    <svg width="34" height="34" viewBox="0 0 34 34"><circle cx="14" cy="14" r="10" stroke="#1B1D1C" stroke-width="3" fill="none"/><path d="M22 22l9 9" stroke="#1B1D1C" stroke-width="3.2" stroke-linecap="round"/></svg>
+    <span id="se_txt"></span><span class="caret" id="se_caret"></span>
+    <span id="se_ph" style="color:#aeaabb">Search your reports</span>
+    <span id="se_time" style="margin-left:auto; font-size:18px; color:var(--green); font-weight:600"></span>
+  </div>
+  <div id="se_res"></div>
+</div>
+
+<!-- ============ UNDER 60 SECONDS ============ -->
+<div id="sixty" class="scene paperbg">
+  <svg class="abs" id="sx_ring" width="620" height="620" style="left:650px; top:230px" viewBox="0 0 620 620">
+    <circle cx="310" cy="310" r="286" stroke="rgba(74,43,142,0.13)" stroke-width="6" fill="none"/>
+    <circle id="sx_arc" cx="310" cy="310" r="286" stroke="#4A2B8E" stroke-width="6" fill="none" stroke-linecap="round" transform="rotate(-90 310 310)" stroke-dasharray="1797" stroke-dashoffset="1797"/>
+  </svg>
+  <div class="caps abs" id="sx_a" style="left:0; width:1920px; text-align:center; top:372px; color:var(--green); font-size:22px">In under</div>
+  <div class="serif abs" id="sx_n" style="left:0; width:1920px; text-align:center; top:400px; font-size:300px; line-height:1; color:var(--ink)">60</div>
+  <div class="caps abs" id="sx_b" style="left:0; width:1920px; text-align:center; top:716px; color:var(--green); font-size:26px; font-weight:600">seconds</div>
+</div>
+
+<!-- ============ END CARD ============ -->
+<div id="endc" class="scene paperbg">
+  <div id="en_logo" class="abs" style="left:50%; top:50%; width:1080px; height:272px; margin-left:-540px; margin-top:-230px">
+    <img id="en_mark" src="assets/logo_mark.png" class="abs" style="left:0;top:0;width:1080px">
+    <img id="en_word" src="assets/logo_word.png" class="abs" style="left:0;top:0;width:1080px">
+    <img id="en_tag"  src="assets/logo_tag.png"  class="abs" style="left:0;top:0;width:1080px">
+  </div>
+  <div id="en_pow" class="abs" style="left:0; width:1920px; top:640px; text-align:center; display:flex; justify-content:center; align-items:baseline; gap:14px">
+    <span class="serif" style="font-size:36px; font-style:italic; color:#6a6778">powered by</span>
+    <span style="font-size:40px; font-weight:600; color:var(--ink)">BigOHealth</span>
+  </div>
+  <div id="en_rule" class="abs" style="left:50%; top:736px; height:1.5px; width:0; background:rgba(74,43,142,0.4)"></div>
+  <div class="abs serif" style="left:0; width:1920px; top:772px; text-align:center; font-size:64px; color:var(--green)">
+    <span id="en_f" style="color:var(--teal)">Faster Care.</span>&nbsp;&nbsp;<span id="en_t" style="font-style:italic">Trusted Care.</span></div>
+</div>
+
+<!-- ============ v4: DOCTOR CARDS ============ -->
+<div id="docs" class="scene paperbg">
+  <div class="caps abs" id="dcap" style="left:0; width:1920px; text-align:center; top:86px; color:var(--teal); font-size:22px">OncoXpress Leadership</div>
+  <div class="dcol" id="dc0" style="left:200px">
+    <div class="dpanel" id="dp0"><img id="di0" src="assets/doctors/shyam_aggarwal.png" style="width:470px"></div>
+    <div class="dtext"><div class="dname" id="dt0b">Dr. Shyam Aggarwal</div><div class="drule" id="dr0"></div>
+      <div class="drole" id="dt0c">Chairman, Medical Oncology</div><div class="dhosp" id="dt0d">Sir Ganga Ram Hospital, New Delhi</div></div>
+  </div>
+  <div class="dcol" id="dc1" style="left:960px">
+    <div class="dpanel" id="dp1"><img id="di1" src="assets/doctors/aditya_sarin.png" style="width:440px"></div>
+    <div class="dtext"><div class="dname" id="dt1b">Dr. Aditya Sarin</div><div class="drule" id="dr1"></div>
+      <div class="drole" id="dt1c">Vice President, Medical Oncology</div><div class="dhosp" id="dt1d">Sir Ganga Ram Hospital, New Delhi</div></div>
+  </div>
+</div>
+<div id="pow4" class="scene">
+  <div class="super" id="pow4t" style="left:120px; bottom:150px; display:flex; align-items:baseline; gap:18px">
+    <span class="serif" style="font-size:46px; font-style:italic">powered by</span>
+    <span style="font-size:54px; font-weight:600; letter-spacing:-0.01em">BigOHealth</span>
+  </div>
+</div>
+
+<!-- ============ v4: COMING SOON ============ -->
+<div id="soon1" class="scene paperbg">
+  <div class="caps abs" id="sn_cap" style="left:150px; top:360px; color:var(--teal); font-size:22px">Coming soon</div>
+  <div class="kline serif" id="sn_t1" style="top:410px">Even more of your</div>
+  <div class="kline serif" id="sn_t2" style="top:500px"><em>journey, together.</em></div>
+  <div id="sn_phone" style="position:absolute; inset:0; perspective:2400px"></div>
+</div>
+<div id="soonchip" class="scene">
+  <div class="chip4" id="ch0"><div class="ci"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M8 24c0-9 6-16 16-17-1 10-8 16-16 17z" fill="#fff"/><path d="M8 24l9-9" stroke="#4A2B8E" stroke-width="2"/></svg></div><div><b>Diet &amp; Nutrition</b><span class="badge">Coming soon</span></div></div>
+  <div class="chip4" id="ch1"><div class="ci"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 26S3 18.5 3 10.5A6 6 0 0 1 15 7a6 6 0 0 1 12 3.5C27 18.5 15 26 15 26z" fill="#fff"/></svg></div><div><b>Emotional Well-being</b><span class="badge">Coming soon</span></div></div>
+  <div class="chip4" id="ch2"><div class="ci"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M12 4v8L5 23a2.5 2.5 0 0 0 2.2 3.6h15.6A2.5 2.5 0 0 0 25 23l-7-11V4" stroke="#fff" stroke-width="2.4" fill="none"/><path d="M10 4h10" stroke="#fff" stroke-width="2.4"/><path d="M8.5 19h13l3 5H5.5z" fill="#fff"/></svg></div><div><b>Diagnostics</b><span class="badge">Coming soon</span></div></div>
+</div>
+<div id="soon2" class="scene paperbg">
+  <div class="mcard" id="mc0"><div class="mi"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M8 24c0-9 6-16 16-17-1 10-8 16-16 17z" fill="#fff"/><path d="M8 24l9-9" stroke="#4A2B8E" stroke-width="2"/></svg></div><div><b>Diet &amp; Nutrition</b><br><span class="badge" style="margin-top:10px">Coming soon</span></div></div>
+  <div class="mcard" id="mc1"><div class="mi"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 26S3 18.5 3 10.5A6 6 0 0 1 15 7a6 6 0 0 1 12 3.5C27 18.5 15 26 15 26z" fill="#fff"/></svg></div><div><b>Emotional Well-being</b><br><span class="badge" style="margin-top:10px">Coming soon</span></div></div>
+  <div class="mcard" id="mc2"><div class="mi"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M12 4v8L5 23a2.5 2.5 0 0 0 2.2 3.6h15.6A2.5 2.5 0 0 0 25 23l-7-11V4" stroke="#fff" stroke-width="2.4" fill="none"/><path d="M10 4h10" stroke="#fff" stroke-width="2.4"/><path d="M8.5 19h13l3 5H5.5z" fill="#fff"/></svg></div><div><b>Diagnostics</b><br><span class="badge" style="margin-top:10px">Coming soon</span></div></div>
+  <div id="sn2_phone" style="position:absolute; inset:0; perspective:2400px"></div>
+  <div class="kline serif" id="sn_all" style="left:0; width:1920px; text-align:center; top:930px; font-size:64px">All within the <em>same platform.</em></div>
+</div>
+
+<script>
+const FPS = 24;
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);             // ease out cubic
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const eback = x => { const c = 1.4; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const lerp = (a, b, k) => a + (b - a) * k;
+function show(el, o, y = 0, blur = 0, s = 1) {
+  el.style.opacity = o; el.style.transform = `translateY(${y}px) scale(${s})`; el.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
+}
+// text reveal: fades up with a soft focus pull
+function rise(el, t, t0, dur = 0.55, out = null, dist = 26) {
+  let k = eo(seg(t, t0, t0 + dur)), o = k, y = (1 - k) * dist, b = (1 - k) * 8;
+  if (out) { const q = eio(seg(t, out[0], out[1])); o *= 1 - q; y -= q * 18; b += q * 6; }
+  show(el, o, y, b);
+}
+
+/* ---------------- phone screens (made-up patient: Anita Verma) ---------------- */
+const STATUS = dark => `<div class="status ${dark ? 'dark' : ''}"><span>9:41</span><span class="ico">
+  <span class="bars"><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i></span>
+  <svg width="17" height="12" viewBox="0 0 17 12"><path d="M8.5 11.5l2.6-3a3.6 3.6 0 0 0-5.2 0zM3.6 6.4a7 7 0 0 1 9.8 0l1.5-1.6a9.2 9.2 0 0 0-12.8 0zM.6 3.3a11.3 11.3 0 0 1 15.8 0L17.9 1.7a13.5 13.5 0 0 0-18.8 0z" fill="currentColor"/></svg>
+  <span class="batt"><i></i></span></span></div>`;
+const ICON = {
+  lab: `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M7 2v6L3 16a2 2 0 0 0 1.8 2.8h10.4A2 2 0 0 0 17 16l-4-8V2" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><path d="M6 2h8" stroke="#4A2B8E" stroke-width="1.7"/><circle cx="9" cy="14" r="1.3" fill="#4A2B8E"/></svg>`,
+  drip: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="5" y="2" width="10" height="11" rx="2" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><path d="M10 13v3a2 2 0 0 0 2 2h3" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><path d="M8 6h4M8 9h4" stroke="#4A2B8E" stroke-width="1.5"/></svg>`,
+  scan: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="2.5" y="2.5" width="15" height="15" rx="3" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><circle cx="10" cy="10" r="3.4" stroke="#4A2B8E" stroke-width="1.6" fill="none"/></svg>`,
+  micro: `<svg width="20" height="20" viewBox="0 0 20 20"><path d="M6 17h10M9 17v-3M7 3l4 7M5.5 4.5l3-1.5M11 10a4 4 0 0 1 3 6" stroke="#4A2B8E" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>`,
+  rx: `<svg width="20" height="20" viewBox="0 0 20 20"><rect x="4" y="2.5" width="12" height="15" rx="2" stroke="#4A2B8E" stroke-width="1.7" fill="none"/><path d="M7 7h6M7 10h6M7 13h3" stroke="#4A2B8E" stroke-width="1.5"/></svg>`,
+};
+const NAV = act => `<div class="navbar">
+  <svg width="26" height="26" viewBox="0 0 26 26"><path d="M3 12L13 3l10 9v10a1 1 0 0 1-1 1h-6v-7h-6v7H4a1 1 0 0 1-1-1z" fill="${act==='home'?'#fff':'#1B1D1C'}"/></svg>
+  <div class="act" style="${act==='home'?'position:absolute;left:16px;':''}"><svg width="28" height="26" viewBox="0 0 28 26"><path d="M14 24S2 16.5 2 8.5A6 6 0 0 1 14 5a6 6 0 0 1 12 3.5C26 16.5 14 24 14 24z" fill="#fff"/><path d="M14 9v7M10.5 12.5h7" stroke="#4A2B8E" stroke-width="2.2"/></svg></div>
+  <div class="fab">+</div>
+  <svg width="26" height="26" viewBox="0 0 26 26"><path d="M6 3v7a5 5 0 0 0 10 0V3M11 15v3a5 5 0 0 0 10 0v-3" stroke="#1B1D1C" stroke-width="2.2" fill="none"/><circle cx="21" cy="12" r="2.6" stroke="#1B1D1C" stroke-width="2" fill="none"/></svg>
+  <svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="8" r="5" fill="#1B1D1C"/><path d="M3 24c0-6 4.5-9 10-9s10 3 10 9z" fill="#1B1D1C"/></svg></div>`;
+
+const FILES = [
+  ['IMG_20250314_0932.jpg', '2.1 MB • JPG', 'img', 'Lab Report', '14 Mar 2025'],
+  ['scan (3).pdf', '1.7 MB • PDF', 'pdf', 'PET-CT Scan', '02 Aug 2025'],
+  ['WhatsApp Image 2025-05-02.jpeg', '820 KB • JPEG', 'img', 'Prescription', '02 May 2025'],
+  ['report_final_FINAL.pdf', '597 KB • PDF', 'pdf', 'Biopsy & Pathology', '21 Feb 2024'],
+  ['Document 14.pdf', '409 KB • PDF', 'pdf', 'Discharge Summary', '26 Jul 2025'],
+];
+function uploadScreen() {
+  let rows = FILES.map((f, i) => `<div class="row" id="up_r${i}">
+     <div class="fic ${f[2]==='img'?'img':''}"><b>${f[2]==='img'?'JPG':'PDF'}</b></div>
+     <div style="flex:1; min-width:0"><div class="rname">${f[0]}</div>
+       <div class="rsub" id="up_s${i}">${f[1]}</div><div class="tag" id="up_t${i}" style="display:none">${f[3]} · ${f[4]}</div>
+       <div class="pbar"><i id="up_p${i}"></i></div></div>
+     <div id="up_c${i}" style="width:26px;height:26px;border-radius:13px;border:2px solid #E2DEEA;flex:none;display:flex;align-items:center;justify-content:center"></div></div>`).join('');
+  return `<div class="screen" id="scr_up">${STATUS(false)}
+   <div class="hdr" style="height:198px; padding:62px 26px 0">
+     <div style="display:flex; align-items:center; gap:14px"><svg width="14" height="24"><path d="M12 2L3 12l9 10" stroke="#fff" stroke-width="2.4" fill="none"/></svg>
+       <div><div style="font-size:26px;font-weight:600">Upload reports</div><div style="font-size:15px;opacity:.8;margin-top:3px" id="up_sel">0 reports selected</div></div></div>
+     <div style="display:flex;align-items:center;gap:14px;margin-top:22px"><div style="flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,0.22)"><div id="up_bar" style="height:100%;width:0;border-radius:4px;background:#D5C6F4"></div></div><span id="up_n" style="font-size:15px">0/5</span></div>
+   </div>
+   <div id="up_chips" class="chips" style="position:absolute; left:18px; top:212px; opacity:0">
+     <span class="chip on">ALL</span><span class="chip">Lab Reports</span><span class="chip">Imaging</span><span class="chip">Biopsy &amp; Pathology</span></div>
+   <div style="position:absolute; left:18px; right:18px; top:222px" id="up_list">
+     <div style="font-size:19px;font-weight:600;margin:6px 4px 14px" id="up_h">Processing <span style="font-size:14px;color:var(--mute);font-weight:400;margin-left:6px" id="up_hn">in progress</span></div>
+     ${rows}</div>
+   <div id="up_scanline" style="position:absolute;left:0;right:0;height:90px;top:0;opacity:0;background:linear-gradient(180deg,rgba(107,70,193,0),rgba(107,70,193,0.22),rgba(107,70,193,0));"></div>
+   <div style="position:absolute;left:0;right:0;bottom:30px;text-align:center;font-size:14px;color:var(--green);font-weight:500">
+     <svg width="14" height="16" viewBox="0 0 14 16" style="vertical-align:-2px;margin-right:6px"><path d="M7 1l6 2.5V8c0 3.5-2.6 6-6 7-3.4-1-6-3.5-6-7V3.5z" fill="#4A2B8E"/></svg>Your data is safe with us</div>
+  </div>`;
+}
+const TL = [
+  ['August', "'25", [['02', 'Aug', 'scan', 'PET-CT Whole Body', 'No new metabolically active disease. Post-treatment changes, left breast.']]],
+  ['July', "'25", [['26', 'Jul', 'drip', 'Chemo Discharge Summary', 'Cycle 4 of Paclitaxel completed. Tolerated well, no fever.']]],
+  ['May', "'25", [['02', 'May', 'rx', 'Prescription', 'Letrozole 2.5 mg OD · Calcium + Vit D3 · review in 8 weeks']]],
+  ['March', "'25", [['14', 'Mar', 'lab', 'Lab Report', 'Hemoglobin: 11.8, TLC: 6,420, Platelets: 2.1 L, CA 15-3: 33.0']]],
+  ['February', "'24", [['21', 'Feb', 'micro', 'Biopsy & Pathology', 'Invasive ductal carcinoma, Grade 2. ER+, PR+, HER2 negative.']]],
+];
+function timelineScreen() {
+  const months = TL.map((m, i) => `<div class="month" id="tl_m${i}"><h4>${m[0]}<small>${m[1]}</small></h4>` +
+    m[2].map(e => `<div class="ev"><div class="d"><b>${e[0]}</b><span>${e[1]}</span></div>
+      <div class="box"><div class="ic">${ICON[e[2]]}</div><div style="min-width:0"><div class="t">${e[3]}</div><div class="s">${e[4]}</div></div></div></div>`).join('') + `</div>`).join('');
+  return `<div class="screen" id="scr_tl">${STATUS(false)}
+   <div class="hdr" style="height:250px; padding:66px 24px 0; z-index:5">
+     <div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="hi">Good Evening</div><div class="nm">Anita Verma</div></div>
+     <div class="pill"><svg width="14" height="16" viewBox="0 0 14 16"><path d="M7 1v9M3 5l4-4 4 4M1 10v4h12v-4" stroke="#fff" stroke-width="1.8" fill="none"/></svg>Share reports</div></div>
+     <div class="tabs"><span class="on">Timeline</span><span>Reports</span></div></div>
+   <div style="position:absolute;left:0;right:0;top:250px;bottom:0;overflow:hidden">
+     <div id="tl_scroll" style="position:absolute;left:18px;right:18px;top:16px">
+       <div class="chips" style="margin-bottom:18px"><span class="chip" style="background:none;padding:9px 6px"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="7.5" cy="7.5" r="5.5" stroke="#555" stroke-width="1.8" fill="none"/><path d="M12 12l4.5 4.5" stroke="#555" stroke-width="1.8"/></svg></span><span class="chip on">ALL</span><span class="chip">Lab Reports</span><span class="chip">Imaging</span><span class="chip">Biopsy &amp; P</span></div>
+       <div style="display:flex;justify-content:space-between;align-items:baseline;margin:0 4px 14px"><span style="font-size:20px;font-weight:600">Treatment Timeline</span><span style="font-size:13px;color:var(--mute)">24 reports total</span></div>
+       ${months}</div></div>
+   ${NAV('heart')}</div>`;
+}
+function spark(vals, w, h, col) {
+  const mx = Math.max(...vals), mn = Math.min(...vals);
+  return `<svg width="${w}" height="${h}"><polyline points="${vals.map((v, i) => `${i * w / (vals.length - 1)},${h - 2 - (v - mn) / (mx - mn + 1e-6) * (h - 4)}`).join(' ')}" stroke="${col}" stroke-width="1.8" fill="none"/></svg>`;
+}
+function overviewScreen() {
+  // CA 15-3 trend (made-up): 52.4 -> 41.0 -> 33.0 -> 24.1 U/mL, normal < 30
+  return `<div class="screen" id="scr_ov">${STATUS(true)}
+   <div style="position:absolute;left:18px;right:18px;top:58px;display:flex;align-items:center;gap:12px;z-index:5">
+     <div style="width:44px;height:44px;border-radius:13px;background:#fff;display:flex;align-items:center;justify-content:center"><svg width="12" height="20"><path d="M10 2L3 10l7 8" stroke="#1B1D1C" stroke-width="2.2" fill="none"/></svg></div>
+     <div style="font-size:23px;font-weight:600">Health Overview</div></div>
+   <div style="position:absolute;left:0;right:0;top:118px;bottom:0;overflow:hidden">
+    <div id="ov_scroll" style="position:absolute;left:16px;right:16px;top:0">
+     <div class="sec" id="ov_s0"><h5>${ICON.lab} Tumour marker trend</h5>
+       <div style="display:flex;justify-content:space-between;align-items:flex-start">
+         <div><div style="font-size:15px;font-weight:600">CA 15-3</div><div style="display:flex;align-items:baseline;gap:8px;margin-top:2px"><b style="font-size:40px;color:#1E7A80;font-weight:600">24.1</b><span style="font-size:13px;color:#555">U/mL</span><span class="tag" style="margin:0">Normal</span></div>
+         <div style="font-size:11.5px;color:var(--mute)">4 readings · Normal &lt; 30</div></div>
+         <div style="border:1.5px solid #EAE4F6;border-radius:14px;padding:8px 10px;text-align:center;font-size:11px;color:var(--mute)">Trend<br><b style="color:var(--green);font-size:13px">Decreasing</b></div></div>
+       <svg width="326" height="150" viewBox="0 0 326 150" style="margin-top:6px">
+         <defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A2B8E" stop-opacity=".22"/><stop offset="1" stop-color="#4A2B8E" stop-opacity="0"/></linearGradient>
+         <clipPath id="ov_clip"><rect id="ov_cliprect" x="0" y="0" width="0" height="150"/></clipPath></defs>
+         <g stroke="#E6E2EE" stroke-dasharray="4 5"><line x1="10" x2="320" y1="20" y2="20"/><line x1="10" x2="320" y1="62" y2="62"/><line x1="10" x2="320" y1="104" y2="104"/></g>
+         <line x1="10" x2="320" y1="84" y2="84" stroke="#BBA7EC" stroke-width="1.2"/><text x="318" y="80" font-size="9" fill="#7B5CC4" text-anchor="end">30</text>
+         <g clip-path="url(#ov_clip)"><path d="M18 22 C 70 30, 90 52, 118 56 S 190 70, 214 78 S 280 96, 306 104 L306 140 L18 140 Z" fill="url(#gA)"/>
+         <path d="M18 22 C 70 30, 90 52, 118 56 S 190 70, 214 78 S 280 96, 306 104" stroke="#4A2B8E" stroke-width="3" fill="none"/></g>
+         <g id="ov_pts" fill="#fff" stroke="#1E7A80" stroke-width="2.4"><circle cx="18" cy="22" r="6"/><circle cx="118" cy="56" r="6"/><circle cx="214" cy="78" r="6"/><circle cx="306" cy="104" r="6"/></g>
+         <g font-size="11" fill="#1B1D1C" font-weight="600" text-anchor="middle" id="ov_vals"><text x="26" y="12">52.4</text><text x="118" y="44">41.0</text><text x="214" y="66">33.0</text><text x="300" y="92">24.1</text></g>
+         <g font-size="10" fill="#8A8796" text-anchor="middle"><text x="22" y="146">Nov'24</text><text x="118" y="146">Mar'25</text><text x="214" y="146">May'25</text><text x="300" y="146">Aug'25</text></g></svg></div>
+     <div class="sec" id="ov_s1"><h5>♥ Vital signs</h5><div class="vit">
+       <div><small>Blood pressure</small><b>118/76</b> <small style="display:inline">mmHg</small>${spark([122,120,124,119,118],120,20,'#6B46C1')}</div>
+       <div><small>Pulse</small><b>78</b> <small style="display:inline">bpm</small>${spark([84,80,82,79,78],120,20,'#6B46C1')}</div>
+       <div><small>SpO₂</small><b>98</b> <small style="display:inline">%</small>${spark([97,98,97,98,98],120,20,'#6B46C1')}</div>
+       <div><small>Weight</small><b>61.2</b> <small style="display:inline">kg</small>${spark([63,62.4,61.8,61.5,61.2],120,20,'#6B46C1')}</div></div></div>
+     <div class="sec" id="ov_s2"><h5>${ICON.drip} Treatment history</h5>
+       <div class="tr"><b>Feb 2024</b><span>Diagnosis → core biopsy, IDC Grade 2</span></div>
+       <div class="tr"><b>Mar–Jun 2024</b><span>AC × 4 cycles → Paclitaxel × 12</span></div>
+       <div class="tr"><b>Aug 2024</b><span>Breast-conserving surgery, left</span></div>
+       <div class="tr"><b>Oct–Nov 2024</b><span>Radiotherapy 40 Gy / 15 fractions</span></div></div>
+     <div class="sec" id="ov_s3"><h5>${ICON.scan} Scans</h5><div class="scans">
+       <div class="scan" style="background:radial-gradient(ellipse 34% 40% at 50% 52%,#cfcfcf,#6d6d6d 55%,#1b1b1b 72%,#050505)"><small>PET-CT · Aug '25</small></div>
+       <div class="scan" style="background:radial-gradient(ellipse 22% 26% at 36% 46%,#e8e8e8,#777 40%,transparent 60%),radial-gradient(ellipse 22% 26% at 64% 46%,#e8e8e8,#777 40%,transparent 60%),#0d0d0d"><small>MRI · Mar '25</small></div>
+       <div class="scan" style="background:radial-gradient(ellipse 50% 60% at 30% 50%,#bdbdbd,#4a4a4a 60%,#0a0a0a)"><small>Mammo · Feb '24</small></div></div></div>
+     <div class="sec" id="ov_s4"><h5>${ICON.micro} Pathology</h5><div style="font-size:15px;font-weight:600">Histopathology report</div>
+       <div style="font-size:12.5px;color:#555;margin-top:5px;line-height:1.4">Invasive ductal carcinoma, Grade 2 · Margins clear · 0/12 nodes</div></div>
+     <div class="sec" id="ov_s5"><h5>✦ Key biomarkers</h5><div class="bm"><span>ER +</span><span>PR +</span><span>HER2 −</span><span>Ki-67 18%</span><span>BRCA1/2 neg</span></div></div>
+     <div style="height:300px"></div>
+    </div></div></div>`;
+}
+function caseScreen() {
+  return `<div class="screen">${STATUS(false)}
+   <div class="hdr" style="height:190px; padding:66px 24px 0"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="hi">Good Evening</div><div class="nm">Anita Verma</div></div>
+     <div class="pill"><svg width="12" height="15" viewBox="0 0 12 15"><rect x="1" y="6" width="10" height="8" rx="2" stroke="#fff" stroke-width="1.6" fill="none"/><path d="M3 6V4a3 3 0 0 1 6 0v2" stroke="#fff" stroke-width="1.6" fill="none"/></svg>Private</div></div></div>
+   <div style="position:absolute;left:18px;right:18px;top:208px">
+     <div style="font-size:19px;font-weight:600;margin-bottom:12px">Case Summary</div>
+     <div class="card" style="padding:16px;font-size:13.5px;line-height:1.55;color:#555">52F diagnosed with left breast cancer (IDC, Grade 2, ER+/PR+/HER2−) in Feb 2024. Received AC → Paclitaxel, breast-conserving surgery and radiotherapy. Now on Letrozole; CA 15-3 trending down…<div style="color:var(--green);font-weight:600;margin-top:8px">Show more</div></div>
+     <div style="font-size:19px;font-weight:600;margin:20px 0 12px">Treatment Timeline</div>
+     <div class="card" style="padding:4px 16px">
+       <div class="tr" style="border:0"><b>Feb 2024</b><span>Diagnosis → Core biopsy</span></div><div class="tr"><b>Mar–Jun 24</b><span>AC × 4 → Paclitaxel × 12</span></div>
+       <div class="tr"><b>Aug 2024</b><span>Breast-conserving surgery</span></div><div class="tr"><b>Oct 2024</b><span>Radiotherapy 40 Gy/15#</span></div><div class="tr"><b>Jan 2025</b><span>Letrozole started</span></div></div></div>
+   ${NAV('home')}</div>`;
+}
+function biomarkerScreen() {
+  return `<div class="screen">${STATUS(true)}
+   <div style="position:absolute;left:18px;right:18px;top:66px"><div style="font-size:23px;font-weight:600;margin-bottom:16px">Report Detail</div>
+     <div class="card" style="padding:16px;display:flex;gap:14px;align-items:center"><div class="fic"><b>PDF</b></div><div><div style="font-size:16px;font-weight:600;line-height:1.3">Histopathology &amp; IHC Panel</div><div class="rsub">21 Feb 2024 · Sunrise Diagnostics</div></div></div>
+     <div class="sec" style="margin-top:14px"><h5>✦ Key biomarkers</h5><div class="bm"><span>ER +</span><span>PR +</span><span>HER2 −</span><span>Ki-67 18%</span><span>BRCA1/2 neg</span></div></div>
+     <div class="sec"><h5>${ICON.micro} Findings</h5><div style="font-size:13px;color:#555;line-height:1.5">Invasive ductal carcinoma, Grade 2. Tumour size 2.1 cm. Margins clear. Lymphovascular invasion absent.</div></div>
+     <div class="sec"><h5>${ICON.lab} Trend · CA 15-3</h5>${spark([52.4,41,33,24.1],320,60,'#4A2B8E')}</div></div></div>`;
+}
+function secScreen() {
+  const cats = [['Lab reports', 11, 'lab'], ['Imaging', 6, 'scan'], ['Biopsy & Pathology', 3, 'micro'], ['Prescriptions', 4, 'rx']];
+  return `<div class="screen" id="scr_sec" style="background:linear-gradient(160deg,#5A38A8 0%,#4A2B8E 45%,#2D1B63 100%)">${STATUS(false)}
+   <div style="position:absolute;left:0;right:0;top:92px;text-align:center;color:#fff">
+     <div style="font-size:15px;opacity:.75;font-weight:300">Anita Verma</div>
+     <div style="font-size:26px;font-weight:600;margin-top:4px">Health Records</div></div>
+   <div id="sec_ring" style="position:absolute;left:50%;top:190px;width:190px;height:190px;margin-left:-95px;border-radius:95px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center">
+     <div style="width:120px;height:120px;border-radius:60px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center">
+       <svg width="58" height="70" viewBox="0 0 58 70"><path id="sec_shackle" d="M14 32V20a15 15 0 0 1 30 0v12" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+       <rect x="5" y="30" width="48" height="36" rx="9" fill="#fff"/><circle cx="29" cy="46" r="5" fill="#4A2B8E"/><rect x="27" y="48" width="4" height="9" rx="2" fill="#4A2B8E"/></svg></div></div>
+   <div id="sec_state" style="position:absolute;left:0;right:0;top:398px;text-align:center;color:#DCD0F6;font-size:14px;font-weight:500;letter-spacing:.14em;text-transform:uppercase">Securing…</div>
+   <div style="position:absolute;left:18px;right:18px;top:444px">
+     ${cats.map((c, i) => `<div id="sec_c${i}" style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.14);border-radius:16px;padding:12px 14px;margin-bottom:10px;color:#fff">
+       <div style="width:38px;height:38px;border-radius:19px;background:#fff;display:flex;align-items:center;justify-content:center">${ICON[c[2]]}</div>
+       <div style="flex:1;font-size:15.5px;font-weight:500">${c[0]}</div><div id="sec_n${i}" style="font-size:16px;font-weight:600;color:#D5C6F4">0</div></div>`).join('')}</div>
+   <div style="position:absolute;left:0;right:0;bottom:34px;text-align:center;color:rgba(255,255,255,0.75);font-size:13px">Private · Encrypted · Shared only with your doctor</div>
+  </div>`;
+}
+function phoneHTML(id, inner) {
+  return `<div class="phone" id="${id}"><div class="scr">${inner}<div class="island"></div></div><div class="glare"></div></div>`;
+}
+$('phones').innerHTML =
+  phoneHTML('pA', uploadScreen() + timelineScreen() + overviewScreen() + secScreen()) +
+  phoneHTML('p1', timelineScreen().replace(/id="[^"]*"/g, '')) +
+  phoneHTML('p2', caseScreen()) +
+  phoneHTML('p3', uploadScreen().replace(/id="[^"]*"/g, '')) +
+  phoneHTML('p4', biomarkerScreen());
+// the side phones show the finished upload state
+document.querySelectorAll('#p3 .pbar i').forEach(e => e.style.width = '100%');
+
+const FEATS = [['Tumour marker trends', 53.18, ICON.lab], ['Vital signs', 54.39, '<b style="color:#4A2B8E">♥</b>'], ['Treatment history', 55.36, ICON.drip],
+               ['Scans', 56.30, ICON.scan], ['Pathology', 56.97, ICON.micro], ['Key biomarkers', 58.16, '<b style="color:#4A2B8E">✦</b>']];
+$('features').innerHTML = FEATS.map((f, i) => `<div class="feat" id="ft${i}" style="top:${205 + i * 112}px"><div class="dot">${f[2].replace(/width="20" height="20"/, 'width="26" height="26"')}</div><span>${f[0]}</span></div>`).join('');
+const RCH = [['Blood report', 'lab', -470, -250], ['CT scan', 'scan', -520, 30], ['Pathology', 'micro', -430, 300], ['Prescription', 'rx', 400, -290],
+             ['Discharge summary', 'drip', 470, 10], ['PET-CT', 'scan', 380, 300]];
+$('rchips').innerHTML = RCH.map((r, i) => `<div class="fcard" id="rc${i}" style="padding:10px 20px 10px 10px"><div class="ev" style="margin:0"><div class="ic" style="width:44px;height:44px;border-radius:22px">${ICON[r[1]]}</div></div><div class="rname" style="font-size:19px">${r[0]}</div></div>`).join('');
+$('fcards').innerHTML = FILES.map((f, i) => `<div class="fcard" id="fc${i}"><div class="fic ${f[2]==='img'?'img':''}"><b>${f[2]==='img'?'JPG':'PDF'}</b></div><div><div class="rname">${f[0]}</div><div class="rsub">${f[1]}</div></div></div>`).join('');
+const RES = [['PET-CT Whole Body', '02 Aug 2025 · City Imaging Centre', 'scan'], ['CT Chest (Contrast)', '17 Mar 2025 · Sunrise Diagnostics', 'scan'], ['HRCT Thorax', '09 Nov 2024 · City Imaging Centre', 'scan']];
+$('se_res').innerHTML = RES.map((r, i) => `<div class="res" id="sr${i}" style="top:${430 + i * 124}px"><div class="ev" style="margin:0"><div class="ic" style="width:60px;height:60px;border-radius:30px">${ICON[r[2]].replace(/width="20" height="20"/, 'width="30" height="30"')}</div></div>
+  <div><div class="t">${r[0]}</div><div class="s">${r[1]}</div></div><div style="margin-left:auto;font-size:15px;color:var(--green);font-weight:600;background:var(--mint);padding:8px 14px;border-radius:16px">Imaging</div></div>`).join('');
+
+/* ---------------- scene timings (film seconds; narration + 1.0 s) ---------------- */
+const SC = {
+  s_lead: [28.85, 32.55], s_pow: [32.6, 34.2], s_sec: [0, 0],
+  brand: [26.2, 28.75], prod: [35.2, 63.7], search: [0, 0], sixty: [70.7, 72.35], endc: [72.35, 80.0],
+};
+window.META = { SC: new URLSearchParams(location.search).has('v4') ? { docs: [29.85, 34.60], pow4: [34.60, 37.10], soon1: [76.95, 81.90], soonchip: [81.90, 86.40], soon2: [86.40, 89.0] } : SC };
+
+function phonePose(el, x, y, s, ry = 0, rx = 0, rz = 0, o = 1) {
+  el.style.left = (x - 205) + 'px'; el.style.top = (y - 432) + 'px'; el.style.opacity = o;
+  el.style.transform = `rotateY(${ry}deg) rotateX(${rx}deg) rotateZ(${rz}deg) scale(${s})`;
+}
+
+function drawProd(t) {
+  const A = $('pA');
+  // ---- global phone pose
+  let x = 1270, y = 548, s = 0.97, ry = -9, rx = 3;
+  const kin = eo(seg(t, 35.2, 36.0));
+  y += (1 - kin) * 160; ry += (1 - kin) * -14;
+  // slow drift so the frame is never static
+  ry += Math.sin(t * 0.5) * 1.5; y += Math.sin(t * 0.7) * 5;
+  // D5: complete picture — pull back to centre, others fan out, then converge
+  const k5 = eio(seg(t, 59.3, 60.3)), k6 = eio(seg(t, 62.15, 62.95));
+  x = lerp(x, 960, k5); y = lerp(y, 468, k5); s = lerp(s, 0.74, k5); ry = lerp(ry, 0, k5); rx = lerp(rx, 0, k5);
+  s = lerp(s, 0.80, k6);
+  phonePose(A, x, y, s, ry, rx, 0, clamp(kin * 3));
+  A.style.zIndex = 10;
+  const side = [['p1', -2, 'timeline'], ['p2', -1], ['p3', 1], ['p4', 2]];
+  side.forEach(([id, k]) => {
+    const e = $(id), st = eo(seg(t, 59.55 + Math.abs(k) * 0.12, 60.55 + Math.abs(k) * 0.12));
+    const fx = 960 + k * 330, fy = 478 + Math.abs(k) * 26, fr = k * 7;
+    const px = lerp(960, fx, st), py = lerp(468, fy, st);
+    const gx = lerp(px, 960, k6), gy = lerp(py, 468, k6);
+    phonePose(e, gx, gy, 0.66 * (1 - 0.1 * Math.abs(k)) , -k * 6 * (1 - k6), 0, fr * (1 - k6), (t < 59.4 ? 0 : st) * (1 - seg(t, 62.6, 62.95)));
+    e.style.zIndex = 10 - Math.abs(k);
+  });
+
+  // ---- screens inside the hero phone
+  const up = $('scr_up'), tl = $('scr_tl'), ov = $('scr_ov');
+  const toTL = eio(seg(t, 47.9, 48.5)), toOV = eio(seg(t, 52.55, 53.1));
+  // screens change with an iOS-style push: the new one slides in over the old, which drifts left and dims
+  const kUp = eio(seg(t, 38.45, 38.95));
+  const push = (el, z, kin, kout) => {
+    el.style.zIndex = z; el.style.opacity = (kin > 0 && kout < 1) ? 1 : 0;
+    el.style.transform = `translateX(${(1 - kin) * 392 - kout * 120}px)`;
+    el.style.filter = kout > 0 ? `brightness(${1 - 0.35 * kout})` : 'none';
+    el.style.boxShadow = kin > 0 && kin < 1 ? '-18px 0 40px rgba(0,0,0,0.18)' : 'none';
+  };
+  push(up, 2, t < 38.45 ? 1e-6 : kUp, toTL);
+  if (t < 38.45) up.style.transform = 'translateX(392px)';
+  push(tl, 3, toTL, toOV);
+  push(ov, 4, toOV, 0);
+
+  // ---- secure beat (35.2 - 38.9): records gather into the vault, the lock closes on "secure"
+  const sec = $('scr_sec'), kS = eio(seg(t, 38.45, 38.95));
+  // iOS-style push: the upload screen slides in over the vault, which drifts left and dims
+  sec.style.zIndex = 1; sec.style.opacity = kS >= 1 ? 0 : 1; sec.style.filter = `brightness(${1 - 0.35 * kS})`;
+  sec.style.transform = `translateX(${-kS * 120}px)`;
+  const lockK = eback(seg(t, 37.1, 37.4));
+  $('sec_shackle').setAttribute('transform', `translate(0 ${-9 * (1 - lockK)})`);
+  $('sec_state').textContent = t >= 37.15 ? 'Secured' : 'Securing…';
+  $('sec_ring').style.boxShadow = `0 0 0 ${lockK * 14 * (1 - seg(t, 37.3, 38.2))}px rgba(191,227,207,${0.35 * (1 - seg(t, 37.3, 38.2))})`;
+  const CN = [11, 6, 3, 4];
+  CN.forEach((c, i) => { const k = seg(t, 35.9 + i * 0.25, 37.0 + i * 0.1); $('sec_n' + i).textContent = Math.round(c * eo(k));
+    const e = $('sec_c' + i), a = eo(seg(t, 35.5 + i * 0.1, 35.9 + i * 0.1)); e.style.opacity = a; e.style.transform = `translateY(${(1 - a) * 16}px)`; });
+  RCH.forEach((r, i) => {
+    const e = $('rc' + i), a = 35.35 + i * 0.08, land = 35.95 + i * 0.2;
+    const kIn = eo(seg(t, a, a + 0.5)), kFly = eio(seg(t, land, land + 0.55));
+    const sx = 1270 + r[2], sy = 540 + r[3];
+    e.style.left = (lerp(sx, 1270, kFly) - 120) + 'px'; e.style.top = (lerp(sy, 470, kFly) - 32 + (1 - kIn) * 30) + 'px';
+    e.style.opacity = kIn * (1 - seg(t, land + 0.35, land + 0.55)); e.style.zIndex = 20;
+    e.style.transform = `scale(${lerp(1, 0.5, kFly)}) rotate(${(i % 2 ? 4 : -4) * (1 - kFly)}deg)`;
+  });
+  rise($('k_sec1'), t, 35.35, 0.6, [38.55, 38.95]); rise($('k_sec2'), t, 37.05, 0.6, [38.55, 38.95]);
+
+  // upload screen state
+  let n = 0;
+  FILES.forEach((f, i) => {
+    const arrive = 39.55 + i * 0.32;                 // file card lands in the phone
+    const r = $('up_r' + i), k = eo(seg(t, arrive + 0.35, arrive + 0.75));
+    r.style.opacity = k; r.style.transform = `translateY(${(1 - k) * -18}px)`;
+    const p = eio(seg(t, 41.2 + i * 0.35, 43.3 + i * 0.3));
+    $('up_p' + i).style.width = (p * 100) + '%';
+    const done = p >= 1;
+    if (done) n++;
+    const c = $('up_c' + i);
+    c.style.background = done ? '#6B46C1' : 'transparent'; c.style.borderColor = done ? '#6B46C1' : '#E2DEEA';
+    c.innerHTML = done ? '<svg width="12" height="10"><path d="M1 5l3.5 3.5L11 1.5" stroke="#fff" stroke-width="2" fill="none"/></svg>' : '';
+    // identifies: tag replaces file meta after the scan line passes
+    const idt = 45.75 + i * 0.16;
+    $('up_s' + i).style.display = t >= idt ? 'none' : 'block';
+    const tg = $('up_t' + i); tg.style.display = t >= idt ? 'inline-block' : 'none';
+    tg.style.opacity = eo(seg(t, idt, idt + 0.25));
+    $('up_p' + i).parentElement.style.display = t >= idt ? 'none' : 'block';
+  });
+  const cnt = FILES.filter((f, i) => t >= 39.9 + i * 0.32).length;
+  $('up_sel').textContent = `${cnt} report${cnt === 1 ? '' : 's'} selected`;
+  $('up_n').textContent = `${n}/5`; $('up_bar').style.width = (n / 5 * 100) + '%';
+  $('up_hn').textContent = n === 5 ? 'all done' : `${5 - n} in progress`;
+  const sl = seg(t, 45.6, 46.6); $('up_scanline').style.opacity = sl > 0 && sl < 1 ? 1 : 0; $('up_scanline').style.top = (230 + sl * 560) + 'px';
+  // categorizes: chips slide in, list shifts down
+  const kc = eo(seg(t, 46.65, 47.1));
+  $('up_chips').style.opacity = kc; $('up_chips').style.transform = `translateX(${(1 - kc) * 40}px)`;
+  $('up_list').style.top = (222 + kc * 52) + 'px'; $('up_h').style.opacity = 1 - kc;
+
+  // timeline: month cards cascade in, then the list scrolls
+  TL.forEach((m, i) => { const k = eback(seg(t, 48.25 + i * 0.22, 48.8 + i * 0.22)); const e = $('tl_m' + i);
+    e.style.opacity = clamp(seg(t, 48.25 + i * 0.22, 48.6 + i * 0.22)); e.style.transform = `translateY(${(1 - k) * 60}px)`; });
+  $('tl_scroll').style.top = (16 - eio(seg(t, 50.3, 52.5)) * 250) + 'px';
+
+  // overview: chart draws, scroll follows the narration's list
+  $('ov_cliprect').setAttribute('width', 330 * eio(seg(t, 53.1, 54.5)));
+  const pts = [...$('ov_pts').children], vals = [...$('ov_vals').children];
+  pts.forEach((c, i) => { const k = eback(seg(t, 53.2 + i * 0.3, 53.5 + i * 0.3)); c.setAttribute('r', 6 * k); vals[i].style.opacity = seg(t, 53.3 + i * 0.3, 53.6 + i * 0.3); });
+  const offs = [0, 0, 250, 440, 560, 680];
+  let sc = 0; FEATS.forEach((f, i) => { if (i) sc = lerp(sc, offs[i], eio(seg(t, f[1] - 0.1, f[1] + 0.35))); });
+  sc = lerp(sc, 0, eio(seg(t, 59.3, 60.2)));
+  $('ov_scroll').style.top = (-sc) + 'px';
+
+  // ---- file cards flying into the phone (39.1 - 41.3)
+  const START = [[330, 250, -8], [520, 780, 6], [1700, 200, 7], [1690, 860, -6], [230, 560, 4]];
+  FILES.forEach((f, i) => {
+    const e = $('fc' + i), a = 39.15 + i * 0.1, land = 39.55 + i * 0.32;
+    const kIn = eo(seg(t, a, a + 0.5)), kFly = eio(seg(t, land - 0.05, land + 0.45));
+    const [sx, sy, r] = START[i];
+    const tx = lerp(sx, 1270, kFly), ty = lerp(sy, 470, kFly);
+    e.style.left = (tx - 200) + 'px'; e.style.top = (ty - 40 + (1 - kIn) * 40) + 'px';
+    e.style.opacity = kIn * (1 - seg(t, land + 0.25, land + 0.45));
+    e.style.transform = `rotate(${r * (1 - kFly)}deg) scale(${lerp(1, 0.55, kFly)})`; e.style.zIndex = 20;
+  });
+
+  // ---- left kinetic text
+  rise($('k_exact'), t, 39.45, 0.6, [41.0, 41.35]);
+  ['k_no1', 'k_no2', 'k_no3'].forEach((id, i) => rise($(id), t, [41.35, 42.51, 43.52][i] - 0.08, 0.45, [44.55, 44.95]));
+  rise($('k_id'), t, 45.75, 0.5, [49.9, 50.3]); rise($('k_cat'), t, 46.65, 0.5, [49.9, 50.3]); rise($('k_org'), t, 47.9, 0.5, [49.9, 50.3]);
+  ['k_id', 'k_cat'].forEach((id, i) => { const e = $(id); const dim = seg(t, [46.65, 47.9][i], [46.65, 47.9][i] + 0.3); e.style.color = `rgba(27,29,28,${1 - dim * 0.55})`; });
+  const tlk = $('k_tl'); rise(tlk, t, 50.3, 0.6, [52.35, 52.65]); tlk.style.top = '420px'; tlk.style.fontSize = '66px'; tlk.style.whiteSpace = 'normal'; tlk.style.width = '640px';
+  FEATS.forEach((f, i) => { const e = $('ft' + i); rise(e, t, f[1] - 0.15, 0.4, [59.2, 59.55], 20);
+    const on = seg(t, f[1] - 0.1, f[1] + 0.2), nxt = i < FEATS.length - 1 ? seg(t, FEATS[i + 1][1] - 0.1, FEATS[i + 1][1] + 0.2) : 0;
+    e.style.color = `rgba(27,29,28,${0.45 + 0.55 * on - 0.4 * nxt})`;
+    e.querySelector('.dot').style.background = on - nxt > 0.5 ? '#ECE6F8' : 'rgba(255,255,255,0.5)'; });
+  rise($('k_pic'), t, 59.9, 0.6, [62.0, 62.3]); rise($('k_one'), t, 62.3, 0.6);
+}
+
+function drawSearch(t) {
+  rise($('se_cap'), t, 65.65, 0.5);
+  const kb = eo(seg(t, 65.6, 66.1)); $('se_bar').style.opacity = kb; $('se_bar').style.transform = `translateY(${(1 - kb) * 30}px)`;
+  const q = 'CT scan', nch = Math.floor(clamp((t - 66.25) / 0.42) * q.length);
+  $('se_txt').textContent = q.slice(0, nch); $('se_ph').style.display = nch ? 'none' : 'inline';
+  $('se_caret').style.opacity = (Math.floor(t * 3) % 2 === 0 || (t > 66.2 && t < 66.75)) ? 1 : 0;
+  $('se_time').textContent = t > 66.8 ? '3 results · 0.4 s' : ''; $('se_time').style.opacity = seg(t, 66.8, 67.0);
+  RES.forEach((r, i) => { const k = eback(seg(t, 66.8 + i * 0.1, 67.25 + i * 0.1)); const e = $('sr' + i);
+    e.style.opacity = clamp(seg(t, 66.8 + i * 0.1, 67.0 + i * 0.1)); e.style.transform = `translateY(${(1 - k) * 40}px)`; });
+}
+function drawSixty(t) {
+  rise($('sx_a'), t, 70.72, 0.4); rise($('sx_b'), t, 71.45, 0.4);
+  const k = eo(seg(t, 70.9, 71.35)); show($('sx_n'), k, (1 - k) * 30, (1 - k) * 10, 0.94 + 0.06 * k);
+  $('sx_arc').setAttribute('stroke-dashoffset', 1797 * (1 - 0.96 * eio(seg(t, 70.75, 72.1))));
+  $('sx_ring').style.opacity = seg(t, 70.7, 70.9);
+}
+function drawEnd(t) {
+  const km = eo(seg(t, 72.45, 73.15));
+  const L = $('en_logo'); L.style.transform = `scale(${0.96 + 0.04 * eo(seg(t, 72.35, 79.5))})`;
+  show($('en_mark'), km, 0, (1 - km) * 12, 1);
+  const kw = eio(seg(t, 72.75, 73.45));
+  $('en_word').style.clipPath = `inset(0 ${(1 - kw) * 100}% 0 0)`; $('en_word').style.opacity = clamp(kw * 3);
+  const kt = eo(seg(t, 73.2, 73.8)); $('en_tag').style.opacity = kt;
+  rise($('en_pow'), t, 73.45, 0.6);
+  const kr = eio(seg(t, 74.4, 75.1)); $('en_rule').style.width = (kr * 420) + 'px'; $('en_rule').style.marginLeft = (-kr * 210) + 'px';
+  rise($('en_f'), t, 75.05, 0.55, null, 18); rise($('en_t'), t, 76.15, 0.55, null, 18);
+  $('en_f').style.display = $('en_t').style.display = 'inline-block';
+}
+function drawBrand(t) {
+  const L = $('br_logo'); L.style.transform = `scale(${0.94 + 0.08 * eo(seg(t, 26.2, 28.75))})`;
+  const km = eo(seg(t, 26.35, 27.0)); show($('br_mark'), km, 0, (1 - km) * 14, 1);
+  const kw = eio(seg(t, 26.75, 27.55)); $('br_word').style.clipPath = `inset(0 ${(1 - kw) * 100}% 0 0)`; $('br_word').style.opacity = clamp(kw * 3);
+  $('br_tag').style.opacity = eo(seg(t, 27.35, 27.9));
+  rise($('br_pow'), t, 27.55, 0.55);
+}
+function drawSupers(t) {
+  rise($('lead_a'), t, 28.95, 0.5, [32.15, 32.5]);
+  $('lead_l').style.width = (eio(seg(t, 29.2, 29.9)) * 180) + 'px'; $('lead_l').style.opacity = 1 - seg(t, 32.15, 32.5);
+  rise($('lead_b'), t, 29.3, 0.7, [32.15, 32.5]);
+  rise($('pow'), t, 32.62, 0.5, [33.75, 34.15]);
+  rise($('secchip'), t, 36.0, 0.5, [37.9, 38.25]);
+}
+
+/* ---------------- v4 scenes ---------------- */
+function homeScreen() {
+  const tile = (ic, name) => `<div class="mtile"><div class="mi">${ic}</div><b>${name}</b></div>`;
+  const ICON2 = { diet: `<svg width="22" height="22" viewBox="0 0 30 30"><path d="M8 24c0-9 6-16 16-17-1 10-8 16-16 17z" fill="#4A2B8E"/></svg>`,
+    mind: `<svg width="22" height="22" viewBox="0 0 30 30"><path d="M15 26S3 18.5 3 10.5A6 6 0 0 1 15 7a6 6 0 0 1 12 3.5C27 18.5 15 26 15 26z" fill="#4A2B8E"/></svg>`,
+    diag: `<svg width="22" height="22" viewBox="0 0 30 30"><path d="M12 4v8L5 23a2.5 2.5 0 0 0 2.2 3.6h15.6A2.5 2.5 0 0 0 25 23l-7-11V4" stroke="#4A2B8E" stroke-width="2.4" fill="none"/><path d="M8.5 19h13l3 5H5.5z" fill="#4A2B8E"/></svg>` };
+  const soon = (ic, name, i) => `<div class="mtile soon" data-soon="${i}"><div style="display:flex;justify-content:space-between;align-items:center"><div class="mi">${ic}</div><span class="badge">Soon</span></div><b>${name}</b></div>`;
+  return `<div class="screen">${STATUS(false)}
+   <div class="hdr" style="height:190px; padding:66px 24px 0"><div class="hi">Good Evening</div><div class="nm">Anita Verma</div>
+     <div style="font-size:13px;opacity:.8;margin-top:10px">Your cancer-care journey, in one place</div></div>
+   <div style="position:absolute;left:18px;right:18px;top:206px">
+     <div style="font-size:17px;font-weight:600;margin:4px 2px 10px">Your records</div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${tile(ICON.drip,'Timeline')}${tile(ICON.rx,'Reports')}${tile(ICON.lab,'Trends')}${tile(ICON.micro,'Case Summary')}</div>
+     <div style="font-size:17px;font-weight:600;margin:18px 2px 10px;display:flex;align-items:center;gap:8px">Coming soon <span class="badge">New</span></div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${soon(ICON2.diet,'Diet &amp; Nutrition',0)}${soon(ICON2.mind,'Emotional Well-being',1)}${soon(ICON2.diag,'Diagnostics',2)}</div>
+   </div>${NAV('home')}</div>`;
+}
+const V4 = new URLSearchParams(location.search).has('v4');
+if (V4) {
+  $('sn_phone').innerHTML = phoneHTML('pS', homeScreen());
+  $('sn2_phone').innerHTML = phoneHTML('pS2', homeScreen());
+}
+const SC4 = { docs: [29.85, 34.60], pow4: [34.60, 37.10], soon1: [76.95, 81.90], soonchip: [81.90, 86.40], soon2: [86.40, 89.0] };
+
+function drawDocs(t) {
+  // both doctors share the screen: Dr. Shyam Aggarwal arrives on his name, Dr. Aditya Sarin on his
+  rise($('dcap'), t, 29.9, 0.5);
+  [[0, 29.90], [1, 31.15]].forEach(([i, a]) => {
+    const c = $('dc' + i), kin = eo(seg(t, a, a + 0.6)), kout = eio(seg(t, 34.25, 34.6));
+    c.style.opacity = clamp(kin * 2) * (1 - kout);
+    c.style.transform = `translateY(${(1 - kin) * 60 - kout * 20}px)`;
+    $('di' + i).style.transform = `translateX(-50%) translateY(${(1 - eo(seg(t, a + 0.05, a + 0.8))) * 36}px) scale(${1.04 - 0.04 * eo(seg(t, a, 34.6))})`;
+    rise($('dt' + i + 'b'), t, a + 0.20, 0.6);
+    $('dr' + i).style.width = (eio(seg(t, a + 0.45, a + 1.0)) * 120) + 'px';
+    rise($('dt' + i + 'c'), t, a + 0.50, 0.5); rise($('dt' + i + 'd'), t, a + 0.65, 0.5);
+  });
+}
+function drawPow4(t) { rise($('pow4t'), t, 34.75, 0.5, [36.55, 36.95]); }
+function drawSoon1(t) {
+  const P = $('pS'), k = eo(seg(t, 76.95, 77.7));
+  phonePose(P, 1270, 548 + (1 - k) * 140, 0.97, -9 + Math.sin(t * 0.5) * 1.5, 3, 0, clamp(k * 3));
+  rise($('sn_cap'), t, 77.05, 0.5); rise($('sn_t1'), t, 77.2, 0.6); rise($('sn_t2'), t, 77.55, 0.6);
+  P.querySelectorAll('[data-soon]').forEach(e => { const i = +e.dataset.soon, a = eback(seg(t, 78.0 + i * 0.35, 78.45 + i * 0.35));
+    e.style.opacity = clamp(seg(t, 78.0 + i * 0.35, 78.2 + i * 0.35)); e.style.transform = `scale(${0.85 + 0.15 * a})`;
+    e.style.boxShadow = `0 0 0 ${4 * Math.max(0, Math.sin((t - 79.2) * 3 + i))}px rgba(107,70,193,0.18)`; });
+}
+function drawChips(t) {
+  [[0, 82.40, 83.75], [1, 83.80, 85.30], [2, 85.40, 86.40]].forEach(([i, a, b]) => {
+    const e = $('ch' + i); e.style.display = (t >= a - 0.05 && t < b) ? 'flex' : 'none'; rise(e, t, a, 0.45, null, 20); });
+}
+function drawSoon2(t) {
+  const conv = eio(seg(t, 87.15, 87.85));
+  const P = $('pS2'), kp = eo(seg(t, 86.9, 87.6));
+  phonePose(P, 960, 470, 0.70 + 0.04 * conv, 0, 0, 0, kp);
+  P.querySelectorAll('[data-soon]').forEach(e => { e.style.opacity = conv; });
+  [[0, 330], [1, 760], [2, 1190]].forEach(([i, x]) => {
+    const e = $('mc' + i), a = 86.45 + i * 0.12, k = eback(seg(t, a, a + 0.5));
+    const sx = x, sy = 380, tx = 960 - 200 + (i - 1) * 90, ty = 610 - 125;
+    e.style.left = lerp(sx, tx, conv) + 'px'; e.style.top = (lerp(sy, ty, conv) + (1 - k) * 60) + 'px';
+    e.style.opacity = clamp(seg(t, a, a + 0.3)) * (1 - seg(t, 87.35, 87.7));
+    e.style.transform = `scale(${lerp(1, 0.3, conv)})`; e.style.zIndex = 20;
+  });
+  rise($('sn_all'), t, 87.3, 0.6);
+}
+
+window.renderFrame = function (fi) {
+  const t = fi / FPS;
+  if (V4) {
+    for (const [id, [a, b]] of Object.entries(SC4)) $(id).style.display = (t >= a && t < b) ? 'block' : 'none';
+    if (t >= SC4.docs[0] && t < SC4.docs[1]) drawDocs(t);
+    if (t >= SC4.pow4[0] && t < SC4.pow4[1]) drawPow4(t);
+    if (t >= SC4.soon1[0] && t < SC4.soon1[1]) drawSoon1(t);
+    if (t >= SC4.soonchip[0] && t < SC4.soonchip[1]) drawChips(t);
+    if (t >= SC4.soon2[0] && t < SC4.soon2[1]) drawSoon2(t);
+    return true;
+  }
+  for (const [id, [a, b]] of Object.entries(SC)) $(id).style.display = (t >= a && t < b) ? 'block' : 'none';
+  if (t >= SC.prod[0] && t < SC.prod[1]) drawProd(t);
+  if (t >= SC.search[0] && t < SC.search[1]) drawSearch(t);
+  if (t >= SC.sixty[0] && t < SC.sixty[1]) drawSixty(t);
+  if (t >= SC.endc[0] && t < SC.endc[1]) drawEnd(t);
+  if (t >= SC.brand[0] && t < SC.brand[1]) drawBrand(t);
+  drawSupers(t);
+  return true;
+};
+window.READY = document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode()))).then(() => true);
+</script>
+</body>
+</html>
