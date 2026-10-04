@@ -8,7 +8,7 @@ A 40 second 16:9 promo (1920×1080, 60 fps, AAC 320k audio) in an Apple keynote 
 - **Opening:** felt piano on the opening lines.
 - **Timeline:** a marimba note as each stage tile lands, over a half-time pulse.
 - **"One patient":** a riser and lift into the full groove.
-- **Logo:** an impact and shimmer as it assembles, then a resolving Dmaj9 under the closing line.
+- **Brand:** an impact and shimmer as the wordmark rises, then a resolving Dmaj9 under the closing line.
 
 | Time | Scene | Copy |
 |---|---|---|
