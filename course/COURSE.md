@@ -593,7 +593,7 @@ Three more paying formats: chapters + clean captions for YouTube, warm testimoni
 
 **Outcome:** You can score any video with an original bed, place SFX on the right frames, add an AI voiceover and deliver a broadcast-clean mix.
 
-**Assignment:** Take any silent video (or one from Module 4) and give it a full soundtrack: music, 4+ sound effects, ducking and a −14 LUFS master.
+**Assignment:** Take any silent video (or one from the Talking-Head module) and give it a full soundtrack: music, 4+ sound effects, ducking and a −14 LUFS master.
 
 **Module resources:** R11 Sound Design Cheat Sheet, R13 Platform Export Specs & Safe Zones
 
@@ -1147,7 +1147,7 @@ A repeatable pipeline: script, AI voice, visuals per sentence, pop captions, mus
 
 - Script: hook line, 3 points, CTA. Written as spoken.
 - Save the pipeline as a one-command script → every new episode is "write script, run".
-- Batch many episodes with the Bulk skill (Module 10).
+- Batch many episodes with the Bulk skill (Bulk, Workflow & Getting Paid module).
 
 
 ---
@@ -1254,7 +1254,7 @@ The 6 portfolio pieces that cover what clients buy, and how to package them into
 4. A stylised short (clay/crayon)
 5. A "say it, it happens" VFX reel
 6. A before/after (raw vs edited)
-- Cut your best 3 seconds of each into a 30-second showreel (Module 7).
+- Cut your best 3 seconds of each into a 30-second showreel (see the Motion Graphics module).
 
 ## 10.8 Capstone: a full client-style project
 *assignment · 60 min*

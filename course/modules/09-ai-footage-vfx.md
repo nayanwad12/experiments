@@ -73,4 +73,4 @@ Prompt: Turn work/script.txt into a 60-second faceless Short: AI voice, one visu
 ### Notes
 - Script: hook line, 3 points, CTA. Written as spoken.
 - Save the pipeline as a one-command script → every new episode is "write script, run".
-- Batch many episodes with the Bulk skill (Module 10).
+- Batch many episodes with the Bulk skill (Bulk, Workflow & Getting Paid module).

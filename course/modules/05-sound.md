@@ -1,7 +1,7 @@
 # Module 5: Sound Design & Music in Code
 > Sound is half the video. Generate original, copyright-free music, sound effects and voiceovers, and mix like a pro.
 Outcome: You can score any video with an original bed, place SFX on the right frames, add an AI voiceover and deliver a broadcast-clean mix.
-Assignment: Take any silent video (or one from Module 4) and give it a full soundtrack: music, 4+ sound effects, ducking and a −14 LUFS master.
+Assignment: Take any silent video (or one from the Talking-Head module) and give it a full soundtrack: music, 4+ sound effects, ducking and a −14 LUFS master.
 Resources: R11, R13
 
 ## Why we synthesise: no copyright strikes, ever | video | 6 min

@@ -63,7 +63,7 @@ Summary: The 6 portfolio pieces that cover what clients buy, and how to package 
 4. A stylised short (clay/crayon)
 5. A "say it, it happens" VFX reel
 6. A before/after (raw vs edited)
-- Cut your best 3 seconds of each into a 30-second showreel (Module 7).
+- Cut your best 3 seconds of each into a 30-second showreel (see the Motion Graphics module).
 
 ## Capstone: a full client-style project | assignment | 60 min
 Summary: Put it all together: brief → beat table → stills → draft → final → revision → multi-platform delivery.

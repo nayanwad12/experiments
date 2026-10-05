@@ -409,7 +409,7 @@
       "title": "Sound Design & Music in Code",
       "summary": "Sound is half the video. Generate original, copyright-free music, sound effects and voiceovers, and mix like a pro.",
       "outcome": "You can score any video with an original bed, place SFX on the right frames, add an AI voiceover and deliver a broadcast-clean mix.",
-      "assignment": "Take any silent video (or one from Module 4) and give it a full soundtrack: music, 4+ sound effects, ducking and a −14 LUFS master.",
+      "assignment": "Take any silent video (or one from the Talking-Head module) and give it a full soundtrack: music, 4+ sound effects, ducking and a −14 LUFS master.",
       "resources": [
         "R11",
         "R13"
@@ -839,7 +839,7 @@
           "summary": "A repeatable pipeline: script, AI voice, visuals per sentence, pop captions, music and export.",
           "prompt": "Turn work/script.txt into a 60-second faceless Short: AI voice, one visual per sentence, pop captions, tech music bed, export for Shorts and Reels.",
           "resources": [],
-          "notes_md": "- Script: hook line, 3 points, CTA. Written as spoken.\n- Save the pipeline as a one-command script → every new episode is \"write script, run\".\n- Batch many episodes with the Bulk skill (Module 10)."
+          "notes_md": "- Script: hook line, 3 points, CTA. Written as spoken.\n- Save the pipeline as a one-command script → every new episode is \"write script, run\".\n- Batch many episodes with the Bulk skill (Bulk, Workflow & Getting Paid module)."
         }
       ]
     },
@@ -934,7 +934,7 @@
           "summary": "The 6 portfolio pieces that cover what clients buy, and how to package them into a showreel.",
           "prompt": "",
           "resources": [],
-          "notes_md": "1. A talking-head reel with pop captions\n2. A launch promo + 1:1 variant\n3. A logo reveal\n4. A stylised short (clay/crayon)\n5. A \"say it, it happens\" VFX reel\n6. A before/after (raw vs edited)\n- Cut your best 3 seconds of each into a 30-second showreel (Module 7)."
+          "notes_md": "1. A talking-head reel with pop captions\n2. A launch promo + 1:1 variant\n3. A logo reveal\n4. A stylised short (clay/crayon)\n5. A \"say it, it happens\" VFX reel\n6. A before/after (raw vs edited)\n- Cut your best 3 seconds of each into a 30-second showreel (see the Motion Graphics module)."
         },
         {
           "number": "10.8",
