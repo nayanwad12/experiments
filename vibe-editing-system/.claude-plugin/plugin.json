@@ -1,0 +1,7 @@
+{
+  "name": "vibe-editing-system",
+  "version": "1.0.0",
+  "description": "Ideabro Studio Vibe Editing System: make any video by directing Claude in plain language. 9 skills (start-here + talking-head, launch/ads, motion graphics, stylised animation, VFX, AI footage, audio, bulk) with a tested Python/ffmpeg toolkit.",
+  "author": { "name": "Ideabro Studio" },
+  "keywords": ["video", "video-editing", "vibe-editing", "motion-graphics", "captions", "animation", "ideabro"]
+}

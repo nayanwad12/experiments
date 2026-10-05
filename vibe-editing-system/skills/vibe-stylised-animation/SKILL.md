@@ -1,0 +1,108 @@
+---
+name: vibe-stylised-animation
+description: Ideabro Studio Vibe Editing System - stylised and handmade-looking animation generated in code with no AI images. Use when the user wants a claymation / plasticine short, crayon or hand-drawn explainer, paper-cut or stop-motion style promo, whiteboard or doodle video, cartoon characters or a mascot (blinking, talking, bouncing), kids' stories or educational animation, a narrated animated story, or a procedural / generative art film. Triggers on "clay", "claymation", "crayon", "hand-drawn", "doodle", "whiteboard animation", "paper cut", "stop motion", "cartoon", "mascot", "character animation", "kids video", "animated story", "generative art film".
+---
+
+# Stylised Animation & Characters
+*Ideabro Studio · Vibe Editing System — direct the vibe, let AI do the keyframes.*
+
+Handmade looks, made entirely in code: every frame, texture and sound is generated, so there are no stock assets and no
+AI images, and you own everything. The look comes from three tricks: **held drawings** (animate on twos), **boil**
+(outlines re-wobble each drawing) and **texture** (paper, clay, crayon grain). Then good cartoon timing:
+squash & stretch, anticipation, overshoot.
+
+Paths below are relative to **this skill's folder**: `scripts/`, `reference/`, `templates/`.
+
+## What you can make here
+
+| medium / type | recipe |
+|---|---|
+| **Claymation** | 24 fps, drawings at 12/s, `blob(style="clay")`, boil 2–3 %, cast shadows, miniature-set depth blur, flicker |
+| **Crayon / hand-drawn** | paper texture, `hatch_fill` + `doodle_line` (drawn twice), boil, things sketch on (`draw_on`) then colour in |
+| **Paper-cut / stop-motion** | flat shapes with `style="paper"` drop shadows, 12 fps steps, torn-edge wipes, layered parallax |
+| **Whiteboard / doodle explainer** | white bg, marker `doodle_line` drawn on with a hand/pen following the stroke end, voiceover |
+| **Cartoon character / mascot** | blob or shape body + `eyes()` (blink, look-at) + `mouth()` driven by the voice |
+| **Kids' story / educational** | narrated (tts.py), bright palette, big readable words, playful bed |
+| **Generative / procedural film** | particles, trails, growth, flow fields from math; one continuous idea, a strong final reveal |
+
+## Step 0: Setup (first time in a project)
+
+1. `python3 scripts/doctor.py --kit animation --install` (Windows: `py`. If pip refuses, see `reference/troubleshooting.md`.)
+2. `python3 scripts/new_project.py <name> --kind animation --format 16:9 --fps 24 --duration 40`
+   Work in the new folder. Tools are in `vibe/`, including `toon_kit.py` (handmade looks). `scene.py`/`timeline.py` = starter.
+
+## Step 1: Brief → story
+
+Ask (defaults in brackets): the story or message in one sentence *(required)* · medium *(clay / crayon / paper / doodle)*
+· characters (who, personality, colours) · length + format *(40 s, 16:9)* · narration, dialogue or wordless?
+*(wordless + music)* · brand + end card *(Ideabro: "by Ideabro Studio")*.
+
+Then write a **shot list** in beat-table form: `time | shot | action / acting beat | sound`. A short animation is
+**4–6 shots** with a clear arc: **setup → problem → turn (the idea/magic) → payoff → end card**. Give each shot ONE
+acting beat (look, react, act). Gags need a set-up, a pause, then the hit, and the hit lands on a beat.
+
+## Step 2: Build the world
+
+```python
+import sys; sys.path.insert(0, "vibe")
+from motion_kit import *
+from toon_kit import *
+
+PAPER = paper_texture(TL.W, TL.H, "#F2EEE3")       # build textures ONCE at module level (they're slow)
+
+def draw(c, t):
+    ts = stepped(t, 12)                             # ALL motion uses ts, so it moves in held drawings
+    c.drawImage(PAPER, 0, 0)
+    ...
+```
+- **Clay:** `blob(c, x, y, r, rgb(col), ts, seed=i, style="clay", squash=sx)`. Build characters from several blobs
+  (body, head, ears), each with its own seed. Add camera "post": per-drawing exposure flicker (`brightness ± 2 %` seeded by
+  `boil_seed(ts)`), a vignette, and a gentle blur on background layers for a miniature-set feel.
+- **Crayon:** shapes = `smooth_path(wobble_points(pts, amp, ts))`, filled with `hatch_fill(c, path, col, ts)` and outlined
+  with `doodle_line(…, passes=2)`. Sketch-on: `c.drawPath(draw_on(path, k), paint(col, stroke=6))`, then fill.
+- **Paper-cut:** flat colours, `style="paper"` shadows, layers at different depths move at different speeds
+  (parallax); wipes are torn-paper shapes sliding across.
+- **Text** in the medium: use rounded/hand fonts (`python3 vibe/fonts.py "Luckiest Guy" "Gochi Hand" "Caveat Brush"`),
+  add a slight per-drawing rotation/offset (`noise1(boil_seed(ts))`) so letters boil too.
+
+## Step 3: Animate characters (the twelve principles, the practical ones)
+
+| principle | how in code |
+|---|---|
+| squash & stretch | `sx, sy = squash_stretch(velocity)`, scale around the contact point (feet), keep volume |
+| anticipation | before a jump/throw: 0.15–0.3 s move the opposite way and squash |
+| overshoot & settle | `ease_out_back` / `spring(t)` on arrivals |
+| arcs | move along curves (`sin`/bezier), never straight lines for living things |
+| secondary action | ears/tail follow 2–4 drawings late (`lerp` toward the body's previous position) |
+| timing | 1–2 drawings for fast actions, holds of 0.5–1 s for reactions to read |
+| eyes | `eyes(c, x, y, r, t, look=(dx, dy))`. Eyes look at what matters a beat before the body moves |
+| talking | `MOUTH = mouth_open_curve("work/vo_hero.wav", fps)` → `mouth(c, x, y, w, MOUTH[frame])` |
+
+Voices/narration: `python3 vibe/tts.py --script work/script.txt` (one line per take, `id | voice | speed | text`), then
+`python3 vibe/transcribe.py work/vo.wav` for word cues, so every pop/scribble lands on its word. Kids: `af_heart`/`am_puck`,
+Hindi: `hf_alpha`/`hm_omega`.
+
+## Step 4: Sound
+
+Cartoon sound sells the motion. `audio_kit.py` gives pop, boing-like `pop`/`swish`, whoosh, sparkle, ding, impact,
+typing, click. Score with `bed --mood playful` (or `chill` for cozy, `cinematic` for epic). Put every SFX on the exact
+contact frame (feet landing, blink can be silent, hit = impact + shake). Mix via `work/cues.json` (`reference/sound-design.md`).
+
+## Step 5: Render loop
+
+`python3 scene.py stills …` for each shot's key pose → READ them → fix → `scene.py draft` (check timing/acting) →
+`scene.py render` → `python3 vibe/stills.py out/<name>.mp4 --count 12` → `export.py --preset youtube` (or reels).
+Textured frames are slower: keep textures cached, and render drafts.
+
+## Quality bar
+
+- [ ] Story readable with the sound off (clear poses, silhouettes, one action at a time)
+- [ ] Animation on twos everywhere (no smooth 24-fps sliding for handmade looks, except camera moves if desired)
+- [ ] Boil subtle (2–3 % of size) and consistent across characters
+- [ ] Every hit/landing has a sound on the exact frame
+- [ ] Characters on-model in every shot (same colours, proportions, eye size)
+- [ ] End card holds ≥ 2 s; credit as agreed (e.g. "by Ideabro Studio")
+
+## Reference
+`reference/motion-principles.md` · `reference/foundations.md` · `reference/brand-kit.md` · `reference/sound-design.md` ·
+`reference/export-specs.md` · `reference/troubleshooting.md`
