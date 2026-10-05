@@ -1,0 +1,17 @@
+{
+  "name": "ideabro-studio",
+  "owner": {
+    "name": "Ideabro Studio"
+  },
+  "metadata": {
+    "description": "Ideabro Studio: the Vibe Editing System skills for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "vibe-editing-system",
+      "source": "./vibe-editing-system",
+      "description": "Ideabro Studio Vibe Editing System: direct the vibe, let AI do the keyframes.",
+      "version": "1.0.0"
+    }
+  ]
+}

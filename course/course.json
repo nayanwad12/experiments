@@ -1,0 +1,1128 @@
+{
+  "title": "Vibe Editing System",
+  "by": "Ideabro Studio",
+  "tagline": "Direct the vibe. Let AI do the keyframes.",
+  "description": "Make reels, ads, motion graphics, animation, VFX, AI films, soundtracks and bulk personalised videos by directing AI in plain language. No timeline, no keyframes.",
+  "modules": [
+    {
+      "number": 1,
+      "title": "Getting Started",
+      "summary": "From zero to your first AI-edited video in one sitting. Install the tools, understand the Vibe Loop, and ship a 30-second edit today.",
+      "outcome": "You have Claude Code + the Vibe Editing Skills installed and a finished 30-second video exported for Reels.",
+      "assignment": "Make a 30-second edit of any clip on your phone using only prompts. Post the before/after in the community with the hashtag #MyFirstVibeEdit.",
+      "resources": [
+        "R01",
+        "R02",
+        "R03",
+        "R04"
+      ],
+      "lessons": [
+        {
+          "number": "1.1",
+          "title": "Welcome: what Vibe Editing actually is",
+          "type": "video",
+          "duration_min": 6,
+          "summary": "The new way to edit: you direct in plain words, AI builds the edit in code. See real before/afters made with this exact system.",
+          "prompt": "Explain what you can do for me as my video editor, in 5 bullet points, then show me the menu of video types I can make.",
+          "resources": [],
+          "notes_md": "- **Vibe Editing = you are the director, AI is the editor.** You describe the vibe (\"warm, punchy, a little dreamy\") and the AI writes and runs the edit.\n- Nothing is dragged on a timeline. Every cut, caption, animation and sound is a line of code, so changes are instant: \"make the title land on the beat\" is one sentence.\n- What you'll be able to make by the end: reels, ads, motion graphics, animations, VFX, AI films, soundtracks and hundreds of personalised videos.\n- What you still bring: taste, the story, the footage, and the final yes. **Taste is the new skill.**\n- Mindset for this course: *don't learn buttons, learn to direct.*"
+        },
+        {
+          "number": "1.2",
+          "title": "The toolkit: Claude Code, Python, ffmpeg (and why no timeline)",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "A plain-English tour of the 3 tools behind every video in this course and what each one does for you.",
+          "prompt": "Check my computer for everything Vibe Editing needs and tell me what's missing in plain English.",
+          "resources": [],
+          "notes_md": "- **Claude Code**: the AI that reads your request, writes the editing code, runs it, and checks the result. Works in the terminal, desktop app or VS Code.\n- **Python**: the language the edits are written in. You will *never* have to write it yourself.\n- **ffmpeg**: the engine that actually cuts, encodes and exports video. Installed automatically.\n- **The Skills Pack**: Ideabro's ready-made playbooks that tell Claude exactly how to make each type of video professionally.\n- Why code instead of a timeline: repeatable, versioned, instantly editable, works for 1 video or 1,000."
+        },
+        {
+          "number": "1.3",
+          "title": "Install everything in 15 minutes",
+          "type": "video",
+          "duration_min": 14,
+          "summary": "Step-by-step install on Mac and Windows: Claude Code, Python, and the Vibe Editing Skills Pack, with a live troubleshooting walk-through.",
+          "prompt": "Let's make a video with the Vibe Editing System. Run the setup check and install anything missing.",
+          "resources": [
+            "R01",
+            "R02"
+          ],
+          "notes_md": "1. Install Claude Code (desktop app or `npm install -g @anthropic-ai/claude-code`).\n2. Install Python 3.10+ from python.org (Windows: tick **\"Add Python to PATH\"**).\n3. Install the Skills Pack: unzip into `~/.claude/skills/` (Windows: `%USERPROFILE%\\.claude\\skills\\`), or install as a plugin.\n4. Open Claude Code in an empty folder and say: *\"Let's make a video with the Vibe Editing System.\"*\n5. Claude runs `doctor.py`, installs what's missing, and shows test frames. **If you see the branded test frames, you're ready.**\n- Windows tip: use `py` where guides say `python3`.\n- \"Externally managed environment\" error → ask Claude: *\"set up a virtual environment and re-run the doctor.\"*"
+        },
+        {
+          "number": "1.4",
+          "title": "Your first edit in 10 minutes",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Live: one phone clip in, a captioned and music-backed reel out. Copy the exact prompt and do it alongside.",
+          "prompt": "Make a 30-second Instagram reel from raw/take1.mp4. Cut the pauses and ums, add big pop captions, upbeat music under my voice, and export for Reels.",
+          "resources": [],
+          "notes_md": "- Drop your clip into the project's `raw/` folder (never edit originals; the system won't either).\n- Claude will ask a few quick questions. Answering **\"defaults are fine\"** is allowed.\n- Watch for the **contact sheet**: a grid of frames Claude shows you before calling anything done.\n- Your files land in `out/`. The `_reels.mp4` version is ready to upload.\n- 🎯 Win condition: a finished video you didn't touch a timeline for."
+        },
+        {
+          "number": "1.5",
+          "title": "The Vibe Loop: Brief → Stills → Draft → Final",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "The 7-step loop every professional Vibe Editor follows, and why it saves you hours of revisions.",
+          "prompt": "",
+          "resources": [
+            "R03"
+          ],
+          "notes_md": "- **Brief:** say what, who it's for, where it plays, the vibe.\n- **Beat table:** a time-by-time plan (what we see / hear / read). Approve it *before* rendering.\n- **Build:** AI writes the edit; all timings live in one file.\n- **Stills:** check frames in seconds. Fix layout here, not after a 10-minute render.\n- **Draft:** fast low-res version for timing.\n- **Final:** full quality, checked again.\n- **Export:** one command → every platform.\n- Rule: **never approve what you haven't seen as stills.**"
+        },
+        {
+          "number": "1.6",
+          "title": "Your project folder & versioning (your undo button)",
+          "type": "reading",
+          "duration_min": 6,
+          "summary": "How every project is organised, where your files go, and how versions keep you safe with clients.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "| folder | what lives there |\n|---|---|\n| `raw/` | your originals (read-only) |\n| `assets/` | logos, cut-outs, licensed music |\n| `work/` | drafts, transcripts, intermediate files |\n| `out/` | finished videos + review stills |\n| `brief.md` | the plan |\n| `brand.json` | colours + fonts |\n| `timeline.py` | every timing in one place |\n- Name deliverables `name_v1.mp4`, `name_v2.mp4`. Never overwrite a version a client has seen.\n- Ask Claude to *\"log this revision in work/revisions.md\"* so you always know what changed."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Vibe Editing Skills Pack (Bonus)",
+      "summary": "9 ready-made Claude skills that turn a sentence into a finished video. Install once, use in every module after this.",
+      "outcome": "All 9 skills installed and tested. You know which skill to use for any video a client asks for.",
+      "assignment": "Make one 10–20 second video with three different skills (e.g. a talking-head clip, a logo reveal and an AI voiceover) and post all three.",
+      "resources": [
+        "R02",
+        "R01",
+        "R04"
+      ],
+      "lessons": [
+        {
+          "number": "2.1",
+          "title": "What skills are (and why they're a cheat code)",
+          "type": "video",
+          "duration_min": 5,
+          "summary": "Skills are expert playbooks for Claude. Here's how they turn \"make me a reel\" into a pro-level edit, every time.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- A **skill** is a folder of instructions + tools Claude loads automatically when your request matches it.\n- Without skills, AI guesses. With skills, it follows **Ideabro's production playbook**: brief, beat table, stills check, mixing rules, export specs.\n- Every skill is self-contained: scripts, guides and templates included. Install one or all nine.\n- You don't call them by name (but you can). Just describe the video."
+        },
+        {
+          "number": "2.2",
+          "title": "Install in 5 minutes (zip and plugin methods)",
+          "type": "video",
+          "duration_min": 7,
+          "summary": "Two ways to install: unzip into your skills folder, or one command as a Claude Code plugin.",
+          "prompt": "",
+          "resources": [
+            "R02",
+            "R01"
+          ],
+          "notes_md": "**Zip method**\n1. Download `vibe-editing-system-all.zip` from Course Resources.\n2. Unzip so each skill folder sits in `~/.claude/skills/` (Windows: `%USERPROFILE%\\.claude\\skills\\`).\n3. Restart Claude Code → type `/skills` → you should see 9 `vibe-…` skills.\n\n**Plugin method** (if your instructor shares the marketplace link)\n```\n/plugin marketplace add <owner>/<repo>\n/plugin install vibe-editing-system@ideabro-studio\n```\n- Update later with `/plugin update` (plugin) or by replacing the folders (zip)."
+        },
+        {
+          "number": "2.3",
+          "title": "Your first video with the Start Here skill",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Let the Start Here skill pick the right playbook, set up your project and show test frames, all in one conversation.",
+          "prompt": "Let's make a video with the Vibe Editing System. I want a 20-second promo for my Instagram page @myhandle. Use defaults.",
+          "resources": [],
+          "notes_md": "- The Start Here skill (`vibe-editing-system`) shows a menu of 8 video types and asks what you have (footage? logo? voice?).\n- It runs setup, creates the project and renders branded test frames in ~1 minute.\n- Then it switches to the matching playbook automatically.\n- Say **\"teach me as you go\"** and it explains every step. Perfect for learning."
+        },
+        {
+          "number": "2.4",
+          "title": "Skill: Talking-Head & Creator Videos",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Reels from raw takes, podcast clips, YouTube edits, testimonials and course lessons, cut word-accurately.",
+          "prompt": "Use vibe-talking-head: make a 45-second reel from raw/take1.mp4, put my strongest line first as the hook, pop captions, punch-in jump cuts.",
+          "resources": [],
+          "notes_md": "- Cuts silences, ums and retakes using a word-level transcript.\n- Moves your best line to the front as the **hook**.\n- Captions: pop / karaoke / clean / minimal, in your brand colours.\n- Adds lower-thirds, stickers and music ducked under your voice."
+        },
+        {
+          "number": "2.5",
+          "title": "Skill: Launch Videos & Ads",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Promos, product launches, social ads with variants, app demos rebuilt as crisp graphics.",
+          "prompt": "Use vibe-launch-ads: 25-second launch reel for my course \"Vibe Editing\", bold and punchy, end card ENROLL NOW, also give me 1:1 and 4:5 versions.",
+          "resources": [],
+          "notes_md": "- Follows the launch formula: Hook → Problem → Reveal → Proof → CTA.\n- Everything locked to the music's beat.\n- Variants (hooks, formats, languages) are re-renders, not re-edits."
+        },
+        {
+          "number": "2.6",
+          "title": "Skill: Motion Graphics",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Showreels, explainers, kinetic typography, logo reveals, infographics and transparent lower-third packs.",
+          "prompt": "Use vibe-motion-graphics: a 6-second logo reveal for assets/logo.png with an impact on the beat and a sparkle.",
+          "resources": [],
+          "notes_md": "- Every frame is generated from code, so it's razor sharp at any size.\n- Export **transparent packs** (ProRes 4444) to use in Premiere, CapCut or DaVinci.\n- Style frames first, animation second."
+        },
+        {
+          "number": "2.7",
+          "title": "Skill: Stylised Animation",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Claymation, crayon, paper-cut, doodle and talking cartoon mascots with no AI images.",
+          "prompt": "Use vibe-stylised-animation: a 20-second claymation short about a sheep who discovers vibe editing at 2am. Wordless, playful music.",
+          "resources": [],
+          "notes_md": "- Handmade feel from 3 tricks: **held drawings, boil, texture**.\n- Characters blink, look and lip-sync to the voice automatically."
+        },
+        {
+          "number": "2.8",
+          "title": "Skill: VFX & Editing Magic",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Background swaps, text behind you, layer splits, tracking, cinematic looks and slow motion.",
+          "prompt": "Use vibe-vfx: put the word VIBE in huge lime letters behind me in raw/take1.mp4, appearing when I say \"vibe\".",
+          "resources": [],
+          "notes_md": "- Person cut-outs (mattes) in one command.\n- Effects start on the exact word you speak.\n- Honest feasibility check before promising a client an effect."
+        },
+        {
+          "number": "2.9",
+          "title": "Skill: AI Footage → Films",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Turn Veo/Sora/Kling clips into a film that doesn't look AI, plus faceless channel episodes.",
+          "prompt": "Use vibe-ai-footage: scan the clips in raw/, tell me which are usable, then cut a 60-second brand film to my voiceover raw/vo.mp3.",
+          "resources": [],
+          "notes_md": "- Scans every clip for morphs, garbled text and popping objects.\n- Retimes shots to land on the narration.\n- One grade + grain + sound design so it stops looking like AI."
+        },
+        {
+          "number": "2.10",
+          "title": "Skill: Audio, Music & Voiceover",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Original copyright-free music, 14 sound effects, AI voiceover (incl. Hindi), audiograms and visualisers.",
+          "prompt": "Use vibe-audio-videos: make a chill 30-second music bed and a Hindi AI voiceover of my script in work/script.txt.",
+          "resources": [],
+          "notes_md": "- 7 music moods: upbeat, hype, tech, corporate, chill, cinematic, playful.\n- Auto-ducking: music dips when someone talks.\n- Final mix hits platform loudness (−14 LUFS) automatically."
+        },
+        {
+          "number": "2.11",
+          "title": "Skill: Bulk & Automated Videos",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "100 personalised videos from a spreadsheet, every format in one go, multi-language versions.",
+          "prompt": "Use vibe-bulk-videos: make a personalised welcome video for every row in students.csv using their first_name.",
+          "resources": [],
+          "notes_md": "- Build one hero template → test 3 rows → render the rest.\n- Long names auto-fit. Non-English names supported with the right fonts.\n- A report shows every video that rendered (and any that failed)."
+        },
+        {
+          "number": "2.12",
+          "title": "Updates & what's new",
+          "type": "reading",
+          "duration_min": 3,
+          "summary": "Where new skill versions are announced and how to update in 1 minute.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- New versions are announced in the community and added to Course Resources.\n- **Zip install:** delete the old `vibe-…` folders and unzip the new ones.\n- **Plugin install:** run `/plugin update`.\n- Changelog\n  - **v1.0**: 9 skills, 20 tools, Ideabro house style, 7 music moods, 14 SFX, 4 caption styles."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "The Director's Brief",
+      "summary": "The skill that separates \"AI slop\" from professional work: telling the AI exactly what you want, in words it can execute.",
+      "outcome": "You can write a brief and a beat table that gets the edit right on the first render.",
+      "assignment": "Write a full brief + beat table for a 25-second promo of your own (or a dream client's) product. Share it for feedback before you render.",
+      "resources": [
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09"
+      ],
+      "lessons": [
+        {
+          "number": "3.1",
+          "title": "Anatomy of a great brief",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "The 7 decisions every video needs. Make them up front and revisions drop by half.",
+          "prompt": "",
+          "resources": [
+            "R05"
+          ],
+          "notes_md": "1. **Goal**: what should the viewer think, feel or do?\n2. **Audience**: who exactly, and where are they watching?\n3. **Platform + format**: Reels 9:16? YouTube 16:9? Both?\n4. **Length**: target and hard limit.\n5. **Message**: hook, max 3 points, one CTA.\n6. **Vibe**: 3 words + references.\n7. **Brand**: colours, fonts, logo, handle.\n- Template prompt: *\"Here's my brief: [paste]. Ask me anything missing in one message, with defaults.\"*"
+        },
+        {
+          "number": "3.2",
+          "title": "Beat tables: plan every second",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "The pro planning tool: a time-by-time table of what we see, hear and read. Get it approved before you render.",
+          "prompt": "Draft a beat table for this video with columns time | what we see | what we hear | on-screen text. Keep cuts on the beat.",
+          "resources": [
+            "R06"
+          ],
+          "notes_md": "| time | picture | sound | text |\n|---|---|---|---|\n| 0.0–2.0 | face close-up, punch-in | impact | STOP SCROLLING |\n| 2.0–6.0 | problem montage | whoosh + bed | HOURS PER REEL |\n- Every row = one idea. If a row has two ideas, split it.\n- Approving a beat table takes 2 minutes. Re-rendering takes 10."
+        },
+        {
+          "number": "3.3",
+          "title": "Speaking \"vibe\": style vocabulary",
+          "type": "video",
+          "duration_min": 11,
+          "summary": "Translate feelings into instructions: what \"premium\", \"punchy\", \"dreamy\" and \"cinematic\" mean technically.",
+          "prompt": "",
+          "resources": [
+            "R07"
+          ],
+          "notes_md": "| you say | the AI does |\n|---|---|\n| punchy | hard cuts on beats, slams, impacts, 0.2–0.4 s moves |\n| premium | slow moves, lots of space, serif titles, muted palette |\n| playful | bounce/overshoot, bright colours, pops, glockenspiel |\n| cinematic | letterbox, teal-orange grade, slow push-ins, drones |\n| dreamy | soft focus, glow, slow fades, pastel, chill bed |\n| techy | mono fonts, grids, glitch, scan lines, tech bed |\n- Combine 2–3 words max. Contradictions (\"calm but frantic\") confuse every editor, human or AI."
+        },
+        {
+          "number": "3.4",
+          "title": "References & brand kits",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "How to describe a reference video so the AI copies the *feel*, not the content, and how to set up a brand in one file.",
+          "prompt": "",
+          "resources": [
+            "R15"
+          ],
+          "notes_md": "- Describe references as: **pace, type, colour, motion, sound**. E.g. *\"pace like a MrBeast intro, type like Apple keynotes.\"*\n- `brand.json` holds colours + fonts. Swap it and every video re-skins.\n- No brand? The **Ideabro house style** is the default: ink, paper, lime."
+        },
+        {
+          "number": "3.5",
+          "title": "Feedback that works",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "The phrasing that gets a fix in one round: timestamps, specifics, and one change at a time.",
+          "prompt": "At 0:04.2 the title lands late. Put it on the beat. Captions one size smaller and 10% higher.",
+          "resources": [
+            "R08"
+          ],
+          "notes_md": "- ❌ \"Make it better\" → ✅ \"The hook needs more energy: faster cut at 0:01 and an impact sound.\"\n- Always include **where** (timestamp), **what** (element), **how** (direction).\n- Batch small notes into one message; send big direction changes alone."
+        },
+        {
+          "number": "3.6",
+          "title": "Reviewing with stills & contact sheets",
+          "type": "video",
+          "duration_min": 7,
+          "summary": "How to review a 60-second video in 10 seconds using contact sheets, and what to look for.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Ask: *\"Give me a contact sheet of the final with 12 frames.\"*\n- Check: text inside safe zones, no typos, faces not covered, brand colours, first frame strong.\n- Approve stills → then watch the full video once for timing and sound."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Talking-Head Editing",
+      "summary": "The money module. Raw takes into scroll-stopping reels, podcast clips and YouTube videos: the edits clients pay for every week.",
+      "outcome": "You can turn any talking-head recording into a tight, captioned, music-backed reel and a YouTube edit.",
+      "assignment": "Record a 2–3 minute take about anything you know well. Deliver a 45-second reel (9:16) and a clean 16:9 cut with subtitles.",
+      "resources": [
+        "R10",
+        "R09",
+        "R11",
+        "R13"
+      ],
+      "lessons": [
+        {
+          "number": "4.1",
+          "title": "Transcribe: every word, timestamped",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "How Whisper turns speech into word-level timestamps, the foundation of every precise talking-head edit.",
+          "prompt": "Transcribe raw/take1.mp4. My name is Priya Sharma and my brand is Ideabro, so spell those right.",
+          "resources": [],
+          "notes_md": "- Runs locally and free. First run downloads the model once.\n- Give names and jargon up front (\"--prompt\") so they're spelled right.\n- Read `work/transcript.txt`. That's your paper edit. Fix spellings before captions."
+        },
+        {
+          "number": "4.2",
+          "title": "Story edit: find the hook, kill the retakes",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Edit from the transcript, not the timeline: pick the hook, drop retakes, tighten tangents, end on the payoff.",
+          "prompt": "Read the transcript. Suggest the strongest hook line, list retakes to remove, and propose a 45-second cut. Don't render yet.",
+          "resources": [],
+          "notes_md": "- **Hook** = bold claim, surprising number, question or result. It goes in the first 2 seconds, even if you said it at minute 2.\n- **Retakes**: keep the *last complete* version of a repeated sentence.\n- Cut \"so, um, hey guys\" intros. Start mid-energy.\n- End on the payoff or CTA. Cut everything after."
+        },
+        {
+          "number": "4.3",
+          "title": "Cut dead air, ums & retakes",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Word-accurate silence cutting with natural breathing room, and how to tune pace for Reels vs YouTube.",
+          "prompt": "Cut the silences and filler words. Snappy social pace. Move my hook to the front and remove the retake at 12–15 seconds.",
+          "resources": [],
+          "notes_md": "| pace | gap setting | use for |\n|---|---|---|\n| frantic | 0.25 s | hype reels |\n| snappy | 0.35 s | Reels/TikTok (default) |\n| natural | 0.5 s | YouTube, testimonials |\n- Words keep a little padding so nothing gets clipped mid-syllable."
+        },
+        {
+          "number": "4.4",
+          "title": "Jump cuts & punch-in zooms",
+          "type": "video",
+          "duration_min": 7,
+          "summary": "The classic creator look: zoom 8–15% on every other cut, centred on your face.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Punch-ins hide jump cuts and add energy.\n- 1.08–1.12 = subtle, 1.15+ = aggressive.\n- Anchor the zoom on the face (usually ~38% from the top). Check stills so the head isn't cropped."
+        },
+        {
+          "number": "4.5",
+          "title": "Animated captions that people actually read",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Pop, karaoke, clean and minimal styles: when to use each, sizing, safe zones and emphasis words.",
+          "prompt": "Add pop captions in my brand colours, highlight the words \"free\", \"secret\" and \"10x\", and keep them above the bottom 420 pixels.",
+          "resources": [
+            "R10"
+          ],
+          "notes_md": "- Most social video is watched with the sound off. **Captions are not optional.**\n- **Pop**: 1–3 big words, active word highlighted (Reels/TikTok).\n- **Karaoke**: line fills as spoken (lyrics, quotes).\n- **Clean**: sentence subtitles on a soft box (YouTube, interviews).\n- **Minimal**: small outlined (cinematic, brand films).\n- Never cover the mouth or eyes. Also deliver the `.srt` file for YouTube/LinkedIn."
+        },
+        {
+          "number": "4.6",
+          "title": "Lower-thirds, B-roll & stickers",
+          "type": "video",
+          "duration_min": 11,
+          "summary": "Graphics that sit on top of your footage: name titles, emoji pops, progress bars and CTA cards, timed to your words.",
+          "prompt": "Add a lower-third with my name and title in the first 3 seconds, a 🔥 sticker that pops when I say \"money\", and a CTA card at the end.",
+          "resources": [],
+          "notes_md": "- Graphics render as a **transparent overlay** and are laid on top, so long videos stay fast.\n- Time every graphic to a word in the transcript.\n- One graphic at a time. Clutter kills retention."
+        },
+        {
+          "number": "4.7",
+          "title": "Podcast → 5 viral clips",
+          "type": "video",
+          "duration_min": 13,
+          "summary": "Find the best self-contained moments in a long recording, reframe to vertical, caption and export a batch.",
+          "prompt": "Here's a 40-minute podcast in raw/. Find the 5 best 30–60 second clips, give me a table with timestamps, title and hook line, then render the ones I pick.",
+          "resources": [],
+          "notes_md": "- A good clip: strong first line, makes sense alone, has emotion or a useful insight, ≤ 60 s.\n- Two-person podcasts: crop on whoever's speaking, or use a blurred-background vertical.\n- Batch export: Reels + Shorts + TikTok in one command."
+        },
+        {
+          "number": "4.8",
+          "title": "YouTube long-form, testimonials & course lessons",
+          "type": "video",
+          "duration_min": 14,
+          "summary": "Three more paying formats: chapters + clean captions for YouTube, warm testimonials, and screen + face-cam lessons.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- **YouTube:** natural pace, punch-in every 5–10 s, chapters from the transcript, subtitles file, graphic every 20–40 s.\n- **Testimonial:** gentle cuts, warm grade, name lower-third, chill bed at low volume.\n- **Course lesson:** screen recording + round face-cam bubble, zoom into the action, callouts on key clicks."
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Sound Design & Music in Code",
+      "summary": "Sound is half the video. Generate original, copyright-free music, sound effects and voiceovers, and mix like a pro.",
+      "outcome": "You can score any video with an original bed, place SFX on the right frames, add an AI voiceover and deliver a broadcast-clean mix.",
+      "assignment": "Take any silent video (or one from the Talking-Head module) and give it a full soundtrack: music, 4+ sound effects, ducking and a −14 LUFS master.",
+      "resources": [
+        "R11",
+        "R13"
+      ],
+      "lessons": [
+        {
+          "number": "5.1",
+          "title": "Why we synthesise: no copyright strikes, ever",
+          "type": "video",
+          "duration_min": 6,
+          "summary": "Why using trending audio in client work is risky, and how generated music solves it forever.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Music from YouTube/Spotify/TikTok libraries in client deliverables = Content ID claims, muted videos, angry clients.\n- The Skills Pack *generates* original music and SFX in code, so they're yours to use commercially.\n- Client has a licensed track? Use it, keep the licence note in the project."
+        },
+        {
+          "number": "5.2",
+          "title": "Music moods, BPM & the beat grid",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "7 moods, how tempo shapes energy, and the simple math that makes every cut land on the beat.",
+          "prompt": "Make a 30-second hype music bed at 128 BPM and plan my cuts on the bar lines.",
+          "resources": [
+            "R11"
+          ],
+          "notes_md": "| mood | BPM | use for |\n|---|---|---|\n| upbeat | 118 | creators, tutorials |\n| hype | 128 | ads, reveals |\n| tech | 124 | SaaS, AI |\n| corporate | 110 | brand, LinkedIn |\n| chill | 84 | vlogs, calm talking heads |\n| cinematic | 72 | brand films, trailers |\n| playful | 120 | kids, food, fun |\n- **beat = 60 ÷ BPM.** At 128 BPM: 1 beat = 0.469 s, 1 bar = 1.875 s, 30 s = 16 bars.\n- Cut on bars, accent on beats."
+        },
+        {
+          "number": "5.3",
+          "title": "The SFX vocabulary",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "14 sound effects and exactly when to use each so your edits feel expensive.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- **Whoosh**: transitions (start 0.3 s *before* the cut).\n- **Pop**: text and stickers appearing.\n- **Impact / bass drop**: hooks, reveals, title slams.\n- **Riser**: build into the big moment.\n- **Click / typing**: UI, prompts.\n- **Sparkle / ding**: magic, success.\n- 3–6 accents per 30 s. More = noise."
+        },
+        {
+          "number": "5.4",
+          "title": "AI voiceover (English, Hindi & more)",
+          "type": "video",
+          "duration_min": 11,
+          "summary": "Natural local AI voices for explainers, ads and faceless content, line by line, with timings.",
+          "prompt": "Turn work/script.txt into a voiceover with a warm female voice at normal speed, then give me word timings.",
+          "resources": [],
+          "notes_md": "- Write as people speak: short sentences, numbers in words, acronyms spelled out (\"A.I.\").\n- One line per take, so you can regenerate a single line without redoing everything.\n- Hindi voices included. Always have a native speaker listen once."
+        },
+        {
+          "number": "5.5",
+          "title": "Mixing: ducking, levels & loudness",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Voice on top, music under, SFX accents, and a final master at platform loudness. All automatic, once you know the rules.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "| element | level |\n|---|---|\n| voice | 0 dB (reference) |\n| music under voice | −8 to −12 dB, ducked 10 dB while speaking |\n| SFX | −6 to −12 dB (impacts up to −3) |\n| final master | −14 LUFS social, −16 LUFS podcast/web |\n- Listen on phone speakers *and* headphones before delivery."
+        },
+        {
+          "number": "5.6",
+          "title": "Fix bad audio",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Clean up noisy phone audio: high-pass, denoise, compression and de-essing in one command.",
+          "prompt": "Clean up the voice in raw/take1.mp4: remove background hiss and harsh S sounds, then re-mix with a chill bed.",
+          "resources": [],
+          "notes_md": "- Fixes: hiss, rumble, uneven volume, harsh \"S\" sounds.\n- Can't fully fix: heavy echo, music bleeding under speech, clipping. **Re-record if possible.**\n- Recording tip for students: a ₹500 lav mic beats any AI cleanup."
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Launch Videos",
+      "summary": "Videos that sell. Promos, product launches and social ads with a clear hook, one message and a CTA, all locked to the beat.",
+      "outcome": "You can produce a 25-second launch reel plus format and hook variants ready for ads.",
+      "assignment": "Make a 25-second launch reel for a real or imaginary product, in 9:16 + 1:1, with 2 different hooks. Post both hooks and let the community vote.",
+      "resources": [
+        "R09",
+        "R05",
+        "R06",
+        "R13",
+        "R15"
+      ],
+      "lessons": [
+        {
+          "number": "6.1",
+          "title": "The launch formula",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Hook → Problem → Reveal → Proof → CTA. The 25-second structure behind most ads that convert.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "| beat | job | time |\n|---|---|---|\n| Hook | stop the scroll | 0–3 s |\n| Problem | name the pain in their words | 3–7 s |\n| Reveal | product/offer appears on a bar line | 7–11 s |\n| Proof | 3 benefits max, numbers, faces | 11–20 s |\n| CTA | what to do now | 20–25 s |\n- One video = one message. Two messages = two videos."
+        },
+        {
+          "number": "6.2",
+          "title": "Hooks that stop the scroll",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "10 proven hook patterns, how to animate each, and how to test them against each other.",
+          "prompt": "Give me 5 hook options for my launch video, each with on-screen text and the visual, then render the top 2 as variants.",
+          "resources": [
+            "R09"
+          ],
+          "notes_md": "- Pattern interrupt: a crumpling timeline, a smash, a glitch.\n- Bold claim: *\"I made 10 reels in 1 hour.\"*\n- Painful question: *\"Still editing like it's 2015?\"*\n- Before/after split screen.\n- A typed prompt + instant result (the vibe editing signature).\n- The hook must work **muted**: big text + motion + contrast."
+        },
+        {
+          "number": "6.3",
+          "title": "Building scenes: kinetic type, chips, counters",
+          "type": "video",
+          "duration_min": 14,
+          "summary": "The building blocks of every promo: slamming titles, benefit chips, counters, highlight bars and end cards.",
+          "prompt": "Build scene 2 as three benefit chips that pop in on the beat: CUTS, CAPTIONS, MUSIC. Lime and periwinkle, mono font.",
+          "resources": [],
+          "notes_md": "- Max 6 words per card, verbs first.\n- Stagger builds by ~80 ms per item.\n- Every pop gets a pop sound. Every reveal gets an impact.\n- Check stills before animating."
+        },
+        {
+          "number": "6.4",
+          "title": "Product hero shots & cut-outs",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "Turn a product photo into a floating, shadowed hero shot with price and benefit callouts.",
+          "prompt": "Cut out raw/product.jpg, make it float with a soft shadow and slow push-in, and add a price card \"₹999 today only\".",
+          "resources": [],
+          "notes_md": "- One command removes the background from photos.\n- Soft shadow + slight float + slow push-in = premium.\n- Prices and claims exactly as the client wrote them."
+        },
+        {
+          "number": "6.5",
+          "title": "App & SaaS demos (without blurry screen recordings)",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Rebuild the key screens as crisp vector UI inside a phone or laptop frame, then animate taps and typing.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Screen recordings scaled up look soft. Rebuilt UI stays razor sharp in any format.\n- Show 2–4 key screens only: the problem moment, the magic moment, the result.\n- Animate: tap ripples, typing, highlight boxes, smooth screen transitions."
+        },
+        {
+          "number": "6.6",
+          "title": "Variants: formats, hooks & cut-downs",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Turn one ad into 9:16, 4:5, 1:1, 16:9, two hooks, and 15 s + 6 s cut-downs without re-editing.",
+          "prompt": "Render this ad in 9:16, 4:5 and 1:1, plus a 15-second cut-down with just hook, reveal and CTA.",
+          "resources": [],
+          "notes_md": "- Design once in relative units → every format adapts. Check stills per format.\n- 15 s = hook + reveal + CTA. 6 s bumper = logo hit + one line + CTA.\n- Name files clearly: `brand_launch_hookA_9x16_v1.mp4`."
+        },
+        {
+          "number": "6.7",
+          "title": "Event teasers, countdowns & testimonials",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "Three bonus formats clients ask for: event/webinar teasers, countdowns, and testimonial compilations.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- **Teaser:** date-time card, speaker cards, \"save your seat\".\n- **Countdown:** big numbers on beats, final number = impact + reveal.\n- **Testimonial compilation:** face clips + quote cards in brand style, the best line first."
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Motion Graphics",
+      "summary": "Studio-quality motion design from a prompt: explainers, kinetic typography, logo reveals, infographics and transparent title packs.",
+      "outcome": "You can design style frames, animate them with professional timing and deliver motion packs other editors can use.",
+      "assignment": "Create a 20-second showreel with 4 sections (kinetic type, shapes, data, logo outro) in 16:9, plus one transparent lower-third.",
+      "resources": [
+        "R12",
+        "R11",
+        "R13"
+      ],
+      "lessons": [
+        {
+          "number": "7.1",
+          "title": "Every frame is a function of time",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "The one idea behind code-based motion design, and why it makes changes instant.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Each frame is drawn from scratch for a moment `t`. Nothing is \"keyframed\".\n- That's why you can render any single frame instantly (stills), render in parallel, and change timings without breaking anything.\n- You direct in timings and feelings. The AI handles the math."
+        },
+        {
+          "number": "7.2",
+          "title": "Style frames first, animation second",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Approve the look of each section as a still before animating. This is how studios avoid wasted renders.",
+          "prompt": "Before animating, show me the key still of each section so I can approve the look.",
+          "resources": [],
+          "notes_md": "- Most revisions are about **design** (layout, type, colour), not motion.\n- Approve 3–5 stills → then animate.\n- Keep max 2 typefaces and 1 accent colour per screen."
+        },
+        {
+          "number": "7.3",
+          "title": "Easing & timing: why things feel alive",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Ease-out, back, expo, bounce, spring: what each communicates and the timing rules pros follow.",
+          "prompt": "",
+          "resources": [
+            "R12"
+          ],
+          "notes_md": "| intent | easing | duration |\n|---|---|---|\n| arrive | ease-out expo/cubic | 0.3–0.5 s |\n| playful arrive | back / spring | 0.4–0.6 s |\n| leave | ease-in | 0.2–0.35 s |\n| move across | ease-in-out | 0.5–0.9 s |\n- Exits are faster than entrances.\n- Never linear for anything that starts or stops."
+        },
+        {
+          "number": "7.4",
+          "title": "Kinetic typography",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Word slams, staggers, highlight bars, typewriters and masked reveals, synced to voice or beat.",
+          "prompt": "Kinetic typography for my voiceover: each word slams in on the exact moment I say it, key words in lime with an impact sound.",
+          "resources": [],
+          "notes_md": "- Sync to voice: transcribe → each word animates at its timestamp.\n- Reading time: 0.3 s per word + 0.5 s.\n- Emphasis = size, colour, or motion. Pick one per word."
+        },
+        {
+          "number": "7.5",
+          "title": "Logo reveals & intros",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "Build a 3–6 second logo reveal from shapes, masks and an impact sound.",
+          "prompt": "Make a 5-second logo reveal: the logo assembles from 3 shapes, lands on the downbeat with an impact and sparkle, then the tagline types in.",
+          "resources": [],
+          "notes_md": "- Split the logo into parts → animate in → land on the full logo + sound.\n- Hold the final logo at least 1.5 s.\n- Provide transparent and solid-background versions."
+        },
+        {
+          "number": "7.6",
+          "title": "Data & infographic videos",
+          "type": "video",
+          "duration_min": 11,
+          "summary": "Animated bar charts, lines that draw on, counters and timelines with numbers that are always exact.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Bars grow with ease-out. Lines draw on. Counters race with ease-out-expo.\n- Label units and sources on screen.\n- Numbers are copied exactly from the client. Never \"rounded for style\"."
+        },
+        {
+          "number": "7.7",
+          "title": "Transparent packs: lower-thirds, titles, transitions",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Export alpha-channel ProRes files you can sell or drop into Premiere, CapCut or DaVinci.",
+          "prompt": "Make a pack of 5 transparent lower-thirds in my brand, each 4 seconds with in-hold-out animation, plus a preview sheet.",
+          "resources": [],
+          "notes_md": "- Transparent = no background painted. Exported as ProRes 4444 `.mov`.\n- One file per element, 3–6 s each.\n- Check over dark AND light backgrounds. 💡 Packs are a sellable digital product."
+        },
+        {
+          "number": "7.8",
+          "title": "Advanced: shaders & WebGL looks",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "For liquid, glow and particle-heavy looks: render HTML/WebGL scenes headlessly into video.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Use for GPU looks: liquid gradients, bloom, thousands of particles, 3D.\n- Everything else: stick to the standard engine (simpler, faster).\n- Needs a one-time browser install (`npx playwright install chromium`)."
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Stylised Animation & Characters",
+      "summary": "Handmade looks without AI images: claymation, crayon, paper-cut and cartoon mascots that blink, bounce and talk.",
+      "outcome": "You can make a 30–40 second stylised short with a character, a story arc and cartoon sound design.",
+      "assignment": "Create a 30-second animated short in the medium of your choice (clay, crayon, paper or doodle) with a mascot that reacts to something. Wordless or narrated.",
+      "resources": [
+        "R12",
+        "R11"
+      ],
+      "lessons": [
+        {
+          "number": "8.1",
+          "title": "Faking a medium: held drawings, boil, texture",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "The three tricks that make code look handmade, and why \"smooth\" is the enemy.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- **Held drawings:** animate at 12 drawings/second (on twos), not a smooth 24/30.\n- **Boil:** outlines re-wobble slightly each drawing, like real clay or crayon.\n- **Texture:** paper grain, clay thumbprints, crayon tooth.\n- Subtle beats strong: boil ≈ 2–3% of the shape's size."
+        },
+        {
+          "number": "8.2",
+          "title": "Claymation",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Soft 3D clay shading, cast shadows, flicker and miniature-set depth. Plasticine without the plasticine.",
+          "prompt": "Make a 15-second claymation scene: a lavender clay blob character bounces onto a table, looks at the camera and blinks. Playful music, boing on each landing.",
+          "resources": [],
+          "notes_md": "- Clay = soft radial lighting + darker rim + soft highlight + cast shadow.\n- Add exposure flicker per drawing and blurred background layers for a \"miniature set\".\n- Squash on landing, stretch while falling."
+        },
+        {
+          "number": "8.3",
+          "title": "Crayon & hand-drawn",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Scribble fills, shaky double outlines and sketch-on reveals on warm paper.",
+          "prompt": "Crayon-style 20-second explainer: a sun, a laptop and a coffee cup get sketched on, then coloured in, one per sentence of my voiceover.",
+          "resources": [],
+          "notes_md": "- Outline drawn twice by a \"shaky hand\", then zig-zag hatched fill.\n- Reveal = draw the outline on, then colour in.\n- Fonts: Luckiest Guy, Gochi Hand, Caveat Brush."
+        },
+        {
+          "number": "8.4",
+          "title": "Paper-cut & stop-motion",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "Flat paper layers, drop shadows, parallax and torn-paper wipes.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Flat colours + soft drop shadows between layers.\n- Background layers move slower than foreground (parallax).\n- Transitions: torn-paper shapes sliding across."
+        },
+        {
+          "number": "8.5",
+          "title": "Characters that blink, look and talk",
+          "type": "video",
+          "duration_min": 13,
+          "summary": "Build a simple mascot rig: eyes that blink irregularly and look at things, a mouth that lip-syncs to the voice.",
+          "prompt": "Give my mascot eyes that look at whatever is moving, natural blinks, and a mouth that talks along with work/vo.wav.",
+          "resources": [],
+          "notes_md": "- Eyes look at the important thing **a beat before** the body moves.\n- Irregular blinks feel alive. Regular blinks feel robotic.\n- Lip-flap from the voice's loudness is convincing for cartoons.\n- Keep characters \"on model\": same colours and proportions every shot."
+        },
+        {
+          "number": "8.6",
+          "title": "Story structure for 30-second shorts",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "Setup → problem → turn → payoff → end card. Plus gag timing that actually lands.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- 4–6 shots, ONE acting beat per shot.\n- Gag = set-up → pause → hit (the hit on a beat with a sound).\n- Readable with the sound off: clear poses and silhouettes.\n- End card holds ≥ 2 s."
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "AI Footage & Advanced VFX",
+      "summary": "Premium films from AI clips and phone footage: cut-outs, text behind you, tracking, cinematic looks, and AI footage that doesn't look AI.",
+      "outcome": "You can QC and assemble AI clips into a brand film, and add pro VFX to real footage, word-locked to speech.",
+      "assignment": "Either (A) a 45–60 second brand film from 5+ AI clips with voiceover and real graphics, or (B) a 20-second talking-head with 3 VFX moments triggered by your words.",
+      "resources": [
+        "R14",
+        "R11",
+        "R13",
+        "R12"
+      ],
+      "lessons": [
+        {
+          "number": "9.1",
+          "title": "Why AI clips look \"AI\" (and the fix)",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "The 6 tell-tale artifacts of generated video and the editing habits that hide them.",
+          "prompt": "",
+          "resources": [
+            "R14"
+          ],
+          "notes_md": "- Tells: morphing hands/faces, garbled text, popping objects, melting geometry, flicker, too-smooth \"plastic\" look.\n- Fix habits: short shots (1.5–4 s), cut before clips degrade, one grade + grain, real text and logos, real sound design."
+        },
+        {
+          "number": "9.2",
+          "title": "Scan & select: QC every clip",
+          "type": "video",
+          "duration_min": 11,
+          "summary": "Automatic contact sheets and instability detection for every clip, then a usable-ranges list.",
+          "prompt": "Scan all clips in raw/ and give me a table of which are usable, the exact usable ranges, and what's wrong with the rest.",
+          "resources": [],
+          "notes_md": "- Review every sheet. The last 0.5–1 s of generated clips often degrades.\n- Mark usable ranges → those become your edit list.\n- Missing a shot? Ask for regeneration prompts or replace it with a graphic or real photo."
+        },
+        {
+          "number": "9.3",
+          "title": "Assemble to the voiceover",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Map narration lines to shots, retime each shot to land on its words, and add transitions that don't feel cheap.",
+          "prompt": "Cut the usable clips to my voiceover: one shot per sentence, cut on the key words, mostly hard cuts, fade only for time jumps.",
+          "resources": [],
+          "notes_md": "- Keep speed changes between 0.7× and 1.4× so motion stays natural.\n- Photos can be shots too (slow push-in = Ken Burns).\n- Cut on the words that matter."
+        },
+        {
+          "number": "9.4",
+          "title": "One grade to rule them all",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "Unify mismatched clips with one look, film grain and a vignette. The single biggest \"not AI\" upgrade.",
+          "prompt": "Grade everything with the same clean-bright look at 80%, add subtle grain and a light vignette. Show me before/after.",
+          "resources": [],
+          "notes_md": "- Looks: natural, warm, cool, teal-orange, cinematic, moody, clean-bright, pastel, punchy, vintage, B&W, noir.\n- Same look + same strength on every shot.\n- A little grain hides the AI \"plastic\" smoothness."
+        },
+        {
+          "number": "9.5",
+          "title": "Cut-outs & text behind you",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "Remove or replace backgrounds and put giant text between you and the wall. The most viral VFX trick.",
+          "prompt": "Put the word VIBE in huge lime letters behind me, appearing when I say \"vibe\", and replace the background with a soft blur.",
+          "resources": [],
+          "notes_md": "- Best results: subject clearly separated from the background, good light, little motion blur.\n- Best hair edges: the high-quality model (slower).\n- Text behind subject = background → text → you on top."
+        },
+        {
+          "number": "9.6",
+          "title": "Tracking, layers & \"remove me\"",
+          "type": "video",
+          "duration_min": 13,
+          "summary": "Stick graphics to a moving hand, split a shot into 3D-style layers, make yourself disappear into particles.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- **Tracking:** follow a point frame by frame and attach a logo/label. Hide it when tracking is lost.\n- **Layer split:** background / you / text, separated with depth and parallax.\n- **Remove me:** a clean empty background + you fading into particles.\n- Be honest with clients: if an effect will look rough, offer a stylised alternative."
+        },
+        {
+          "number": "9.7",
+          "title": "Cinematic looks, slow-mo & speed ramps",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "Letterbox, film grade, serif titles, optical-flow slow motion and speed ramps.",
+          "prompt": "Make it cinematic: 2.39 letterbox, teal-orange grade, slow push-in, serif titles, and slow-mo on the walk-in at 0:03.",
+          "resources": [],
+          "notes_md": "- Optical-flow slow-mo is smooth on gentle motion. Fast motion can warp, so check stills.\n- Speed ramp = normal → slow → normal across segments.\n- On vertical video, use thin cinematic bars instead of full 2.39."
+        },
+        {
+          "number": "9.8",
+          "title": "\"Say it, it happens\" edits",
+          "type": "video",
+          "duration_min": 11,
+          "summary": "The signature Vibe Editing reel: speak your edit directions on camera and every effect starts on the exact word.",
+          "prompt": "In raw/take1.mp4 I say my edit directions out loud. Transcribe it and build each effect on the word that asks for it.",
+          "resources": [],
+          "notes_md": "- Record with clear directions: \"zoom in on my hand\", \"put my logo here\", \"remove me\".\n- Every effect starts on its trigger word and ends before the next.\n- This format is a portfolio magnet. Make one for yourself."
+        },
+        {
+          "number": "9.9",
+          "title": "Faceless channels: script → episode",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "A repeatable pipeline: script, AI voice, visuals per sentence, pop captions, music and export.",
+          "prompt": "Turn work/script.txt into a 60-second faceless Short: AI voice, one visual per sentence, pop captions, tech music bed, export for Shorts and Reels.",
+          "resources": [],
+          "notes_md": "- Script: hook line, 3 points, CTA. Written as spoken.\n- Save the pipeline as a one-command script → every new episode is \"write script, run\".\n- Batch many episodes with the Bulk skill (Bulk, Workflow & Getting Paid module)."
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Bulk, Workflow & Getting Paid",
+      "summary": "Turn the skill into income: bulk production, delivery that looks professional, pricing, proposals and your portfolio.",
+      "outcome": "You have a portfolio, a price list, a proposal template and a delivery workflow, and you've completed a client-style capstone.",
+      "assignment": "Capstone: complete a full client-style job (brief → beat table → stills approval → render → 1 revision → multi-platform delivery) and submit the folder + final videos.",
+      "resources": [
+        "R16",
+        "R17",
+        "R18",
+        "R19",
+        "R20",
+        "R13"
+      ],
+      "lessons": [
+        {
+          "number": "10.1",
+          "title": "Bulk videos from a spreadsheet",
+          "type": "video",
+          "duration_min": 12,
+          "summary": "One hero template → 100 personalised videos. Test 3 rows, then render the rest with a report.",
+          "prompt": "Make a personalised welcome video for every row in students.csv using first_name and course. Test the first 3 rows before rendering all.",
+          "resources": [],
+          "notes_md": "- Collect samples including the **longest** names. That's where templates break.\n- Clean data first: spaces, capitals, empty fields, duplicates.\n- The report lists every video: ok / skipped / failed.\n- 💰 Personalised video is a premium service: sales outreach, onboarding, events."
+        },
+        {
+          "number": "10.2",
+          "title": "One edit → every format & language",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "9:16, 4:5, 1:1 and 16:9 from one design, plus translated voiceover and captions per language.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Design in relative units → re-render per format → check stills.\n- Translation: same number of sentences so timings hold.\n- Non-Latin scripts need the right fonts (Devanagari, Japanese...).\n- Always have a native speaker check one version."
+        },
+        {
+          "number": "10.3",
+          "title": "Render faster: drafts, sections & templates",
+          "type": "video",
+          "duration_min": 8,
+          "summary": "Stills in seconds, half-res drafts, rendering just one section, and turning past projects into templates.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "- Stills → draft → final. Never full-render to check a typo.\n- Render only the changed section when fixing one moment.\n- Every finished project is a template: *\"Save this style so the next one is a one-liner.\"*"
+        },
+        {
+          "number": "10.4",
+          "title": "Delivery like a pro",
+          "type": "video",
+          "duration_min": 9,
+          "summary": "File naming, platform exports, subtitles, thumbnails, contact sheets and licence notes.",
+          "prompt": "",
+          "resources": [
+            "R18",
+            "R13"
+          ],
+          "notes_md": "- Names: `client_project_format_v2.mp4`.\n- Deliver: platform exports + `.srt` + thumbnail still + contact sheet.\n- Note licences: fonts (OFL), music (generated original), footage source.\n- Keep every version. Never overwrite what the client has seen."
+        },
+        {
+          "number": "10.5",
+          "title": "Pricing your Vibe Editing services",
+          "type": "video",
+          "duration_min": 14,
+          "summary": "Packages, per-video vs retainer pricing, and how to price on value, not hours, when AI does the heavy lifting.",
+          "prompt": "",
+          "resources": [
+            "R17"
+          ],
+          "notes_md": "- Sell **outcomes and turnaround**, not hours. Your speed is your margin.\n- Typical packages: Reel pack (8–12 reels/month), Launch kit (promo + variants + cut-downs), Motion pack (titles + lower-thirds), Personalised campaign (per-video pricing at volume).\n- Always include: revision rounds (2), formats, turnaround time.\n- Retainers > one-offs."
+        },
+        {
+          "number": "10.6",
+          "title": "Proposals, briefs & client communication",
+          "type": "video",
+          "duration_min": 11,
+          "summary": "A one-page proposal, a brief the client fills, and the update rhythm that makes clients trust you.",
+          "prompt": "",
+          "resources": [
+            "R16",
+            "R05"
+          ],
+          "notes_md": "- Proposal: their goal → your plan → deliverables → timeline → price → next step.\n- Send the brief template before the first call.\n- Every update = file + contact sheet + 1–3 specific questions."
+        },
+        {
+          "number": "10.7",
+          "title": "Build your portfolio in a weekend",
+          "type": "video",
+          "duration_min": 10,
+          "summary": "The 6 portfolio pieces that cover what clients buy, and how to package them into a showreel.",
+          "prompt": "",
+          "resources": [],
+          "notes_md": "1. A talking-head reel with pop captions\n2. A launch promo + 1:1 variant\n3. A logo reveal\n4. A stylised short (clay/crayon)\n5. A \"say it, it happens\" VFX reel\n6. A before/after (raw vs edited)\n- Cut your best 3 seconds of each into a 30-second showreel (see the Motion Graphics module)."
+        },
+        {
+          "number": "10.8",
+          "title": "Capstone: a full client-style project",
+          "type": "assignment",
+          "duration_min": 60,
+          "summary": "Put it all together: brief → beat table → stills → draft → final → revision → multi-platform delivery.",
+          "prompt": "",
+          "resources": [
+            "R05",
+            "R06",
+            "R18"
+          ],
+          "notes_md": "- Pick a real business (a friend's café, your own brand, a local gym).\n- Submit: brief.md, beat table, contact sheets, final exports, revisions log.\n- Graded on: hook strength, clarity, brand consistency, sound, delivery quality.\n- 🏆 Top capstones get featured on the Ideabro Studio page."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "R01",
+      "title": "Quick Start: Install in 15 Minutes",
+      "description": "Everything you need to make your first AI-edited video today. Mac and Windows.",
+      "file": "R01-quick-start.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R02",
+      "title": "The Vibe Editing Skills Pack",
+      "description": "9 Claude skills by Ideabro Studio. Attach the zip files from `dist/` next to this guide.",
+      "file": "R02-skills-pack.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R03",
+      "title": "The Vibe Loop: One-Pager",
+      "description": "Follow it on every project. It's how you get it right on the first render.",
+      "file": "R03-vibe-loop.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R04",
+      "title": "100 Vibe Editing Prompts",
+      "description": "Copy, paste, change the details. Each one works with the Vibe Editing Skills Pack.",
+      "file": "R04-prompt-library.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R05",
+      "title": "Creative Brief Template",
+      "description": "Fill this in (or paste it to Claude and answer its questions) before any edit.",
+      "file": "R05-creative-brief.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R06",
+      "title": "Beat Table Template",
+      "description": "Plan every second before rendering. One idea per row. Times on the beat grid.",
+      "file": "R06-beat-table.pdf",
+      "type": "pdf",
+      "extra_files": [
+        "R06-beat-table.csv"
+      ]
+    },
+    {
+      "id": "R07",
+      "title": "Vibe Vocabulary: Feelings → Instructions",
+      "description": "Say the feeling. This is what the AI does with it.",
+      "file": "R07-vibe-vocabulary.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R08",
+      "title": "Feedback Phrasebook: Get It Fixed in One Round",
+      "description": "Formula: **WHERE** (timestamp) + **WHAT** (element) + **HOW** (direction).",
+      "file": "R08-feedback-phrasebook.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R09",
+      "title": "Hook Swipe File: 50 Scroll-Stopping Openers",
+      "description": "The first 2 seconds decide everything. Each hook works muted: big text + motion + contrast.",
+      "file": "R09-hook-swipe-file.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R10",
+      "title": "Caption Style Guide",
+      "description": "Most social video is watched with the sound off. Captions are part of the design.",
+      "file": "R10-caption-style-guide.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R11",
+      "title": "Sound Design Cheat Sheet",
+      "description": "**beat = 60 ÷ BPM · bar = 4 beats.** Cut on bars, accent on beats. Pick the BPM so the video is a whole number of bars.",
+      "file": "R11-sound-cheat-sheet.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R12",
+      "title": "Motion & Easing Cheat Sheet",
+      "description": "word slam · stagger rise · highlight bar · typewriter + caret · counter · strike-through · slot machine · masked reveal",
+      "file": "R12-motion-cheat-sheet.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R13",
+      "title": "Platform Export Specs & Safe Zones",
+      "description": "All exports: H.264, AAC 48 kHz, −14 LUFS, fast-start, done by one command:",
+      "file": "R13-platform-specs.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R14",
+      "title": "AI Footage QC Checklist",
+      "description": "Check every generated clip before it goes near the timeline.",
+      "file": "R14-ai-footage-qc.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R15",
+      "title": "Brand Kit Template",
+      "description": "One file (`brand.json`) re-skins every video. Fill in the client's values; keep the role names.",
+      "file": "R15-brand-kit.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R16",
+      "title": "Client Proposal Template (one page)",
+      "description": "**Prepared for:** [Client name] · **By:** [Your name / studio] · **Date:** [ ]",
+      "file": "R16-proposal-template.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R17",
+      "title": "Pricing & Packages Guide",
+      "description": "Price the **outcome and the speed**, not your hours. The numbers below are *example starting points*. Adjust them to your market, niche and portfolio.",
+      "file": "R17-pricing-guide.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R18",
+      "title": "Delivery Checklist",
+      "description": "Run this before every delivery. It's what makes you look like a studio.",
+      "file": "R18-delivery-checklist.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R19",
+      "title": "Troubleshooting Guide",
+      "description": "Post in the community with: what you asked, what happened (screenshot of the error), your OS. Someone will help fast.",
+      "file": "R19-troubleshooting.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R20",
+      "title": "The 30-Day Vibe Editing Challenge",
+      "description": "One small video a day. By day 30 you have a portfolio, a showreel and real confidence.",
+      "file": "R20-30-day-challenge.pdf",
+      "type": "pdf",
+      "extra_files": []
+    },
+    {
+      "id": "R21",
+      "title": "Glossary A–Z",
+      "description": "",
+      "file": "R21-glossary.pdf",
+      "type": "pdf",
+      "extra_files": []
+    }
+  ]
+}
