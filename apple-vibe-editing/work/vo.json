@@ -1,0 +1,72 @@
+[
+ {
+  "id": "apps",
+  "voice": "af_heart",
+  "text": "After Effects. Premiere Pro. Higgsfield.",
+  "s": 0.0,
+  "e": 2.378
+ },
+ {
+  "id": "subs",
+  "voice": "af_heart",
+  "text": "Another month. Another subscription.",
+  "s": 2.678,
+  "e": 4.617
+ },
+ {
+  "id": "whatif",
+  "voice": "af_heart",
+  "text": "What if you didn't need any of them?",
+  "s": 4.917,
+  "e": 6.299
+ },
+ {
+  "id": "era",
+  "voice": "af_heart",
+  "text": "This is the era of vibe editing.",
+  "s": 6.599,
+  "e": 8.426
+ },
+ {
+  "id": "describe",
+  "voice": "af_heart",
+  "text": "You don't drag keyframes. You describe the vibe.",
+  "s": 8.726,
+  "e": 11.25
+ },
+ {
+  "id": "features",
+  "voice": "af_heart",
+  "text": "Smooth transitions. Kinetic type. Sound design.",
+  "s": 11.55,
+  "e": 14.621
+ },
+ {
+  "id": "meta",
+  "voice": "af_heart",
+  "text": "Even this video. Every frame, every sound, came from a prompt.",
+  "s": 14.921,
+  "e": 18.647
+ },
+ {
+  "id": "nos",
+  "voice": "af_heart",
+  "text": "No timeline. No plugins. No subscriptions.",
+  "s": 18.947,
+  "e": 21.83
+ },
+ {
+  "id": "idea",
+  "voice": "af_heart",
+  "text": "Just your idea, and the words to describe it.",
+  "s": 22.13,
+  "e": 24.504
+ },
+ {
+  "id": "end",
+  "voice": "af_heart",
+  "text": "Welcome to vibe editing.",
+  "s": 24.804,
+  "e": 26.226
+ }
+]

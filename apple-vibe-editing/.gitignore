@@ -1,0 +1,8 @@
+__pycache__/
+work/*
+!work/script.txt
+!work/vo.json
+!work/vo_*.wav
+out/*
+!out/vibe_editing_apple.mp4
+!out/sheet.png

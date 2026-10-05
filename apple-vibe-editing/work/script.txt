@@ -1,0 +1,10 @@
+apps | af_heart | 1.08 | After Effects. Premiere Pro. Higgsfield.
+subs | af_heart | 1.08 | Another month. Another subscription.
+whatif | af_heart | 1.05 | What if you didn't need any of them?
+era | af_heart | 1.0 | This is the era of vibe editing.
+describe | af_heart | 1.08 | You don't drag keyframes. You describe the vibe.
+features | af_heart | 1.1 | Smooth transitions. Kinetic type. Sound design.
+meta | af_heart | 1.08 | Even this video. Every frame, every sound, came from a prompt.
+nos | af_heart | 1.08 | No timeline. No plugins. No subscriptions.
+idea | af_heart | 1.05 | Just your idea, and the words to describe it.
+end | af_heart | 1.0 | Welcome to vibe editing.
