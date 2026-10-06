@@ -41,6 +41,26 @@ def verb(x, wet=0.2, ir=None):
     return (x * (1 - wet) + y * wet).astype(np.float32)
 
 
+def broadcast(x, room=0.06):
+    """radio-style voice chain: level, EQ (low cut, de-mud, presence, air), compression, de-ess, warmth, small room."""
+    import music as M
+    x = np.asarray(x, np.float32)
+    x = x / (10 ** (M.active_rms_db(x) / 20) + 1e-9) * 10 ** (-20 / 20)          # every line at the same level
+    x = M.filt(x, "hp", 85)
+    x = x - 0.22 * M.filt(x, "bp", (220, 480)) + 0.32 * M.filt(x, "bp", (2400, 5200)) + 0.22 * M.filt(x, "hp", 9500)
+    x = M.compressor(x, -24, 3.2, 0.004, 0.09, 6.0, knee=8)
+    ess = M.filt(x, "bp", (5200, 9500))
+    e = np.abs(ess).mean(1) if ess.ndim == 2 else np.abs(ess)
+    e = np.convolve(e, np.ones(240) / 240, mode="same")
+    k = np.clip((e - 0.02) / 0.05, 0, 0.6)
+    x = x - ess * (k[:, None] if x.ndim == 2 else k)
+    x = M.sat(x * 1.3, 1.2) / 1.3
+    if room:
+        x = x * (1 - room) + M.conv_reverb(x if x.ndim == 2 else np.stack([x, x], 1),
+                                           M.reverb_ir(0.6, 9, 7000, 0.004, 5)) * room * 2.2
+    return x.astype(np.float32)
+
+
 class Mix:
     def __init__(self, dur):
         self.dur = dur
@@ -50,10 +70,12 @@ class Mix:
         self.fx = np.zeros((self.n, 2), np.float32)
         self.duck_db = -9
 
-    def voice(self, placements, gain_db=0.0, warmth=True):
+    def voice(self, placements, gain_db=0.0, warmth=True, chain="broadcast"):
         for path, t in placements:
             x = ak.read_audio(path)
-            if warmth:   # gentle presence: low cut, a touch of air
+            if chain == "broadcast":
+                x = broadcast(x)
+            elif warmth:   # gentle presence: low cut, a touch of air
                 x = ak.filt(x, "hp", 70)
                 x = x + 0.12 * ak.filt(x, "hp", 6000)
             ak.place(self.vbus, x, t, gain_db)

@@ -246,7 +246,7 @@ class Captions:
         return self
 
     def draw(self, c, t, alpha=1.0, y=None):
-        if any(a <= t < b for a, b in self.off):
+        if os.environ.get("NOCAP") or any(a <= t < b for a, b in self.off):
             return
         y = self.y if y is None else y
         for gi, g in enumerate(self.groups):
@@ -486,3 +486,45 @@ class Film:
         self.out_dir.mkdir(parents=True, exist_ok=True)
         img.save(self.out_dir / name)
         print("->", self.out_dir / name)
+
+
+# ---------------------------------------------------------------- layer video (3D render) for compositing
+class Layer:
+    """Random-access frames from a rendered layer video. Sequential reads within a render chunk are cheap
+    (one ffmpeg pipe per process); a jump restarts the pipe at the right frame.
+
+        BG = Layer("work/layer.mp4", fps=30)
+        c.drawImage(BG.image(f), 0, 0)        # f = frame index
+    """
+
+    def __init__(self, path, w=W, h=H, fps=30):
+        self.path, self.w, self.h, self.fps = str(path), w, h, fps
+        self.proc, self.next, self.pid = None, None, None
+        self.last = None
+
+    def _open(self, f):
+        import subprocess
+        if self.proc:
+            self.proc.kill()
+        self.proc = subprocess.Popen(["ffmpeg", "-v", "error", "-ss", f"{f / self.fps:.4f}", "-i", self.path,
+                                      "-f", "rawvideo", "-pix_fmt", "rgba", "-s", f"{self.w}x{self.h}", "-"], stderr=subprocess.DEVNULL,
+                                     stdout=subprocess.PIPE, bufsize=self.w * self.h * 4 * 2)
+        self.next, self.pid = f, os.getpid()
+
+    def array(self, f):
+        if self.pid != os.getpid() or self.proc is None or f != self.next:
+            if self.last is not None and self.last[0] == f and self.pid == os.getpid():
+                return self.last[1]
+            self._open(f)
+        n = self.w * self.h * 4
+        buf = self.proc.stdout.read(n)
+        if len(buf) < n:
+            arr = self.last[1] if self.last is not None else np.zeros((self.h, self.w, 4), np.uint8)
+        else:
+            arr = np.frombuffer(buf, np.uint8).reshape(self.h, self.w, 4)
+        self.next = f + 1
+        self.last = (f, arr)
+        return arr
+
+    def image(self, f):
+        return skia.Image.fromarray(self.array(f), colorType=skia.kRGBA_8888_ColorType)

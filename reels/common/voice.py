@@ -33,6 +33,25 @@ def _kokoro():
     return _K
 
 
+LANGS = {"a": "en-us", "b": "en-gb", "h": "hi", "e": "es", "f": "fr-fr", "i": "it", "p": "pt-br", "j": "ja", "z": "cmn"}
+
+
+def _lang(v):
+    return LANGS.get(v.strip()[0], "en-us")
+
+
+def _voice(v):
+    """'af_heart' or a blend 'af_heart*0.6+af_bella*0.4' (style vectors mixed)."""
+    if "+" not in v and "*" not in v:
+        return v
+    style = None
+    for part in v.split("+"):
+        name, _, w = part.partition("*")
+        vec = _kokoro().get_voice_style(name.strip()) * float(w or 1)
+        style = vec if style is None else style + vec
+    return style
+
+
 def _phon_len(word):
     w = re.sub(r"[^\w'’-]", "", word)
     if not w:
@@ -140,7 +159,7 @@ def narrate(lines, work="work", voice="af_heart", speed=1.0):
         if meta.exists() and json.loads(meta.read_text()).get("key") == key and wav.exists():
             out[lid] = json.loads(meta.read_text())
             continue
-        a, sr = _kokoro().create(spoken, voice=v, speed=sp, lang="en-gb" if v.startswith("b") else "en-us")
+        a, sr = _kokoro().create(spoken, voice=_voice(v), speed=sp, lang=_lang(v))
         a = _trim(np.asarray(a, np.float32))
         sf.write(str(wav), a, sr)
         words = align(text, a)
@@ -190,7 +209,7 @@ class Script:
     def find(self, lid, word):
         """start of the first word in line lid that starts with `word` (case-insensitive)."""
         for i, (w, s, e) in enumerate(self.vo[lid]["words"]):
-            if re.sub(r"\W", "", w).lower().startswith(word.lower()):
+            if re.sub(r"\W", "", w).lower().startswith(re.sub(r"\W", "", word).lower()):
                 return self.start[lid] + s
         raise KeyError(f"{word!r} not in line {lid!r}")
 
