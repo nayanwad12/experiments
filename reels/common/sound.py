@@ -134,9 +134,10 @@ class Mix:
         mixw = work / "mix.wav"
         ff("-i", raw, "-af", loudnorm_filter(raw, lufs, -1.0, 11), "-ar", str(SR), "-c:a", "pcm_s16le", mixw)
         Path(out).parent.mkdir(parents=True, exist_ok=True)
-        # delivery encode for Instagram: H.264 high, ~12 Mbps cap (keeps grain, stays upload-friendly)
+        # delivery encode for Instagram: H.264 high, capped so every Reel stays under ~28 MB (shareable anywhere)
+        mbps = min(12.0, 28 * 8 * 0.93 / self.dur - 0.3)
         ff("-i", picture, "-i", mixw, "-map", "0:v:0", "-map", "1:a:0", "-c:v", "libx264", "-preset", "slow",
-           "-crf", "18", "-maxrate", "12M", "-bufsize", "24M", "-pix_fmt", "yuv420p", "-profile:v", "high",
+           "-crf", "18", "-maxrate", f"{mbps:.2f}M", "-bufsize", f"{2 * mbps:.2f}M", "-pix_fmt", "yuv420p", "-profile:v", "high",
            "-r", "30", "-c:a", "aac", "-b:a", "256k", "-ar", "48000", "-t", f"{self.dur:.3f}",
            "-movflags", "+faststart", out)
         print("->", out)

@@ -25,7 +25,7 @@ from voice import Script, narrate  # noqa: E402
 
 FPS, BPM = 30, 88
 vo = narrate(LINES, HERE / "work", VOICE)
-S = Script(vo, [("hook", "@", 0.15), ("cmd", 0.1), ("how", 0.3), ("en", 0.38), ("hi", 0.2), ("es", 0.22), ("langs", 0.28),
+S = Script(vo, [("hook", "@", 0.15), ("cmd", 0.1), ("how", 1.3), ("en", 0.38), ("hi", 0.2), ("es", 0.22), ("langs", 0.28),
                 ("fmt", 0.14), ("tail", 1.2), ("cta", 0.23)])
 END_T = S.end("cta") + 0.45
 DUR = END_T + 2.9
@@ -226,11 +226,12 @@ def terminal(c, t, t0):
     cmd = "python3 batch.py students.csv"
     n = int(clamp((t - t0 - 0.1) / 0.55) * len(cmd))
     text(c, "$ " + cmd[:n], x0 + 40, y0 + 120, "monob", 38, LIME, a, anchor="l")
-    done = int(clamp((t - t0 - 0.75) / 1.3) * 100)
+    done = int(clamp((t - t0 - 0.7) / 1.1) * 100)
     for j in range(max(0, done - 12), done):
         r = ROWS[j]
         y = y0 + 190 + (j - max(0, done - 12)) * 46
-        text(c, f"✓ {r['seat'][1:]}-{r['name'].lower()}-{r['city'].lower()}.mp4", x0 + 40, y, "mono", 32, "#cfd3dc", a,
+        text(c, "ok", x0 + 40, y, "monob", 32, LIME, a, anchor="l")
+        text(c, f"{r['seat'][1:]}-{r['name'].lower()}-{r['city'].lower()}.mp4", x0 + 110, y, "mono", 32, "#cfd3dc", a,
              anchor="l")
     bw = w - 80
     c.drawRRect(rrect(x0 + 40, y0 + h - 90, bw, 34, 17), fill("#22242e", a))

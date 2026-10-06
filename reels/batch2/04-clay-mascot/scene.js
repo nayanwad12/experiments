@@ -85,17 +85,17 @@ function piece(obj, x, y, z, delay) { obj.traverse(o => { if (o.isMesh) { o.cast
 // back wall with a window and a sun
 const wallG = new THREE.Group();
 const wall = new THREE.Mesh(new RoundedBoxGeometry(12, 7, 0.4, 3, 0.15), clay('#9ccbe8', 0.9, 0.04)); wallG.add(wall);
-const win = new THREE.Mesh(new RoundedBoxGeometry(2.8, 2.2, 0.5, 3, 0.15), clay('#fff3d6')); win.position.set(-2.4, 0.7, 0.05); wallG.add(win);
-const sky = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.8), new THREE.MeshBasicMaterial({ color: '#8fd3ff' })); sky.position.set(-2.4, 0.7, 0.31); wallG.add(sky);
-const sunM = sph(0.35, '#ffcf3a'); sunM.position.set(-1.9, 1.05, 0.35); wallG.add(sunM);
-const mull = new THREE.Mesh(new RoundedBoxGeometry(0.12, 1.9, 0.12, 2, 0.04), clay('#fff3d6')); mull.position.set(-2.4, 0.7, 0.36); wallG.add(mull);
+const win = new THREE.Mesh(new RoundedBoxGeometry(2.8, 2.2, 0.5, 3, 0.15), clay('#fff3d6')); win.position.set(-1.2, 0.9, 0.05); wallG.add(win);
+const sky = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.8), new THREE.MeshBasicMaterial({ color: '#8fd3ff' })); sky.position.set(-1.2, 0.9, 0.31); wallG.add(sky);
+const sunM = sph(0.35, '#ffcf3a'); sunM.position.set(-0.7, 1.25, 0.35); wallG.add(sunM);
+const mull = new THREE.Mesh(new RoundedBoxGeometry(0.12, 1.9, 0.12, 2, 0.04), clay('#fff3d6')); mull.position.set(-1.2, 0.9, 0.36); wallG.add(mull);
 piece(wallG, 0, 3.0, -3.6, 0.0);
 // plant
 const plant = new THREE.Group();
 const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.32, 0.7, 32), clay('#d4704a')); plant.add(pot);
 for (let i = 0; i < 6; i++) { const lf = sph(0.32, '#4fae4a'); lf.scale.set(0.6, 1.3, 0.35); const a = i / 6 * Math.PI * 2;
   lf.position.set(Math.cos(a) * 0.25, 0.75 + 0.15 * (i % 2), Math.sin(a) * 0.25); lf.rotation.set(Math.sin(a) * 0.5, 0, -Math.cos(a) * 0.5); plant.add(lf); }
-piece(plant, -2.3, 0.35, 0.2, 0.28);
+piece(plant, -1.55, 0.35, 1.0, 0.28);
 // laptop with a tiny timeline on screen
 const lap = new THREE.Group();
 const lbase = new THREE.Mesh(new RoundedBoxGeometry(1.7, 0.1, 1.1, 2, 0.05), clay('#d9dde3')); lap.add(lbase);
@@ -103,21 +103,21 @@ const lscr = new THREE.Group(); lscr.position.set(0, 0.05, -0.52); lscr.rotation
 { const lid = new THREE.Mesh(new RoundedBoxGeometry(1.7, 1.1, 0.08, 2, 0.05), clay('#d9dde3')); lid.position.set(0, 0.55, 0); lscr.add(lid); }
 const lt = canvasTex(512, 320);
 const lface = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.92), new THREE.MeshBasicMaterial({ map: lt.tex, toneMapped: false })); lface.position.set(0, 0.55, 0.045); lscr.add(lface);
-piece(lap, 2.2, 0.06, 0.6, 0.55);
+piece(lap, 1.55, 0.06, 1.15, 0.55);
 // lamp
 const lamp = new THREE.Group();
 const lb = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.4, 0.12, 32), clay('#2f3138')); lamp.add(lb);
 const lp = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 1.6, 6, 12), clay('#2f3138')); lp.position.set(0, 0.85, 0); lamp.add(lp);
 const shade = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.55, 32, 1, true), clay('#ff8a3d')); shade.material.side = THREE.DoubleSide; shade.position.set(0.25, 1.75, 0.1); shade.rotation.z = -0.6; lamp.add(shade);
 const bulb = new THREE.PointLight('#ffcf8a', 0, 5); bulb.position.set(0.35, 1.55, 0.2); lamp.add(bulb);
-piece(lamp, 3.6, 0.06, -1.4, 0.8);
+piece(lamp, 1.7, 0.06, -1.2, 0.8);
 // mug + books
 const mug = new THREE.Group(); mug.add(new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.25, 0.55, 32), clay('#f2f2ee')));
 const handle = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.05, 10, 24), clay('#f2f2ee')); handle.position.set(0.3, 0, 0); mug.add(handle);
-piece(mug, -1.3, 0.28, 1.4, 1.05);
+piece(mug, -0.95, 0.28, 2.0, 1.05);
 const books = new THREE.Group(); [['#e05d5d', 0], ['#5d8ee0', 0.26], ['#f2c14e', 0.5]].forEach(([c, y], i) => {
   const b = new THREE.Mesh(new RoundedBoxGeometry(1.2, 0.24, 0.85, 2, 0.05), clay(c)); b.position.set(0.05 * i, y, 0); b.rotation.y = 0.1 * i; books.add(b); });
-piece(books, -3.4, 0.12, -1.0, 1.3);
+piece(books, -1.75, 0.12, -1.3, 1.3);
 
 function drawLaptop(t) {
   const c = lt.ctx; c.fillStyle = '#16181f'; c.fillRect(0, 0, 512, 320);
@@ -214,9 +214,9 @@ window.renderFrame = t => {
   else if (ts < T.NOBODY) { const k = io(prog(ts, T.WEEKS, T.NOBODY - T.WEEKS)); cp = [lerp(0.3, 1.2, k), lerp(2.1, 2.7, k), lerp(10.2, 11.0, k)]; cl = [0.4, 1.7, 0]; }
   else if (ts < T.CODE) { cp = [0.1, 1.7, 6.4]; cl = [0, 1.3, 0]; }
   else if (ts < T.CODE_END) { const k = io(prog(ts, T.CODE, T.CODE_END - T.CODE)); const a = lerp(-0.2, 1.1, k); cp = [Math.sin(a) * 8.2, 2.0, Math.cos(a) * 8.2]; cl = [0, 1.1, 0]; }
-  else if (ts < T.LIPS) { const k = io(prog(ts, T.WORLD, 1.8)); cp = [lerp(0.4, 0.2, k), lerp(2.2, 3.4, k), lerp(7.0, 11.8, k)]; cl = [0, lerp(1.2, 1.6, k), 0]; }
+  else if (ts < T.LIPS) { const k = io(prog(ts, T.WORLD, 1.8)); cp = [lerp(0.4, 0.2, k), lerp(2.2, 3.6, k), lerp(7.0, 13.2, k)]; cl = [0, lerp(1.2, 1.7, k), 0]; }
   else if (ts < T.NEXT) { cp = [0.05, 1.35, 4.4]; cl = [0, 1.2, 0.6]; }
-  else { const k = io(prog(ts, T.NEXT, 3)); cp = [lerp(1.2, 0.6, k), 2.6, lerp(11.5, 10.6, k)]; cl = [0.3, 1.5, 0]; }
+  else { const k = io(prog(ts, T.NEXT, 3)); cp = [lerp(0.9, 0.4, k), 2.9, lerp(12.8, 12.0, k)]; cl = [0.1, 1.55, 0]; }
   camera.position.set(...cp); camera.lookAt(...cl);
   // exposure flicker per drawing (stop-motion feel)
   const fl = 1 + 0.02 * (hash(drawing, 4) - 0.5);

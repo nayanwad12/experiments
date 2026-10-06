@@ -1,4 +1,9 @@
-# Vibe Editing Reels, batch 1 (6 Instagram Reels)
+# Vibe Editing Reels
+
+- **Batch 2 (one Reel per skill, 3D, new music engine):** see [`batch2/README.md`](batch2/README.md)
+- **Batch 1 (6 Reels):** below
+
+# Batch 1 (6 Instagram Reels)
 
 Six finished, narrated, vertical Reels (1080×1920, 30 fps, H.264 + AAC 48 kHz, −14 LUFS) for the Vibe
 Editing page. Each one shows a different kind of video you can make with one workflow and **no AI video

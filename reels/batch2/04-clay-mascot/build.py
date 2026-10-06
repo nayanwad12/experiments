@@ -72,8 +72,16 @@ CODE = ["const body = clay(sphere(1.0), LIME);", "body.boil(seed = drawing);", "
         "finger.poke(at = word('hand'));"]
 
 
+PATCH_T0 = S.t("world") - 0.2                # world shots re-rendered after re-staging the set: work/patch.mp4
+PG = Layer(HERE / "work" / "patch.mp4", fps=FPS)
+
+
 def draw(c, t, f):
-    c.drawImage(BG.image(f), 0, 0)
+    p0 = int(round(PATCH_T0 * FPS))
+    if t >= PATCH_T0 and (HERE / "work" / "patch.mp4").exists():
+        c.drawImage(PG.image(f - p0), 0, 0)
+    else:
+        c.drawImage(BG.image(f), 0, 0)
     t0, t1 = S.find("code", "code") - 0.05, S.t("world") - 0.1
     if t0 <= t < t1:
         a = e_out(prog(t, t0, 0.25)) * (1 - prog(t, t1 - 0.2, 0.2))

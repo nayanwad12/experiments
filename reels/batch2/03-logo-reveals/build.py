@@ -55,21 +55,22 @@ def draw(c, t, f):
         # recap: five bands, each a slice of its reveal's hold, sliding in
         band = H / 5
         for i in range(5):
-            src = int(round((REV[i] + 2.0 + (t - RECAP) * 0.6) * FPS))
+            src = int(round((REV[i] + min(2.6, 1.9 + (t - RECAP) * 0.12)) * FPS))
             img = BG.image(src)
             k = e_out(prog(t, RECAP + 0.06 * i, 0.4))
             c.save()
             c.clipRect(skia.Rect.MakeXYWH(0, i * band, W, band))
             c.translate((1 - k) * (W if i % 2 else -W), 0)
-            c.translate(0, i * band + band / 2)
-            c.scale(0.62, 0.62)
-            c.translate(-W / 2, -H * 0.47)
+            # the whole frame, shrunk so the logo (y ~ 330..1400 of the frame) fits the band, on the right
+            c.translate(760, i * band + band / 2)
+            c.scale(0.33, 0.33)
+            c.translate(-W / 2, -880)
             c.drawImage(img, 0, 0)
             c.restore()
-            text(c, f"0{i + 1}", 40, i * band + 70, "monob", 44, LIME, k, anchor="l")
-            text(c, NAMES[i], 40, i * band + band - 28, "black", 40, WHITE, k, anchor="l", outline=6)
+            text(c, f"0{i + 1}", 60, i * band + band / 2 - 20, "monob", 48, LIME, k, anchor="l")
+            text(c, NAMES[i], 60, i * band + band / 2 + 50, "black", 50, WHITE, k, anchor="l")
             c.drawRect(skia.Rect.MakeXYWH(0, i * band - 3, W, 6), fill(INK))
-        dim = 0.5 * e_out(prog(t, S.t("nos"), 0.3))
+        dim = 0.3 * e_out(prog(t, S.t("nos"), 0.3))
         c.drawRect(skia.Rect.MakeWH(W, H), fill(INK, dim))
     # hook title
     if t < REV[0]:
@@ -81,7 +82,7 @@ def draw(c, t, f):
     for i, r0 in enumerate(REV):
         if r0 <= t < min(r0 + 1.5 * BAR, RECAP):
             k = e_out(prog(t, r0 + 0.05, 0.3))
-            text(c, f"0{i + 1} / 05", W / 2, 300, "monob", 40, LIME, k)
+            text(c, f"0{i + 1} / 05", W / 2, 215, "monob", 40, LIME, k)
             c.save()
             c.clipRect(skia.Rect.MakeLTRB(0, 1600, W, 1760))
             text(c, NAMES[i], W / 2, 1720 + 120 * (1 - k), "unbounded", 82, WHITE, 1, shadow=16)
@@ -91,7 +92,7 @@ def draw(c, t, f):
     CAP.draw(c, t)
 
 
-CAP = Captions(S.words(skip=("hook", "hook2", "l1", "l2", "l3", "l4", "l5")), y=1060, size=88).mute(END_T, DUR)
+CAP = Captions(S.words(skip=("hook", "hook2", "l1", "l2", "l3", "l4", "l5")), y=1060, size=80, box=True).mute(END_T, DUR)
 film = Film(draw, DUR, FPS, out_dir=HERE / "out")
 
 
