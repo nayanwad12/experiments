@@ -78,11 +78,22 @@ class Mix:
         ak.place(self.fx, clip, t, gain_db, pan)
         return self
 
-    def render(self):
-        mus = self.mbus
-        if self.duck_db and np.abs(self.vbus).max() > 0:
-            mus = mus * ak.duck_gain(self.vbus, self.duck_db, release=0.4)[:, None]
-        out = mus + self.fx + self.vbus
+    def render(self, target_db=10.0):
+        mus, fx = self.mbus, self.fx
+        if np.abs(self.vbus).max() > 0:
+            g = ak.duck_gain(self.vbus, min(self.duck_db, -10), release=0.4)
+            mus = mus * g[:, None]
+            fx = fx * (1 - 0.5 * (1 - g))[:, None]          # sfx dip half as much as the music
+            # keep the narration clearly on top: trim the whole bed if speech is still masked
+            on = np.abs(self.vbus).mean(1) > 0.01
+            v = np.sqrt((self.vbus[on] ** 2).mean())
+            b = np.sqrt(((mus + fx)[on] ** 2).mean()) + 1e-9
+            short = target_db - 20 * np.log10(v / b)
+            if short > 0:
+                k = ak.db(-min(short, 9))
+                mus, fx = mus * k, fx * k
+        self.stems = {"voice": self.vbus, "music": mus, "fx": fx}
+        out = mus + fx + self.vbus
         peak = np.max(np.abs(out)) or 1
         if peak > 0.98:
             out = np.tanh(out / peak * 1.3) / math.tanh(1.3) * 0.98
@@ -93,6 +104,11 @@ class Mix:
         work.mkdir(parents=True, exist_ok=True)
         raw = work / "mix_raw.wav"
         ak.write_wav(raw, self.render())
+        on = np.abs(self.vbus).mean(1) > 0.01
+        if on.any():
+            v = 20 * np.log10(np.sqrt((self.vbus[on] ** 2).mean()) + 1e-9)
+            b = 20 * np.log10(np.sqrt(((self.stems["music"] + self.stems["fx"])[on] ** 2).mean()) + 1e-9)
+            print(f"  voice-over-bed while speaking: {v - b:+.1f} dB")
         mixw = work / "mix.wav"
         ff("-i", raw, "-af", loudnorm_filter(raw, lufs, -1.0, 11), "-ar", str(SR), "-c:a", "pcm_s16le", mixw)
         Path(out).parent.mkdir(parents=True, exist_ok=True)

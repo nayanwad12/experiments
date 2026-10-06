@@ -152,7 +152,7 @@ def crayon_shape(c, path, outline_pts, colr, seed, f, angle=0.5, gap=11, w=9, al
         i += 1
     c.restore()
     lc = line_c or mixc(colr, "#000000", 0.35)
-    for pas in range(2):
+    for pas in range(2 if outline_pts else 0):
         q = _jit(outline_pts, 5, seed * 7 + pas * 13 + f * 101)
         pa = skia.Path()
         pa.moveTo(*q[0])
@@ -422,7 +422,7 @@ def style_badge(c, t, t0, name, idx):
 def prompt_pill(c, t, style_name, swap_t, a=1.0):
     """top pill: the prompt + the one word that changes."""
     base = PROMPT + ", "
-    size = 38
+    size = 42
     word = LABEL[style_name].lower()
     k = prog(t, swap_t, 0.25)
     wb = measure(base, "medium", size)
@@ -443,10 +443,10 @@ def collage(c, t, labels=True, dim=0.0):
         c.save()
         c.clipRect(skia.Rect.MakeXYWH(0, i * band, W, band))
         c.translate(W / 2, i * band + band / 2)
-        c.scale(0.5, 0.5)
-        c.translate(-540, -1060)
-        u = 0.55 + 0.25 * math.sin(t * 0.6 + i)
-        RENDER[sname](c, story(u, t + i * 0.7), t)
+        c.translate(-540, -1120)
+        st = story(0.3 + 0.05 * math.sin(t * 0.6 + i), t + i * 0.7)
+        st["boat_x"] = 600 + 70 * math.sin(t * 0.5 + i * 1.3)
+        RENDER[sname](c, st, t)
         c.restore()
         if labels:
             text(c, LABEL[sname], 40, i * band + band - 34, "black", 46, WHITE, 0.95, anchor="l", outline=7)
