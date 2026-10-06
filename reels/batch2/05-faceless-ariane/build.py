@@ -65,6 +65,19 @@ def prep():
 
 
 BG = Layer(HERE / "work" / "layer.mp4", fps=FPS)
+PATCH = (11.6, 24.7)                       # re-staged bits + gauge shots: work/patch.mp4
+PG = Layer(HERE / "work" / "patch.mp4", fps=FPS)
+
+
+def gauge_value(t):
+    """the same 'horizontal bias' reading the 3D gauge shows (scene.js), drawn crisp here."""
+    from kit import e_io
+    T = dict(MAXNUM=S.find("max", "32,767"), OVER=S.t("over"))
+    if t < T["OVER"]:
+        vk = 0.85 * e_out(prog(t, T["MAXNUM"] - 0.8, 1.4))
+    else:
+        vk = lerp(0.85, 1.25, e_io(prog(t, T["OVER"], OVERFLOW - T["OVER"])))
+    return round(vk / 0.85 * 32767 * (1.0 + (vk - 0.85) * 3.2 if vk > 0.85 else 1))
 CODE = ["-- inertial reference system (SRI)", "-- reused from Ariane 4", "",
         "procedure Align is", "   H_Bias : Float_64;", "begin", "   ...",
         "   E_BH := Integer_16 (H_Bias);", "   --  64 bits  ->  16 bits", "end Align;"]
@@ -74,20 +87,34 @@ def code_card(c, t, t0, t1):
     if not (t0 <= t < t1):
         return
     a = e_out(prog(t, t0, 0.3)) * (1 - prog(t, t1 - 0.25, 0.25))
-    x0, y0, w, h = 70, 1010, W - 140, 600
+    x0, y0, w, h = 70, 1180, W - 140, 460
     c.drawRRect(rrect(x0, y0, w, h, 24), fill("#03110a", 0.86 * a))
     c.drawRRect(rrect(x0, y0, w, h, 24), stroke("#2BFF88", 2, 0.4 * a))
     n = int((t - t0) * 7) + 1
     for i, ln in enumerate(CODE[:n]):
         hl = "Integer_16" in ln
         if hl and t > S.find("squeeze", "16") - 0.1:
-            c.drawRect(skia.Rect.MakeXYWH(x0 + 24, y0 + 52 + i * 52, w - 48, 48), fill(RED, 0.25 * a))
-        text(c, ln, x0 + 40, y0 + 88 + i * 52, "monob" if hl else "mono", 34, "#2BFF88" if not hl else "#FFFFFF", a,
+            c.drawRect(skia.Rect.MakeXYWH(x0 + 24, y0 + 36 + i * 41, w - 48, 40), fill(RED, 0.25 * a))
+        text(c, ln, x0 + 40, y0 + 66 + i * 41, "monob" if hl else "mono", 30, "#2BFF88" if not hl else "#FFFFFF", a,
              anchor="l")
 
 
 def draw(c, t, f):
-    c.drawImage(BG.image(f), 0, 0)
+    p0 = int(round(PATCH[0] * FPS))
+    if PATCH[0] <= t < PATCH[1] and (HERE / "work" / "patch.mp4").exists():
+        c.drawImage(PG.image(f - p0), 0, 0)
+    else:
+        c.drawImage(BG.image(f), 0, 0)
+    if t < S.t("lift") + 0.3:                                    # dark band behind the title
+        c.drawRect(skia.Rect.MakeWH(W, 760), skia.Paint(Shader=skia.GradientShader.MakeLinear(
+            [skia.Point(0, 0), skia.Point(0, 760)], [skia.Color(0, 0, 0, 170), skia.Color(0, 0, 0, 0)])))
+    if S.t("max") - 0.1 <= t < OVERFLOW:                         # the reading, big and crisp
+        a = e_out(prog(t, S.t("max") - 0.1, 0.3))
+        v = gauge_value(t)
+        c.drawRRect(rrect(W / 2 - 300, 1330, 600, 250, 30), fill("#05070b", 0.82 * a))
+        c.drawRRect(rrect(W / 2 - 300, 1330, 600, 250, 30), stroke(RED if v > 32767 else "#4d8dff", 3, 0.8 * a))
+        text(c, "HORIZONTAL BIAS READING", W / 2, 1385, "monob", 28, "#B9B2A0", a)
+        text(c, f"{v:,}", W / 2, 1540, "anton", 150, RED if v > 32767 else WHITE, a)
     # documentary title card on the hook
     if t < S.t("lift"):
         k = e_out(prog(t, S.find("hook", "one") - 0.05, 0.4))

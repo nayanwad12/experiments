@@ -14,7 +14,7 @@ narration is local Kokoro TTS.
 | B2-04 | `vibe-stylised-animation` | **The clay mascot that's made of code** · 20 s | A 3D claymation character talks to camera (lip sync from the voice), gets poked by a giant clay finger, turns to wireframe, and watches its world drop in |
 | B2-05 | `vibe-ai-footage` (faceless recipe, no AI clips) | **Ariane 5: one number, one rocket** · 48 s | Faceless documentary short on Flight 501: liftoff, inside the guidance computer, 64 bits into 16, the 32,767 overflow, both computers fail, break-up |
 | B2-06 | `vibe-audio-videos` | **This song is code. Watch it build.** · 29 s | Kick → hats → bass → chords → melody → drop; each layer drives its own part of a 3D audio-reactive visualiser, with live stem meters |
-| B2-07 | `vibe-bulk-videos` | **100 personalised videos, one command** · 31 s | One template × a 100-row spreadsheet: a wall of all 100, the batch run, rows becoming videos, heroes in English / Hindi / Spanish, one card in every format |
+| B2-07 | `vibe-bulk-videos` | **100 personalised videos, one command** · 32 s | One template × a 100-row spreadsheet: a wall of all 100, the batch run, rows becoming videos, heroes in English / Hindi / Spanish, one card in every format |
 
 Talking-head and VFX need real footage; they come next when there's a phone take.
 

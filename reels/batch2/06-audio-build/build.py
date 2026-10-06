@@ -152,6 +152,7 @@ def sound():
     from sound import Mix
     F = features()
     m = Mix(DUR)
+    m.target_db = 6.0                 # music-led: the song stays big, the callouts sit just on top
     m.voice(S.placements())
     m.music(F["mix"], gain_db=-1, duck_db=-6, fade_out=2.0)
     m.sfx("whoosh", END_T - 0.25, -12)

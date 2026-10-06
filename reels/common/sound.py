@@ -69,6 +69,7 @@ class Mix:
         self.mbus = np.zeros((self.n, 2), np.float32)
         self.fx = np.zeros((self.n, 2), np.float32)
         self.duck_db = -9
+        self.target_db = 10.0       # narration over (music + sfx) while speaking
 
     def voice(self, placements, gain_db=0.0, warmth=True, chain="broadcast"):
         for path, t in placements:
@@ -100,7 +101,8 @@ class Mix:
         ak.place(self.fx, clip, t, gain_db, pan)
         return self
 
-    def render(self, target_db=10.0):
+    def render(self, target_db=None):
+        target_db = self.target_db if target_db is None else target_db
         mus, fx = self.mbus, self.fx
         if np.abs(self.vbus).max() > 0:
             g = ak.duck_gain(self.vbus, min(self.duck_db, -10), release=0.4)

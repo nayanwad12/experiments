@@ -99,14 +99,14 @@ const bitsG = new THREE.Group(); scene.add(bitsG); bitsG.position.set(0, 1000, 0
 const bitMat = new THREE.MeshStandardMaterial({ color: '#e9eef7', roughness: 0.3, metalness: 0.2, emissive: '#6f8cff', emissiveIntensity: 0.25 });
 const fitMat = new THREE.MeshStandardMaterial({ color: '#2bff88', roughness: 0.3, emissive: '#2bff88', emissiveIntensity: 0.6 });
 const redMat = new THREE.MeshStandardMaterial({ color: '#ff3b3b', roughness: 0.3, emissive: '#ff3b3b', emissiveIntensity: 0.5 });
-const bits = [...Array(64)].map((_, i) => { const m = new THREE.Mesh(new RoundedBoxGeometry(0.28, 0.28, 0.28, 2, 0.05), bitMat); bitsG.add(m); return m; });
-const reg = new THREE.Mesh(new RoundedBoxGeometry(16 * 0.32 + 0.3, 0.6, 0.6, 2, 0.08), new THREE.MeshPhysicalMaterial({ color: '#9fb4d8', transparent: true, opacity: 0.25, roughness: 0.1 }));
+const bits = [...Array(64)].map((_, i) => { const m = new THREE.Mesh(new RoundedBoxGeometry(0.22, 0.22, 0.22, 2, 0.04), bitMat); bitsG.add(m); return m; });
+const reg = new THREE.Mesh(new RoundedBoxGeometry(16 * 0.27 + 0.25, 0.5, 0.5, 2, 0.08), new THREE.MeshPhysicalMaterial({ color: '#9fb4d8', transparent: true, opacity: 0.25, roughness: 0.1 }));
 bitsG.add(reg);
 function label(txt, col, w = 6, h = 1) { const ct = canvasTex(1024, Math.round(1024 * h / w)), c = ct.ctx; c.fillStyle = col; c.font = `700 ${Math.round(ct.cv.height * 0.6)}px JBM`;
   c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(txt, 512, ct.cv.height / 2); ct.update();
   return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: ct.tex, transparent: true, toneMapped: false })); }
-const l64 = label('64-BIT FLOAT', '#c9d6ff', 5, 0.6); bitsG.add(l64);
-const l16 = label('16-BIT INTEGER', '#2bff88', 5, 0.6); bitsG.add(l16);
+const l64 = label('64-BIT FLOAT', '#c9d6ff', 4.2, 0.5); bitsG.add(l64);
+const l16 = label('16-BIT INTEGER', '#2bff88', 4.2, 0.5); bitsG.add(l16);
 
 // gauge
 const gauge = new THREE.Group(); scene.add(gauge); gauge.position.set(0, 1500, 0);
@@ -118,7 +118,7 @@ const maxRing = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.05, 12, 64), new 
 maxRing.rotation.x = Math.PI / 2; maxRing.position.y = 6.2; gauge.add(maxRing);
 const maxLbl = label('MAX  32,767', '#ff6b6b', 4.2, 0.6); maxLbl.position.set(0, 6.75, 0.95); gauge.add(maxLbl);
 const valT = canvasTex(1024, 256); const valM = new THREE.Mesh(new THREE.PlaneGeometry(5, 1.25), new THREE.MeshBasicMaterial({ map: valT.tex, transparent: true, toneMapped: false }));
-valM.position.set(0, -1.1, 0.6); gauge.add(valM);
+valM.position.set(0, -1.1, 0.6); valM.visible = false; gauge.add(valM);   // the counter is drawn crisp in 2D (build.py)
 const shards = [...Array(40)].map((_, i) => { const m = new THREE.Mesh(new THREE.TetrahedronGeometry(0.15 + 0.2 * hash(i, 1)), tube.material); gauge.add(m); return m; });
 const drops = [...Array(120)].map(() => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), liquid.material); gauge.add(m); return m; });
 
@@ -207,17 +207,17 @@ window.renderFrame = t => {
     reg.position.set(0, -0.6, 0);
     bits.forEach((b, i) => {
       const k = expo(prog(t, T.BITS16 + 0.03 * i, 0.5));
-      const row = new THREE.Vector3(-0.32 * 31.5 / 2 + (i % 32) * 0.32 * 0.5 - 0.0, 1.0 + (i < 32 ? 0.2 : -0.2), 0).setX(-5.0 + (i % 32) * 0.32);
+      const row = new THREE.Vector3(-2.025 + (i % 16) * 0.27, 1.0 + (1.5 - Math.floor(i / 16)) * 0.3, 0);
       let target;
-      if (i < 16) target = new THREE.Vector3(-2.4 + i * 0.32, -0.6, 0);
-      else { const j = i - 16; target = new THREE.Vector3(-2.6 + (j % 12) * 0.45 + 0.2 * hash(j, 1), -0.25 + Math.floor(j / 12) * 0.36 + 0.2 * hash(j, 2), 0.7 + 0.5 * hash(j, 3)); }
+      if (i < 16) target = new THREE.Vector3(-2.025 + i * 0.27, -0.6, 0);
+      else { const j = i - 16; target = new THREE.Vector3(-2.2 + (j % 12) * 0.4 + 0.15 * hash(j, 1), -0.2 + Math.floor(j / 12) * 0.3 + 0.15 * hash(j, 2), 0.7 + 0.5 * hash(j, 3)); }
       b.position.lerpVectors(row, target, k);
       b.rotation.set(i >= 16 ? k * hash(i, 4) * 2 : 0, i >= 16 ? k * hash(i, 5) * 2 : 0, 0);
       b.material = i < 16 ? (k > 0.95 ? fitMat : bitMat) : (k > 0.95 ? redMat : bitMat);
     });
-    l64.position.set(0, 1.85, 0);
+    l64.position.set(0, 1.95, 0);
     const k = io(prog(t, T.SQUEEZE, T.MAX - T.SQUEEZE));
-    camera.position.set(lerp(-1.5, 1.2, k), 1000 + lerp(1.2, 0.4, k), lerp(9.5, 8.0, k)); camera.lookAt(0, 1000.3, 0);
+    camera.position.set(lerp(-0.8, 0.8, k), 999.9 + lerp(0.3, 0.0, k), lerp(12.8, 11.8, k)); camera.lookAt(0, 999.6, 0);
     flash = 0.6 * Math.exp(-(t - T.SQUEEZE) * 9);
   } else if (t < T.CRASH) {                                              // gauge: value climbs past 32,767, then bursts
     gauge.visible = true; sky.visible = ground.visible = false;
