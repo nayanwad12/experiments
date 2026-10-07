@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Photo + voice -> talking-head video with SadTalker (CPU, free, offline once set up).
 #   ./make_avatar.sh input/me.jpg work/voice.wav out/avatar.mp4
-# Env knobs: SIZE=256|512 (face model res; 512 is ~4x slower on CPU), ENHANCE=gfpgan|none, STILL=1 (less head motion),
+# Env knobs: SIZE=256|512 (face model res; 512 is ~4x slower on CPU), ENHANCE=none|gfpgan (sharper face, ~2x slower), STILL=1 (less head motion),
 #            EXPR=1.0 (expression strength), MAXW=1080 (photo is downscaled to this width first)
 set -euo pipefail
 
 IMG="$1"; AUDIO="$2"; OUT="${3:-out/avatar.mp4}"
 AVATAR_HOME="${AVATAR_HOME:-$HOME/avatar-tools}"
 ST="$AVATAR_HOME/SadTalker"; PY="$AVATAR_HOME/venv/bin/python"
-SIZE="${SIZE:-256}"; ENHANCE="${ENHANCE:-gfpgan}"; STILL="${STILL:-1}"; EXPR="${EXPR:-1.0}"; MAXW="${MAXW:-1080}"
+SIZE="${SIZE:-256}"; ENHANCE="${ENHANCE:-none}"; STILL="${STILL:-1}"; EXPR="${EXPR:-1.0}"; MAXW="${MAXW:-1080}"
 
 [ -x "$PY" ] || { echo "run ./setup.sh first"; exit 1; }
 WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT
