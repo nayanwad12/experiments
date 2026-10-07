@@ -17,3 +17,4 @@ batch2/_test/
 batch2/*.log
 batch2/*/out/tmp*/
 logo-b/logs/
+logo-ideabro/logs/
