@@ -22,7 +22,7 @@ def name(st, style, fmt):
     return f"IDEABRO_0{st}_{style}_{fmt}.mp4"
 
 
-def encode(inputs, out, fps, dur, extra=(), crf=16, cap_mb=27.5, maps=("-map", "0:v:0", "-map", "1:a:0")):
+def encode(inputs, out, fps, dur, extra=(), crf=16, cap_mb=24.0, maps=("-map", "0:v:0", "-map", "1:a:0")):
     mbps = cap_mb * 8 * 0.95 / dur - 0.33
     ff(*inputs, *extra, *maps, "-c:v", "libx264", "-preset", "slow", "-crf", str(crf), "-maxrate", f"{mbps:.1f}M",
        "-bufsize", f"{2 * mbps:.1f}M", "-pix_fmt", "yuv420p", "-profile:v", "high", "-r", str(fps), "-c:a", "aac",
