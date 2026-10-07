@@ -1,0 +1,118 @@
+-> /home/user/experiments/reels/logo-b/work/logo.json
+node /home/user/experiments/reels/batch2/render3d.mjs /home/user/experiments/reels/logo-b/scene.html --w 3840 --h 2160 --fps 60 --dur 8.0 --png --crf 10 --preset slow --workers 4 -o /home/user/experiments/reels/logo-b/work/16x9/layer.mp4
+layer: 480 frames, 11/11 chunks to render, 4 workers
+
+chunk 90 failed (1): page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+
+chunk 0 failed (1): page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+
+chunk 45 failed (1): page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+
+chunk 135 failed (1): page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+
+chunk 135 failed (2): page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+
+chunk 90 failed (2): page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+
+chunk 45 failed (2): page.screenshot: Timeout 30000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+
+chunk 90 failed (3): page.screenshot: Target page, context or browser has been closed
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.screenshot: Target page, context or browser has been closed
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+    at grab (/home/user/experiments/reels/batch2/render3d.mjs:55:44)
+    at chunk (/home/user/experiments/reels/batch2/render3d.mjs:85:23)
+    at async worker (/home/user/experiments/reels/batch2/render3d.mjs:101:13)
+    at async file:///home/user/experiments/reels/batch2/render3d.mjs:108:1
+
+Node.js v22.22.0
+[out#0/mp4 @ 0x55963e159640] [out#0/mp4 @ 0x55755aebb640] [out#0/mp4 @ 0x558e4b250640] Output file does not contain any stream
+Output file does not contain any stream
+Output file does not contain any stream
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00135.mp4.part.mp4.
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00090.mp4.part.mp4.
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00090.mp4.part.mp4.
+Error opening output files: Invalid argument
+Error opening output files: Invalid argument
+Error opening output files: Invalid argument
+[out#0/mp4 @ 0x55b46a392640] [out#0/mp4 @ 0x555d839ef640] Output file does not contain any stream
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00045.mp4.part.mp4.
+Error opening output files: Invalid argument
+[out#0/mp4 @ 0x5579d83ee640] Output file does not contain any stream
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00135.mp4.part.mp4.
+Error opening output files: Invalid argument
+Output file does not contain any stream
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00045.mp4.part.mp4.
+Error opening output files: Invalid argument
+[out#0/mp4 @ 0x559156322640] Output file does not contain any stream
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00090.mp4.part.mp4.
+Error opening output files: Invalid argument
+[out#0/mp4 @ 0x55d578300640] Output file does not contain any stream
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00000.mp4.part.mp4.
+Error opening output files: Invalid argument
+[out#0/mp4 @ 0x563afebc5640] Output file does not contain any stream
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00135.mp4.part.mp4.
+Error opening output files: Invalid argument
+[out#0/mp4 @ 0x562f5eb4d640] Output file does not contain any stream
+Error opening output file /home/user/experiments/reels/logo-b/work/16x9/layer.mp4.segs/s00045.mp4.part.mp4.
+Error opening output files: Invalid argument
+Traceback (most recent call last):
+  File "/home/user/experiments/reels/logo-b/build.py", line 56, in <module>
+    render3d(fmt, "--png", "--crf", arg("--crf", "10"), "--preset", "slow", "--workers", arg("--workers", "4"),
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+             "-o", str(WORK / fmt / "layer.mp4"))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/experiments/reels/logo-b/build.py", line 41, in render3d
+    subprocess.run(cmd, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['node', '/home/user/experiments/reels/batch2/render3d.mjs', '/home/user/experiments/reels/logo-b/scene.html', '--w', '3840', '--h', '2160', '--fps', '60', '--dur', '8.0', '--png', '--crf', '10', '--preset', 'slow', '--workers', '4', '-o', '/home/user/experiments/reels/logo-b/work/16x9/layer.mp4']' returned non-zero exit status 1.

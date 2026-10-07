@@ -74,7 +74,9 @@ export async function stage(opts = {}) {
     scene.environmentIntensity = opts.envIntensity ?? 1.0;
   }
   const camera = new THREE.PerspectiveCamera(opts.fov ?? 35, W / H, 0.05, 400);
-  const composer = new EffectComposer(renderer);
+  // opts.samples > 0: multisampled composer target (clean edges on hard geometry such as logos)
+  const composer = opts.samples ? new EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H,
+    { type: THREE.HalfFloatType, samples: opts.samples })) : new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
   let bloom = null;
   if (opts.bloom) { bloom = new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), opts.bloom, opts.bloomRadius ?? 0.55,

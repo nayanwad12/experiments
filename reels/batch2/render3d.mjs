@@ -3,6 +3,7 @@
 //   node render3d.mjs <video-dir>/scene.html --w 1080 --h 1920 --fps 30 --dur 30 -o <video-dir>/work/layer.mp4
 //   node render3d.mjs <video-dir>/scene.html --stills 1.2,4.5 -o <video-dir>/out/web_stills
 //   options: --workers 4  --from 0 --to <sec>  --q 92 (jpeg quality of the frame grab)
+//            --png (lossless frame grab)  --crf 12  --preset fast
 //
 // The page must set window.READY (a promise) and window.renderFrame(t) (sync or async; t in seconds).
 // Pages are served from the reels/ folder over http, so they can import /batch2/node_modules/three/...
@@ -23,6 +24,7 @@ const WORKERS = +opt('workers', 4), Q = +opt('q', 94);
 const OUT = path.resolve(args.includes('-o') ? args[args.indexOf('-o') + 1] : 'work/layer.mp4');
 const STILLS = opt('stills', null);
 const FROM = +opt('from', 0), TO = +opt('to', DUR);
+const PNG = args.includes('--png'), CRF = opt('crf', '12'), PRESET = opt('preset', 'fast');
 
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json',
   '.ttf': 'font/ttf', '.png': 'image/png', '.jpg': 'image/jpeg', '.wav': 'audio/wav', '.bin': 'application/octet-stream' };
@@ -50,8 +52,8 @@ async function open() {
     new Promise((_, rej) => setTimeout(() => rej(new Error('page never became READY (see page errors above)')), 180000))]);
   return { browser, page };
 }
-const grab = (page, type = 'jpeg') => page.screenshot(type === 'png' ? { type, clip: { x: 0, y: 0, width: W, height: H } }
-  : { type, quality: Q, clip: { x: 0, y: 0, width: W, height: H } });
+const grab = (page, type = 'jpeg') => page.screenshot(type === 'png' ? { type, timeout: 300000, clip: { x: 0, y: 0, width: W, height: H } }
+  : { type, quality: Q, timeout: 300000, clip: { x: 0, y: 0, width: W, height: H } });     // big frames under load can take a while
 
 if (STILLS) {
   fs.mkdirSync(OUT, { recursive: true });
@@ -75,12 +77,12 @@ const t0 = Date.now(); let done = 0;
 
 async function chunk(ctx, a) {
   const b = Math.min(N1, a + CH), part = segPath(a) + '.part.mp4';
-  const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
-    '-c:v', 'libx264', '-preset', 'fast', '-crf', '12', '-pix_fmt', 'yuv420p', '-r', String(FPS), part], { stdio: ['pipe', 'inherit', 'inherit'] });
+  const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', PNG ? 'png' : 'mjpeg', '-i', '-',
+    '-c:v', 'libx264', '-preset', PRESET, '-crf', CRF, '-pix_fmt', 'yuv420p', '-r', String(FPS), part], { stdio: ['pipe', 'inherit', 'inherit'] });
   const closed = new Promise(r => ff.on('close', r));
   for (let i = a; i < b; i++) {
     await ctx.page.evaluate(t => window.renderFrame(t), i / FPS);
-    const buf = await grab(ctx.page);
+    const buf = await grab(ctx.page, PNG ? 'png' : 'jpeg');
     if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
   }
   ff.stdin.end();

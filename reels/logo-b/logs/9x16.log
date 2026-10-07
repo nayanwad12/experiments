@@ -1,0 +1,3 @@
+-> /home/user/experiments/reels/logo-b/work/logo.json
+node /home/user/experiments/reels/batch2/render3d.mjs /home/user/experiments/reels/logo-b/scene.html --w 1080 --h 1920 --fps 60 --dur 8.0 --png --crf 10 --preset slow --workers 4 -o /home/user/experiments/reels/logo-b/work/9x16/layer.mp4
+layer: 480 frames, 11/11 chunks to render, 4 workers
