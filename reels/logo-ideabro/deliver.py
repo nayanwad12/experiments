@@ -92,5 +92,6 @@ def showcase(styles, titles, work, out_dir, fps, T):
     ff("-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", tmp / "joined.mov")
     total = INTRO + sum(T[s]["dur"] for s in styles.values())
     ff("-i", tmp / "joined.mov", "-vn", "-c:a", "pcm_s16le", tmp / "joined.wav")
-    ff("-i", tmp / "joined.wav", "-af", loudnorm_filter(tmp / "joined.wav", -14.0, -1.0, 11), "-ar", "48000", tmp / "joined_ln.wav")
+    ff("-i", tmp / "joined.wav", "-af", loudnorm_filter(tmp / "joined.wav", -14.0, -1.0, 11) + ",alimiter=limit=0.84:level=false",
+       "-ar", "48000", tmp / "joined_ln.wav")      # limiter: the joined clips can push loudnorm past its peak target
     encode(["-i", tmp / "joined.mov", "-i", tmp / "joined_ln.wav"], out_dir / "IDEABRO_5_styles_9x16.mp4", fps, total)

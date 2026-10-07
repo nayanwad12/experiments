@@ -24,7 +24,7 @@ The neon flicker and the glitch frames use the same hash in the picture (`stage.
 | `out/IDEABRO_0N_<style>_9x16.mp4` | 1080×1920, 60 fps (Reels, Shorts, TikTok, Stories) |
 | `out/IDEABRO_5_styles_9x16.mp4` | showcase reel: title card plus all five, each labelled |
 
-All files are H.264 high with AAC 320k at 48 kHz, −14 LUFS and −1 dBTP, and each is under 28 MB.
+All files are H.264 high with AAC 320k at 48 kHz, −14 to −16 LUFS with no clipping, and each is under 28 MB.
 
 ## Build
 
