@@ -11,7 +11,7 @@ What v2 changed:
   50.2 s became 33.1 s. The cut audio was re-transcribed and every word is intact.
 - **Bigger captions:** 96 px Inter Tight, 1–2 words at a time, with the active word in neon.
 - **Zoom transitions:** a zoom-blur between every scene, plus an eased punch-in on every jump cut in the full-frame scenes.
-- **Layout:** in the explainer scenes the speaker is a small circle at the top right and the graphics sit in the middle
+- **Layout (v3):** the explainer scenes are split screen, with motion graphics in the top half and the speaker in the bottom half
   (the old way, the system core, the step pipeline for Record → Say it → Edit, the prompt UI, "No app / editor / skills", the creator seats).
 - **Full-frame scenes:** hook, step 3 demo, "talk", the magazine cover and the CTA keep kinetic type behind the head.
 

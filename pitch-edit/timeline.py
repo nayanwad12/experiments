@@ -8,19 +8,19 @@ DURATION = 34.3
 MOOD = "tech"
 SEED = 21
 
-# (start, end, scene, layout)  layout: full = footage full frame, explainer = graphics + face circle top-right
+# (start, end, scene, layout)  layout: full = footage full frame, split = motion graphics top half + footage bottom half
 SCENES = [
     (0.00, 2.20, "hook", "full"),          # This video is fully edited and I didn't touch it.
-    (2.20, 3.30, "forever", "explainer"),  # Editing takes forever.
-    (3.30, 6.75, "pain", "explainer"),     # Cutting, captions, music, zooms. It eats your whole day.
-    (6.75, 8.02, "built", "explainer"),    # So I've built my own system.
-    (8.02, 11.46, "step1", "explainer"),   # Step 1: I record on my phone. One take and mistakes are fine.
-    (11.46, 16.82, "step2", "explainer"),  # Step 2: I tell my system what I want in normal words. Like make it fun...
+    (2.20, 3.30, "forever", "full"),  # Editing takes forever.
+    (3.30, 6.75, "pain", "split"),     # Cutting, captions, music, zooms. It eats your whole day.
+    (6.75, 8.02, "built", "full"),    # So I've built my own system.
+    (8.02, 11.46, "step1", "split"),   # Step 1: I record on my phone. One take and mistakes are fine.
+    (11.46, 16.82, "step2", "split"),  # Step 2: I tell my system what I want in normal words. Like make it fun...
     (16.82, 20.48, "step3", "full"),       # Step 3: it edits everything. The cuts, the captions, the zooms, the music.
-    (20.48, 22.48, "nos", "explainer"),    # No editing app, no editor, no skills.
+    (20.48, 22.48, "nos", "split"),    # No editing app, no editor, no skills.
     (22.48, 24.26, "talk", "full"),        # If you can talk, you can make videos like this.
     (24.26, 27.20, "cover", "full"),       # This video was made exactly like that. So is every video on my page.
-    (27.20, 29.12, "open", "explainer"),   # And I'm opening it up to a few creators.
+    (27.20, 29.12, "open", "split"),   # And I'm opening it up to a few creators.
     (29.12, DURATION, "cta", "full"),      # If you want to see how it works, comment system ... tap the link below.
 ]
 ZOOM_T = 0.40          # zoom transition length

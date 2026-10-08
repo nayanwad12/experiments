@@ -126,10 +126,11 @@ def place(c, t, zoom, rect=None):
     a = w / h
     sh = min(SH, SW / a) / zoom
     sw = sh * a
-    cx = lerp(SW / 2, fx, clamp((zoom - 1) * 6)) + jx
-    cy = lerp(SH / 2, fy + 60, clamp((zoom - 1) * 6)) + jy
+    focus = 1.0 if abs(a - SW / SH) > 0.01 else clamp((zoom - 1) * 6)
+    cx = lerp(SW / 2, fx, focus) + jx
+    cy = lerp(SH / 2, fy + 60, focus) + jy
     sx = clamp(cx - sw / 2, 0, SW - sw)
-    sy = clamp(cy - sh / 2, 0, SH - sh)
+    sy = clamp(cy - sh * (0.42 if focus >= 1 and rect else 0.5), 0, SH - sh)
     k = w / sw
     c.translate(x, y)
     c.scale(k, k)
@@ -255,60 +256,34 @@ def explainer_bg(c, t):
 def section(c, t, t0, label):
     """the section label every explainer scene opens with."""
     k = fade(t, t0)
-    c.drawRect(skia.Rect.MakeXYWH(90, 335, 16, 16), P(NEON, k))
-    mono(c, label, 122, 343, 24, WHITE, alpha=k)
+    c.drawRect(skia.Rect.MakeXYWH(90, 292, 16, 16), P(NEON, k))
+    mono(c, label, 122, 300, 24, WHITE, alpha=k)
 
 
-# face circle (explainer scenes)
-FC_X, FC_Y, FC_R = 885, 392, 108
+# split layout: motion graphics on top, the speaker on the bottom half
+SPLIT = 900
 
 
-def face_circle(c, t, k):
-    if k <= 0.01:
-        return
-    fx, fy, jx, jy = face(t)
+def video_panel(c, t):
     c.save()
-    c.translate(FC_X, FC_Y)
-    c.scale(k, k)
-    sh = skia.Paint(Color=skia.Color(0, 0, 0, 140), AntiAlias=True)
-    sh.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 22))
-    c.drawCircle(0, 14, FC_R + 8, sh)
-    path = skia.Path()
-    path.addCircle(0, 0, FC_R)
-    c.save()
-    c.clipPath(path, skia.ClipOp.kIntersect, True)
-    side = 520
-    sx = clamp(fx + jx - side / 2, 0, SW - side)
-    sy = clamp(fy + jy - side * 0.5, 0, SH - side)
+    c.clipRect(skia.Rect.MakeXYWH(0, SPLIT, W, H - SPLIT))
     img, _ = layers(t)
-    c.drawImageRect(img, skia.Rect.MakeXYWH(sx, sy, side, side),
-                    skia.Rect.MakeXYWH(-FC_R, -FC_R, 2 * FC_R, 2 * FC_R), SAMP, skia.Paint(AntiAlias=True))
+    c.save()
+    place(c, t, 1.0, rect=(0, SPLIT, W, H - SPLIT))
+    c.drawImage(img, 0, 0, SAMP)
     c.restore()
-    c.drawCircle(0, 0, FC_R + 3, SP(NEON, 5))
-    # speaking indicator
-    lv = 0.5 + 0.5 * math.sin(t * 9)
-    c.drawCircle(FC_R * 0.72, FC_R * 0.72, 14, P(INK))
-    c.drawCircle(FC_R * 0.72, FC_R * 0.72, 9, P(NEON, 0.6 + 0.4 * lv))
+    shade = skia.Paint(Shader=skia.GradientShader.MakeLinear(
+        [skia.Point(0, SPLIT), skia.Point(0, SPLIT + 140)], [col(INK, 0.55), col(INK, 0.0)]))
+    c.drawRect(skia.Rect.MakeXYWH(0, SPLIT, W, 140), shade)
     c.restore()
-
-
-def circle_k(t):
-    """the face circle pops in at the start of an explainer run and out at its end."""
-    for a, b, name, lay in TL.SCENES:
-        if lay == "explainer" and a <= t < b:
-            runs_a = a
-            for a2, b2, n2, l2 in TL.SCENES:
-                if b2 == runs_a and l2 == "explainer":
-                    runs_a = a2
-            return ease_out_back(prog(t, runs_a + 0.1, 0.45))
-    return 0.0
+    c.drawRect(skia.Rect.MakeXYWH(0, SPLIT - 2, W, 4), P(NEON))
 
 
 # pipeline header shared by the steps
 def pipeline(c, t, t0, active):
     k = fade(t, t0)
     labels = ["RECORD", "SAY IT", "EDIT"]
-    x0, x1, y = 110, 700, 470
+    x0, x1, y = 120, 700, 420
     c.drawLine(x0, y, x0 + (x1 - x0) * k, y, SP(WHITE, 2, 0.2))
     for i, lb in enumerate(labels):
         x = x0 + i * (x1 - x0) / 2
@@ -353,127 +328,94 @@ def sc_hook(c, t, a, b):
 
 
 def sc_forever(c, t, a, b):
-    explainer_bg(c, t)
-    section(c, t, a, "THE OLD WAY")
-    for i, (w_, ts, colr) in enumerate([("EDITING", C["editing"], WHITE), ("TAKES", C["takes"], WHITE),
-                                        ("FOREVER.", C["forever"], NEON)]):
-        kinetic(c, t, ts - 0.06, w_, W / 2, 660 + i * 205, 225, colr)
-    # a render bar that never finishes
-    k = fade(t, a + 0.1)
-    bw = 700
-    x, y = (W - bw) / 2, 1225
-    c.drawRoundRect(skia.Rect.MakeXYWH(x, y, bw, 14), 7, 7, P(WHITE, 0.12 * k))
-    pr = 0.92 + 0.07 * (1 - math.exp(-(t - a) * 1.5))
-    c.drawRoundRect(skia.Rect.MakeXYWH(x, y, bw * pr * k, 14), 7, 7, P(NEON, k))
-    mono(c, f"RENDERING... {int(pr * 100)}%", x, y - 30, 22, WHITE, alpha=0.6 * k, tracking=0.1)
+    def behind(c, t):
+        big(c, t, C["forever"] - 0.06, "FOREVER.", NEON)
+    footage(c, t, seg_zoom(t), dim=0.55 * ease_in_out_cubic(prog(t, a - 0.1, 0.3)), behind=behind)
+    kicker(c, t, a + 0.02, "editing takes")
 
 
 def sc_pain(c, t, a, b):
-    explainer_bg(c, t)
     section(c, t, a, "THE OLD WAY")
     rows = [("CUTTING", C["cutting"], "02:10"), ("CAPTIONS", C["captions"], "01:45"), ("MUSIC", C["music"], "00:50"),
             ("ZOOMS", C["zooms"], "01:20")]
-    for i, (s, ts, hrs) in enumerate(rows):
+    for i, (s_, ts, hrs) in enumerate(rows):
         k = ease_out_expo(prog(t, ts - 0.05, 0.5))
         if k <= 0:
             continue
-        y = 560 + i * 170
-        x = 90 + (1 - k) * 80
+        y = 395 + i * 104
         c.save()
-        c.translate(x, 0)
-        glass(c, 0, y - 70, W - 180, 140, 28, a=k)
-        text(c, f"0{i + 1}", 46, y, size=26, font="mono", fill=col(NEON, k))
-        text(c, s, 110, y + 4, size=96, font=BIG, fill=col(WHITE, k), align="left")
-        text(c, hrs, W - 180 - 40, y, size=34, font="mono", fill=col(WHITE, 0.6 * k), align="right")
+        c.translate((1 - k) * 80, 0)
+        glass(c, 90, y - 44, W - 180, 88, 24, a=k)
+        text(c, f"0{i + 1}", 136, y, size=22, font="mono", fill=col(NEON, k))
+        text(c, s_, 190, y + 3, size=64, font=BIG, fill=col(WHITE, k), align="left")
+        text(c, hrs, W - 130, y, size=28, font="mono", fill=col(WHITE, 0.6 * k), align="right")
         sk = ease_in_out_cubic(prog(t, C["day"] + i * 0.1, 0.35))
         if sk > 0:
-            c.drawRect(skia.Rect.MakeXYWH(100, y - 4, (text_width(s, 96, BIG) + 30) * sk, 10), P(NEON))
+            c.drawRect(skia.Rect.MakeXYWH(180, y - 3, (text_width(s_, 64, BIG) + 24) * sk, 8), P(NEON))
         c.restore()
-    # total
     kt = fade(t, C["day"] + 0.3)
     if kt > 0:
-        y = 560 + 4 * 170 - 20
-        mono(c, "TOTAL / ONE VIDEO", 90, y, 24, WHITE, alpha=0.6 * kt)
+        mono(c, "TOTAL / ONE VIDEO", 90, 828, 22, WHITE, alpha=0.6 * kt)
         hrs = clamp((t - C["day"] - 0.3) / 0.6) * 5.75
-        text(c, f"{int(hrs):02d}:{int(hrs % 1 * 60):02d} HRS", W - 90, y + 6, size=88, font=BIG, fill=col(NEON, kt),
+        text(c, f"{int(hrs):02d}:{int(hrs % 1 * 60):02d} HRS", W - 90, 832, size=66, font=BIG, fill=col(NEON, kt),
              align="right")
 
 
 def sc_built(c, t, a, b):
-    explainer_bg(c, t)
-    section(c, t, a, "SO I BUILT")
-    k = ease_out_expo(prog(t, C["my_own"] - 0.15, 0.6))
-    cx, cy = W / 2, 800
-    # orbit rings + core
-    for i, r in enumerate((300, 230, 160)):
-        kk = ease_out_expo(prog(t, C["my_own"] - 0.15 + i * 0.08, 0.6))
-        c.save()
-        c.translate(cx, cy)
-        c.rotate((t * (18 + i * 14)) * (1 if i % 2 else -1))
-        dash = SP(WHITE if i else NEON, 2, 0.35 * kk)
-        dash.setPathEffect(skia.DashPathEffect.Make([18, 14], 0))
-        c.drawCircle(0, 0, r * kk, dash)
-        c.drawCircle(r * kk, 0, 7, P(NEON, kk))
-        c.restore()
-    g = skia.Paint(Color=col(NEON, 0.35 * k), AntiAlias=True)
-    g.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 60))
-    c.drawCircle(cx, cy, 120 * k, g)
-    c.drawCircle(cx, cy, 110 * k, P(NEON, k))
-    text(c, "MY", cx, cy - 22, size=44 * k + 0.1, font=BIG, fill=INK)
-    text(c, "SYSTEM", cx, cy + 24, size=44 * k + 0.1, font=BIG, fill=INK)
-    kinetic(c, t, C["system"] - 0.05, "MY OWN SYSTEM.", W / 2, 1230, fit("MY OWN SYSTEM.", 140), WHITE)
+    def behind(c, t):
+        big(c, t, C["my_own"] - 0.06, "MY OWN", WHITE, out_t=C["system"] - 0.14)
+        big(c, t, C["system"] - 0.06, "SYSTEM.", NEON)
+    footage(c, t, seg_zoom(t), dim=0.55 * ease_in_out_cubic(prog(t, C["my_own"] - 0.25, 0.3)), behind=behind)
+    kicker(c, t, a + 0.05, "so I built")
 
 
 def phone(c, t, x, y, w, h):
-    rr = skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(x, y, w, h), 54, 54)
+    rr = skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(x, y, w, h), 34, 34)
     sh = skia.Paint(Color=skia.Color(0, 0, 0, 160), AntiAlias=True)
     sh.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 30))
     c.drawRRect(rr, sh)
     c.drawRRect(rr, P(skia.Color(30, 30, 34)))
     c.drawRRect(rr, SP(WHITE, 2, 0.25))
-    scr = skia.Rect.MakeXYWH(x + 14, y + 14, w - 28, h - 28)
+    scr = skia.Rect.MakeXYWH(x + 10, y + 10, w - 20, h - 20)
     c.save()
-    c.clipRRect(skia.RRect.MakeRectXY(scr, 42, 42), True)
+    c.clipRRect(skia.RRect.MakeRectXY(scr, 26, 26), True)
     img, _ = layers(t)
     c.save()
     place(c, t, 1.12, rect=(scr.x(), scr.y(), scr.width(), scr.height()))
     c.drawImage(img, 0, 0, SAMP)
     c.restore()
     c.restore()
-    c.drawRoundRect(skia.Rect.MakeXYWH(x + w / 2 - 48, y + 28, 96, 26), 13, 13, P(INK))
+    c.drawRoundRect(skia.Rect.MakeXYWH(x + w / 2 - 32, y + 20, 64, 18), 9, 9, P(INK))
     on = (t * 2) % 1 < 0.6
-    c.drawRoundRect(skia.Rect.MakeXYWH(x + 36, y + 76, 150, 46), 23, 23, P(INK, 0.6))
-    c.drawCircle(x + 62, y + 99, 9, P(skia.Color(255, 64, 56), 1 if on else 0.3))
-    mono(c, "REC", x + 82, y + 99, 20, WHITE)
+    c.drawRoundRect(skia.Rect.MakeXYWH(x + 22, y + 52, 100, 34), 17, 17, P(INK, 0.6))
+    c.drawCircle(x + 40, y + 69, 7, P(skia.Color(255, 64, 56), 1 if on else 0.3))
+    mono(c, "REC", x + 54, y + 69, 16, WHITE)
 
 
 def sc_step1(c, t, a, b):
-    explainer_bg(c, t)
     section(c, t, a, "STEP 01")
     pipeline(c, t, a + 0.05, 0)
-    kinetic(c, t, C["record"] - 0.08, "RECORD.", 90, 640, 150, NEON, align="left")
+    kinetic(c, t, C["record"] - 0.08, "RECORD.", 90, 570, 128, NEON, align="left")
+    serif(c, "on my phone", 92, 665, 54, WHITE, align="left", alpha=fade(t, C["phone"] - 0.1))
     k = ease_out_expo(prog(t, a + 0.25, 0.7))
-    phone(c, t, 560 + (1 - k) * 500, 600, 400, 720)
-    serif(c, "on my phone", 90, 770, 64, WHITE, align="left", alpha=fade(t, C["phone"] - 0.1))
-    pill(c, t, C["one_take"], "ONE TAKE", 90, 940)
-    pill(c, t, C["mistakes"], "MISTAKES", 90, 1060)
-    pill(c, t, C["mistakes"] + 0.3, "ARE FINE", 90, 1180)
+    phone(c, t, 790 + (1 - k) * 320, 300, 200, 380)
+    pill(c, t, C["one_take"], "ONE TAKE", 90, 760, size=30)
+    pill(c, t, C["mistakes"], "MISTAKES ARE FINE", 90, 845, size=30)
 
 
 def sc_step2(c, t, a, b):
-    explainer_bg(c, t)
     section(c, t, a, "STEP 02")
     pipeline(c, t, a + 0.05, 1)
-    kinetic(c, t, C["tell"] - 0.1, "SAY IT.", 90, 650, 150, NEON, align="left")
-    serif(c, "in plain words", 90 + text_width("SAY IT.", 150, BIG) + 24, 670, 64, WHITE, align="left",
+    kinetic(c, t, C["tell"] - 0.1, "SAY IT.", 90, 548, 116, NEON, align="left")
+    serif(c, "in plain words", 90 + text_width("SAY IT.", 116, BIG) + 22, 566, 54, WHITE, align="left",
           alpha=fade(t, C["normal"] - 0.1))
     k = ease_out_expo(prog(t, a + 0.3, 0.7))
-    x, y, w, h = 90, 780 + (1 - k) * 200, W - 180, 470
+    x, y, w, h = 90, 625 + (1 - k) * 120, W - 180, 245
     glass(c, x, y, w, h, 40, a=k, glow=True)
-    mono(c, "MY SYSTEM", x + 50, y + 60, 22, NEON, alpha=k)
+    mono(c, "MY SYSTEM", x + 40, y + 42, 20, NEON, alpha=k)
     for i in range(3):
-        c.drawCircle(x + w - 60 - i * 34, y + 60, 9, P(WHITE, 0.25 * k))
-    c.drawLine(x + 40, y + 108, x + w - 40, y + 108, SP(WHITE, 1, 0.12 * k))
+        c.drawCircle(x + w - 50 - i * 30, y + 42, 8, P(WHITE, 0.25 * k))
+    c.drawLine(x + 30, y + 76, x + w - 30, y + 76, SP(WHITE, 1, 0.12 * k))
     words = [wd for wd in WORDS if C["type_start"] - 0.05 <= wd["s"] <= C["type_end"]]
     shown = ""
     for wd in words:
@@ -484,32 +426,32 @@ def sc_step2(c, t, a, b):
             if frac >= 1:
                 shown += " "
     shown = shown.strip()
-    size = 52
+    size = 40
     lines, cur = [], ""
     for wd in shown.split(" ") if shown else []:
         trial = (cur + " " + wd).strip()
-        if text_width(trial, size, "mono") > w - 120 and cur:
+        if text_width(trial, size, "mono") > w - 200 and cur:
             lines.append(cur)
             cur = wd
         else:
             cur = trial
     if cur:
         lines.append(cur)
-    ty = y + 190
+    ty = y + 128
     if not lines:
-        text(c, "describe the vibe...", x + 50, ty, size=size, font="mono", fill=col(WHITE, 0.3 * k), align="left")
+        text(c, "describe the vibe...", x + 40, ty, size=size, font="mono", fill=col(WHITE, 0.3 * k), align="left")
     for i, ln in enumerate(lines):
-        text(c, ln, x + 50, ty + i * 76, size=size, font="mono", fill=WHITE, align="left")
+        text(c, ln, x + 40, ty + i * 58, size=size, font="mono", fill=WHITE, align="left")
     if (t * 2.2) % 1 < 0.55:
         last = lines[-1] if lines else ""
-        cx_ = x + 50 + (text_width(last, size, "mono") + 8 if last else 0)
+        cx_ = x + 40 + (text_width(last, size, "mono") + 8 if last else 0)
         c.drawRect(skia.Rect.MakeXYWH(cx_, ty + max(0, len(lines) - 1) * 76 - 30, 5, 60), P(NEON))
     sk = prog(t, C["send"], 0.3)
     s_ = 1 - 0.15 * math.sin(math.pi * sk)
     c.save()
-    c.translate(x + w - 90, y + h - 80)
+    c.translate(x + w - 70, y + h - 62)
     c.scale(s_ * k, s_ * k)
-    c.drawCircle(0, 0, 46, P(NEON if t >= C["send"] else WHITE, 1 if t >= C["send"] else 0.15))
+    c.drawCircle(0, 0, 38, P(NEON if t >= C["send"] else WHITE, 1 if t >= C["send"] else 0.15))
     p = skia.Path()
     p.moveTo(0, 20)
     p.lineTo(0, -18)
@@ -551,19 +493,18 @@ def sc_step3(c, t, a, b):
 
 
 def sc_nos(c, t, a, b):
-    explainer_bg(c, t)
     section(c, t, a, "WHAT YOU NEED")
     rows = [("EDITING APP", C["no1"]), ("EDITOR", C["no2"]), ("SKILLS", C["no3"])]
     for i, (s, ts) in enumerate(rows):
         k = ease_out_expo(prog(t, ts - 0.06, 0.5))
         if k <= 0:
             continue
-        y = 640 + i * 220
+        y = 430 + i * 155
         c.save()
         c.translate((1 - k) * 120, 0)
-        glass(c, 90, y - 85, W - 180, 170, 34, a=k)
-        text(c, "NO", 150, y + 4, size=120, font=BIG, fill=col(NEON, k), align="left")
-        text(c, s, 150 + text_width("NO ", 120, BIG), y + 4, size=fit(s, 120, 620), font=BIG, fill=col(WHITE, k),
+        glass(c, 90, y - 64, W - 180, 128, 30, a=k)
+        text(c, "NO", 140, y + 4, size=92, font=BIG, fill=col(NEON, k), align="left")
+        text(c, s, 140 + text_width("NO ", 92, BIG), y + 4, size=fit(s, 92, 600), font=BIG, fill=col(WHITE, k),
              align="left")
         # cross icon
         cx_, cy_ = W - 170, y
@@ -615,27 +556,25 @@ def sc_cover(c, t, a, b):
 
 
 def sc_open(c, t, a, b):
-    explainer_bg(c, t)
     section(c, t, a, "NOW OPENING")
-    serif(c, "opening it up to", W / 2, 640, 72, WHITE, alpha=fade(t, a + 0.1))
-    kinetic(c, t, C["few"] - 0.1, "A FEW", W / 2, 800, 200, WHITE)
-    kinetic(c, t, C["creators"] - 0.05, "CREATORS.", W / 2, 1000, fit("CREATORS.", 210), NEON)
-    # seats: a row of avatars, a few light up
+    serif(c, "opening it up to", W / 2, 392, 58, WHITE, alpha=fade(t, a + 0.1))
+    kinetic(c, t, C["few"] - 0.1, "A FEW", W / 2, 510, 130, WHITE)
+    kinetic(c, t, C["creators"] - 0.05, "CREATORS.", W / 2, 660, fit("CREATORS.", 160), NEON)
     n = 7
     for i in range(n):
         k = ease_out_back(prog(t, a + 0.3 + i * 0.05, 0.4))
         if k <= 0.01:
             continue
-        x = W / 2 + (i - (n - 1) / 2) * 120
-        y = 1230
+        x = W / 2 + (i - (n - 1) / 2) * 104
+        y = 812
         lit = i in (1, 3, 4) and t > C["creators"] + 0.1 + i * 0.05
         c.save()
         c.translate(x, y)
         c.scale(k, k)
-        c.drawCircle(0, 0, 44, P(NEON if lit else WHITE, 1 if lit else 0.08))
-        c.drawCircle(0, 0, 44, SP(WHITE, 2, 0.25))
-        c.drawCircle(0, -10, 14, P(INK if lit else WHITE, 1 if lit else 0.35))
-        c.drawRoundRect(skia.Rect.MakeXYWH(-22, 8, 44, 22), 11, 11, P(INK if lit else WHITE, 1 if lit else 0.35))
+        c.drawCircle(0, 0, 38, P(NEON if lit else WHITE, 1 if lit else 0.08))
+        c.drawCircle(0, 0, 38, SP(WHITE, 2, 0.25))
+        c.drawCircle(0, -9, 12, P(INK if lit else WHITE, 1 if lit else 0.35))
+        c.drawRoundRect(skia.Rect.MakeXYWH(-19, 7, 38, 19), 9, 9, P(INK if lit else WHITE, 1 if lit else 0.35))
         c.restore()
 
 
@@ -715,8 +654,8 @@ def captions(c, t):
     if C["s3_captions"] - 0.05 <= t < C["s3_captions"] + 0.6:
         boost = lerp(1.0, 1.25, ease_out_back(prog(t, C["s3_captions"] - 0.05, 0.25)))
     c.save()
-    full = TL.SCENES[scene_at(t)][3] == "full"
-    c.translate(W / 2, 1440 if full else 1385)
+    split = TL.SCENES[scene_at(t)][3] == "split"
+    c.translate(W / 2, SPLIT + 82 if split else 1450)
     c.scale(lerp(0.85, 1, k) * boost, lerp(0.85, 1, k) * boost)
     sh = skia.Paint(Color=skia.Color(0, 0, 0, 150), AntiAlias=True)
     sh.setMaskFilter(skia.MaskFilter.MakeBlur(skia.kNormal_BlurStyle, 22))
@@ -776,28 +715,64 @@ def scene_at(t):
 _SURF = {}
 
 
-def snapshot(i, t):
-    s = _SURF.get("s") or skia.Surface(W, H)
-    _SURF["s"] = s
+def draw_scene(c, i, t):
+    a, b, name, lay = TL.SCENES[i]
+    if lay == "split":
+        c.save()
+        c.clipRect(skia.Rect.MakeWH(W, SPLIT))
+        explainer_bg(c, t)
+        FN[name](c, t, a, b)
+        c.restore()
+        video_panel(c, t)
+    else:
+        FN[name](c, t, a, b)
+
+
+def snapshot(i, t, top_only=False):
+    key = "top" if top_only else "full"
+    s = _SURF.get(key) or skia.Surface(W, SPLIT if top_only else H)
+    _SURF[key] = s
     with s as cc:
         cc.clear(INK)
-        a, b, name, lay = TL.SCENES[i]
-        FN[name](cc, t, a, b)
+        if top_only:
+            a, b, name, lay = TL.SCENES[i]
+            explainer_bg(cc, t)
+            FN[name](cc, t, a, b)
+        else:
+            draw_scene(cc, i, t)
     return s.makeImageSnapshot()
 
 
-def zoom_blit(c, img, scale, alpha=1.0, blur_amt=0.0):
-    """draw a full-frame image scaled about the centre, with a cheap radial motion blur (stacked scales)."""
+def zoom_blit(c, img, scale, alpha=1.0, blur_amt=0.0, cy=H * 0.46):
+    """draw an image scaled about (W/2, cy), with a cheap radial motion blur (stacked scales)."""
     n = 5 if blur_amt > 0.01 else 1
     for j in range(n):
         s = scale * (1 + blur_amt * j / max(1, n - 1))
         p = skia.Paint(Alphaf=alpha if j == 0 else alpha * 0.35 / j)
         c.save()
-        c.translate(W / 2, H * 0.46)
+        c.translate(W / 2, cy)
         c.scale(s, s)
-        c.translate(-W / 2, -H * 0.46)
+        c.translate(-W / 2, -cy)
         c.drawImage(img, 0, 0, SAMP, p)
         c.restore()
+
+
+def transition(c, i, t, scale, blur, flash, both_split):
+    """zoom transition: split->split only moves the graphics half, everything else zooms the whole frame."""
+    if both_split:
+        img = snapshot(i, t, top_only=True)
+        c.save()
+        c.clipRect(skia.Rect.MakeWH(W, SPLIT))
+        c.drawRect(skia.Rect.MakeWH(W, SPLIT), P(INK))
+        zoom_blit(c, img, scale, 1.0, blur, cy=SPLIT * 0.55)
+        c.drawRect(skia.Rect.MakeWH(W, SPLIT), P(WHITE, flash))
+        c.restore()
+        video_panel(c, t)
+    else:
+        img = snapshot(i, t)
+        c.drawRect(skia.Rect.MakeWH(W, H), P(INK))
+        zoom_blit(c, img, scale, 1.0, blur)
+        c.drawRect(skia.Rect.MakeWH(W, H), P(WHITE, flash))
 
 
 def draw(c, t):
@@ -805,23 +780,16 @@ def draw(c, t):
     a = TL.SCENES[i][0]
     half = TL.ZOOM_T / 2
     if i > 0 and t < a + half:
-        k = (t - (a - half)) / TL.ZOOM_T          # 0.5 .. 1 here (incoming)
-        e = (k - 0.5) * 2
-        img = snapshot(i, t)
-        c.drawRect(skia.Rect.MakeWH(W, H), P(INK))
-        zoom_blit(c, img, lerp(1.35, 1.0, ease_out_expo(e)), 1.0, blur_amt=0.10 * (1 - e))
-        c.drawRect(skia.Rect.MakeWH(W, H), P(WHITE, 0.10 * (1 - e) ** 2))
+        e = (t - a) / half                          # 0 .. 1 (incoming)
+        both = TL.SCENES[i - 1][3] == "split" and TL.SCENES[i][3] == "split"
+        transition(c, i, t, lerp(1.35, 1.0, ease_out_expo(e)), 0.10 * (1 - e), 0.10 * (1 - e) ** 2, both)
     elif i + 1 < len(TL.SCENES) and t >= TL.SCENES[i + 1][0] - half:
         nxt = TL.SCENES[i + 1][0]
-        e = (t - (nxt - half)) / half            # 0 .. 1 (outgoing)
-        img = snapshot(i, t)
-        c.drawRect(skia.Rect.MakeWH(W, H), P(INK))
-        zoom_blit(c, img, lerp(1.0, 1.4, ease_in_cubic(e)), 1.0, blur_amt=0.10 * e)
-        c.drawRect(skia.Rect.MakeWH(W, H), P(WHITE, 0.10 * e ** 2))
+        e = (t - (nxt - half)) / half               # 0 .. 1 (outgoing)
+        both = TL.SCENES[i + 1][3] == "split" and TL.SCENES[i][3] == "split"
+        transition(c, i, t, lerp(1.0, 1.4, ease_in_cubic(e)), 0.10 * e, 0.10 * e ** 2, both)
     else:
-        a, b, name, lay = TL.SCENES[i]
-        FN[name](c, t, a, b)
-    face_circle(c, t, circle_k(t))
+        draw_scene(c, i, t)
     captions(c, t)
     hud(c, t)
     finish(c, t)
