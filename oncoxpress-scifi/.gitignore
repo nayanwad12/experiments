@@ -1,0 +1,3 @@
+out/*
+!out/oncoxpress_teaser.mp4
+__pycache__/
