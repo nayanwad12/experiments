@@ -566,8 +566,9 @@ function montage(t) {
 // ---------------------------------------------------------------- HUD (2D, composited after the grade so it stays crisp)
 function mono(size, w = 500) { return `${w} ${size}px Mono`; }
 function txt(s, x, y, font, color, a = 1, align = 'left', base = 'alphabetic') {
-  hx.globalAlpha = a; hx.font = font; hx.fillStyle = color; hx.textAlign = align; hx.textBaseline = base;
-  hx.fillText(s, x, y); hx.globalAlpha = 1;
+  const g = hx.globalAlpha;                 // multiply with any fade already set by the caller
+  hx.globalAlpha = g * a; hx.font = font; hx.fillStyle = color; hx.textAlign = align; hx.textBaseline = base;
+  hx.fillText(s, x, y); hx.globalAlpha = g;
 }
 function fitFont(s, family, max, maxW) {
   let z = max; hx.font = `${z}px ${family}`;
