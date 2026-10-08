@@ -30,6 +30,11 @@ Framing stays above the chest: every shot is a face-centred crop that ends at th
 Captions sit **above your head**, not at the bottom: Meta's Reels ad UI covers the bottom ~35% of the screen.
 All text stays inside the top 14% / bottom 35% safe zones, except the end-card CTA pill.
 
+## Portfolio version
+`out/pool_ad_portfolio.mp4`: the same ad playing inside a rounded card on a white dot-grid background, with a
+bouncy "[AI] EDITED / *this video*" headline, sparkles and a "no timeline opened!" note. Everything sits inside the
+Instagram Reels safe zone (top 250 px, bottom 420 px, ~60 px sides). Rebuild: `python3 portfolio.py render`.
+
 ## Sound
 Your voice through a broadcast chain (EQ, compression, de-ess), an original future-bass track (drop when you
 return to the pool, break for the before/after, second drop on "comment SYSTEM"), and SFX on every graphic: swishes,
