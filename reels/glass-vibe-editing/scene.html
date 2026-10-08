@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'ISerif';src:url('/fonts/InstrumentSerif-400-italic.ttf');font-style:italic;font-weight:400}
+@font-face{font-family:'JBM';src:url('/fonts/JetBrainsMono-500.ttf');font-weight:500}
+:root{--grad:linear-gradient(100deg,#D2C4FF 0%,#9DB6FF 32%,#86F0FF 62%,#FFC2F1 100%);
+  --grad2:linear-gradient(120deg,#7C5CFF 0%,#3D7BFF 45%,#2FD8FF 100%)}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#04050b}
+*{box-sizing:border-box}
+body{font-family:'Inter Display','Inter',sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
+#world{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:540px 960px}
+#bg{position:absolute;left:0;top:0}
+.L{position:absolute}
+.glass{position:absolute;border-radius:48px;overflow:hidden;color:#fff;
+  background:linear-gradient(150deg,rgba(255,255,255,.19),rgba(255,255,255,.07) 40%,rgba(255,255,255,.035) 62%,rgba(255,255,255,.1));
+  backdrop-filter:blur(34px) saturate(170%) brightness(1.08);-webkit-backdrop-filter:blur(34px) saturate(170%) brightness(1.08);
+  box-shadow:0 60px 120px -40px rgba(0,0,0,.7),inset 0 2px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(255,255,255,.07)}
+.glass::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.6px;pointer-events:none;z-index:5;
+  background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(255,255,255,.18) 28%,rgba(255,255,255,.04) 55%,rgba(255,255,255,.2) 80%,rgba(255,255,255,.6));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.glass.soft{backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%)}
+.sheen{position:absolute;top:-30%;height:160%;width:45%;left:0;pointer-events:none;z-index:4;
+  background:linear-gradient(100deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.05) 35%,rgba(255,255,255,.32) 50%,rgba(255,255,255,.05) 65%,rgba(255,255,255,0) 100%);
+  transform:translateX(-160%) skewX(-18deg)}
+.gt{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.serif{font-family:'ISerif';font-style:italic;font-weight:400;letter-spacing:-.01em}
+.mono{font-family:'JBM';font-weight:500}
+.b{font-weight:700;letter-spacing:-.035em}
+.w{display:inline-block;white-space:pre;will-change:transform}
+.center{left:0;width:1080px;text-align:center}
+.shadow{text-shadow:0 12px 50px rgba(0,0,0,.45)}
+.ink{position:absolute;inset:0}
+.row{display:flex;align-items:center}
+.pill{border-radius:999px}
+#grain{position:absolute;left:0;top:0;width:1080px;height:1920px;mix-blend-mode:overlay;opacity:.16;pointer-events:none}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 75% 60% at 50% 48%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
+#leak{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:0;
+  background:radial-gradient(ellipse 70% 45% at 50% 50%,rgba(225,215,255,.9),rgba(140,120,255,.35) 45%,rgba(0,0,0,0) 75%)}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D2C4FF"/><stop offset=".4" stop-color="#8FB4FF"/><stop offset=".7" stop-color="#7FF0FF"/><stop offset="1" stop-color="#FFC2F1"/></linearGradient>
+  <linearGradient id="gv" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7C5CFF"/><stop offset=".5" stop-color="#3D7BFF"/><stop offset="1" stop-color="#2FD8FF"/></linearGradient>
+  <linearGradient id="gw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC2F1" stop-opacity=".95"/><stop offset="1" stop-color="#7C5CFF" stop-opacity=".25"/></linearGradient>
+</defs></svg>
+<div id="world"><canvas id="bg" width="1080" height="1920"></canvas><div id="shapes"></div><div id="stage"></div><div id="chrome"></div></div>
+<div id="leak"></div><div id="vig"></div><canvas id="grain" width="540" height="960"></canvas>
+<script src="./scene.js"></script>
+</body></html>

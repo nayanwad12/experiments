@@ -1,5 +1,6 @@
 # Vibe Editing Reels
 
+- **ideabro studio glassmorphism Reel (35 s, premium glass motion graphics + CTA):** see [`glass-vibe-editing/README.md`](glass-vibe-editing/README.md)
 - **Batch 2 (one Reel per skill, 3D, new music engine):** see [`batch2/README.md`](batch2/README.md)
 - **Batch 1 (6 Reels):** below
 
