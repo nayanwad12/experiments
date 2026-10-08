@@ -16,3 +16,8 @@ batch2/*/out/row.png
 batch2/_test/
 batch2/*.log
 batch2/*/out/tmp*/
+batch3/*/work/
+batch3/*/out/web/
+batch3/*/out/*.jpg
+batch3/*/out/crop.png
+batch3/*/out/spectro.png

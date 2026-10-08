@@ -1,5 +1,6 @@
 # Vibe Editing Reels
 
+- **Batch 3 (art-directed from Pinterest references):** see [`batch3/README.md`](batch3/README.md), starting with ACID CHROME
 - **Batch 2 (one Reel per skill, 3D, new music engine):** see [`batch2/README.md`](batch2/README.md)
 - **Batch 1 (6 Reels):** below
 
