@@ -40,9 +40,8 @@ The ad is edited by the system, so the ad itself is the proof.
 | 6 | 20–24 s | **"Step three. Baaki sab system karta hai. Cuts, captions, zoom, music."** | **3 · DONE**, har cheez apne word pe hoti hai |
 | 7 | 24–28 s | **"Na editing app, na editor, na koi skill. Agar aap bol sakte ho, toh aap aise videos bana sakte ho."** | ✓ No app ✓ No editor ✓ No skill |
 | 8 | 28–31 s | **"Yeh video bhi aise hi bani hai. Mere page ki har video aise hi bani hai."** | Aapki baaki videos ki wall |
-| 9 | 31–36 s | **"Main ise kuch creators ke liye khol raha hoon. Dekhna hai kaise kaam karta hai? Comment karo SYSTEM."** | End card: **THE VIBE EDITING SYSTEM** · **Comment "SYSTEM" ↓** |
+| 9 | 31–36 s | **"Ab yeh system kuch creators ke liye open hai. Dekhna hai kaise kaam karta hai? Comment karo SYSTEM."** | End card: **THE VIBE EDITING SYSTEM** · **Comment "SYSTEM" ↓** |
 
-**Line 9:** say *"khol raha hoon"* or *"khol rahi hoon"*, whichever fits you.
 **Button version of line 9:** "Dekhna hai kaise kaam karta hai? Neeche button pe tap karo."
 **Captions:** in Roman Hinglish, exactly as written above.
 
