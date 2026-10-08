@@ -57,22 +57,8 @@ then **THE VIBE EDITING SYSTEM** plus the soft CTA.
 
 ---
 
-## Ad C · "Split-screen proof" (~50 s)
-*The explainer. RAW and EDITED side by side, with the 4 steps.*
-
-*[Split screen the whole way: left = RAW, right = EDITED BY MY SYSTEM]*
-
-1. **"This video you're watching? I didn't edit it. My system did."**
-2. **"On the left is my raw recording. On the right is what you're watching. Same clip. I never opened an editing
-   app."** *[CUT stamps land on the pauses and ums on the left]*
-3. **"This is the editing system I built for my own content, and it runs in four steps."**
-4. **"One. I record on my phone. One take. Mistakes are fine. Like this one, I'm going to… wait, let me say that again.
-   Mistakes are fine."** *(fumble on purpose. I show it being cut out)*
-5. **"Two. I tell my system the vibe, in plain words."**
-6. **"Three. It edits. The cuts, the zooms, the captions, the music… even this graphic."** *(point at the screen)*
-7. **"Four. I check it, say 'more energy' if I want, and it exports for every platform."** *[4 formats appear]*
-8. **"That's how this entire video was made. That's how every video on my page is made."**
-9. **"If you want to see how my system works, comment SYSTEM and I'll send it to you."** *[Receipt end card]*
+## Ad C · "Before / After" split-screen (~50 s)
+The explainer. Full scene-by-scene script, in simple words: [`AD-C-split-screen.md`](AD-C-split-screen.md)
 
 ---
 
