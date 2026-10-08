@@ -32,7 +32,7 @@ All text stays inside the top 14% / bottom 35% safe zones, except the end-card C
 
 ## Portfolio version
 `out/pool_ad_portfolio.mp4`: the same ad playing inside a rounded card on a white dot-grid background, with a
-bouncy "[AI] EDITED / *this video*" headline, sparkles and a "no timeline opened!" note. Everything sits inside the
+compact one-line "[AI] EDITED *this video*" headline (the card fills the rest of the safe area), sparkles and a "no timeline opened!" note. Everything sits inside the
 Instagram Reels safe zone (top 250 px, bottom 420 px, ~60 px sides). Rebuild: `python3 portfolio.py render`.
 
 ## Sound

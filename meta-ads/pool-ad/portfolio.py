@@ -25,10 +25,10 @@ S = Stage(1080, 1920, fps=FPS, duration=DUR)
 SAFE_TOP, SAFE_BOTTOM, SAFE_SIDE = 250, 1920 - 420, 60
 
 # card: 9:16, bottom edge on the safe line
-CARD_H = 860
+CARD_Y = SAFE_TOP + 158                     # right under the one-line headline
+CARD_H = (SAFE_BOTTOM - 20 - CARD_Y) // 2 * 2
 CARD_W = CARD_H * 9 / 16
 CARD_X = (1080 - CARD_W) / 2
-CARD_Y = SAFE_BOTTOM - 20 - CARD_H
 RADIUS = 46
 
 CW, CH = int(round(CARD_W)) // 2 * 2, int(round(CARD_H)) // 2 * 2
@@ -113,37 +113,36 @@ def draw(c, t):
     c.clear(skia.ColorWHITE)
     dot_grid(c)
 
-    # ---------------- headline (inside the top safe line)
-    # line 1: [AI] sticker + EDITED
+    # ---------------- headline: one compact line inside the top safe line  [AI] EDITED this video
+    ai_w, ai_h, ed_size, tv_size, gap = 150, 108, 78, 104, 20
+    ed_w = text_width("EDITED", ed_size, F_DISPLAY)
+    tv_w = text_width("this video", tv_size, F_SERIF)
+    total = ai_w + gap + ed_w + gap + tv_w
+    sc = min(1.0, (1080 - 2 * SAFE_SIDE - 20) / total)
+    ai_w, ai_h, ed_size, tv_size, gap = ai_w * sc, ai_h * sc, ed_size * sc, tv_size * sc, gap * sc
+    ed_w, tv_w = ed_w * sc, tv_w * sc
+    x0 = (1080 - (ai_w + gap + ed_w + gap + tv_w)) / 2
+    y1 = SAFE_TOP + 72
     k_ai = ease_out_back(prog(t, 0.05, 0.45), 2.0)
-    ai_w, ai_h = 210, 150
-    l1_size = 118
-    edited_w = text_width("EDITED", l1_size, F_DISPLAY)
-    total = ai_w + 26 + edited_w
-    x0 = (1080 - total) / 2
-    y1 = SAFE_TOP + 92
     if k_ai > 0:
         c.save()
         c.translate(x0 + ai_w / 2, y1)
         c.rotate(-8 + 3 * math.sin(t * 2.0) * clamp(t - 1.2))
         c.scale(k_ai, k_ai)
-        rrect(c, -ai_w / 2 + 10, -ai_h / 2 + 12, ai_w, ai_h, 40, INK)            # offset shadow
-        rrect(c, -ai_w / 2, -ai_h / 2, ai_w, ai_h, 40, LIME)
-        rrect(c, -ai_w / 2, -ai_h / 2, ai_w, ai_h, 40, INK, stroke=7)
-        text(c, "AI", 0, 4, size=104, font=F_DISPLAY, fill=INK)
+        rrect(c, -ai_w / 2 + 7, -ai_h / 2 + 9, ai_w, ai_h, 30, INK)              # offset shadow
+        rrect(c, -ai_w / 2, -ai_h / 2, ai_w, ai_h, 30, LIME)
+        rrect(c, -ai_w / 2, -ai_h / 2, ai_w, ai_h, 30, INK, stroke=6)
+        text(c, "AI", 0, 3, size=74 * sc, font=F_DISPLAY, fill=INK)
         c.restore()
-    bouncy_word(c, t, "EDITED", x0 + ai_w + 26, y1, l1_size, F_DISPLAY, INK, 0.25, offset_col=LIME, offset=(7, 8))
+    xe = x0 + ai_w + gap
+    bouncy_word(c, t, "EDITED", xe, y1, ed_size, F_DISPLAY, INK, 0.25, offset_col=LIME, offset=(5, 6))
+    xt = xe + ed_w + gap
+    bouncy_word(c, t, "this video", xt, y1 + 4, tv_size, F_SERIF, INK, 0.55, stagger=0.035)
+    squiggle(c, xt + 6, xt + tv_w - 6, y1 + 52, ease_out_cubic(prog(t, 1.0, 0.5)), ORANGE, width=7, amp=7, waves=4)
 
-    # line 2: "this video" in italic serif + squiggle underline
-    l2_size = 132
-    w2 = text_width("this video", l2_size, F_SERIF)
-    y2 = y1 + 142
-    bouncy_word(c, t, "this video", (1080 - w2) / 2, y2, l2_size, F_SERIF, INK, 0.6, stagger=0.035)
-    squiggle(c, (1080 - w2) / 2 + 10, (1080 + w2) / 2 - 10, y2 + 62, ease_out_cubic(prog(t, 1.05, 0.5)), ORANGE)
-
-    # sparkles
-    for i, (sx, sy, r, colr) in enumerate([(120, SAFE_TOP + 40, 26, ORANGE), (975, SAFE_TOP + 60, 22, PERI),
-                                           (955, y2 + 10, 30, LIME), (110, y2 + 40, 18, INK)]):
+    # sparkles around the card, in the side margins
+    for i, (sx, sy, r, colr) in enumerate([(120, CARD_Y + 420, 26, ORANGE), (975, CARD_Y + 230, 24, PERI),
+                                           (965, CARD_Y + 760, 30, LIME), (110, CARD_Y + 900, 18, INK)]):
         k = ease_out_back(prog(t, 0.9 + i * 0.12, 0.35), 2.5)
         if k > 0:
             tw = 0.8 + 0.2 * math.sin(t * 4 + i * 1.7)
@@ -167,13 +166,15 @@ def draw(c, t):
     ka = prog(t, 1.4, 0.5)
     if ka > 0:
         c.save()
-        c.translate(SAFE_SIDE + 95, CARD_Y + 120)
+        c.translate((SAFE_SIDE + CARD_X) / 2 - 4, CARD_Y + 110)
         c.rotate(-10)
-        text(c, "no timeline", 0, 0, size=46, font=F_HAND, fill=ORANGE, alpha=clamp(ka * 2))
-        text(c, "opened!", 0, 44, size=46, font=F_HAND, fill=ORANGE, alpha=clamp(ka * 2))
+        text(c, "no", 0, -40, size=40, font=F_HAND, fill=ORANGE, alpha=clamp(ka * 2))
+        text(c, "timeline", 0, 0, size=40, font=F_HAND, fill=ORANGE, alpha=clamp(ka * 2))
+        text(c, "opened!", 0, 40, size=40, font=F_HAND, fill=ORANGE, alpha=clamp(ka * 2))
         c.restore()
         p = skia.Path()
-        pts = [(SAFE_SIDE + 110 + 70 * u, CARD_Y + 200 + 90 * u - 40 * math.sin(u * math.pi)) for u in
+        pts = [((SAFE_SIDE + CARD_X) / 2 + 10 + (CARD_X - (SAFE_SIDE + CARD_X) / 2 - 22) * u,
+                CARD_Y + 190 + 90 * u - 30 * math.sin(u * math.pi)) for u in
                np.linspace(0, ease_out_cubic(ka), 30)]
         p.moveTo(*pts[0])
         for q in pts[1:]:
