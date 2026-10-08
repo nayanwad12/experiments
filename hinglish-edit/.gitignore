@@ -1,0 +1,10 @@
+raw/
+work/*
+!work/*.py
+!work/words.json
+!work/*.json
+work/alpha.npy
+out/*
+!out/adex_ooh_edit.mp4
+models/
+__pycache__/
