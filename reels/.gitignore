@@ -21,3 +21,5 @@ batch3/*/out/web/
 batch3/*/out/*.jpg
 batch3/*/out/crop.png
 batch3/*/out/spectro.png
+batch3/*/out/stills/
+batch3/*/out/picture.mp4

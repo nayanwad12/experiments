@@ -8,6 +8,7 @@ committed.
 | # | Reel | Brief | File |
 |---|---|---|---|
 | B3-01 | **ACID CHROME**: a 33.75 s music-driven hype reel for Vibe Editing. Chrome blob → type tunnel → shape morphs → "NO TIMELINE / NO KEYFRAMES / NO PLUGINS" sliced by a chrome blade → ring-tunnel drop → montage → 3D chrome logo | [`references/vibe-crazy/BRIEF.md`](../../references/vibe-crazy/BRIEF.md) | [`01-acid-chrome/out/vibe_editing_acid_chrome.mp4`](01-acid-chrome/out/vibe_editing_acid_chrome.mp4) |
+| B3-02 | **VIBE EDITING, EXPLAINED**: a 35.7 s Vox-style paper-cut collage explainer, narrated. A short history of editing (film + scissors → timelines → keyframes), the grind, then the vibe and the program | [`references/vox-papercut/BRIEF.md`](../../references/vox-papercut/BRIEF.md) | [`02-vox-papercut/out/vibe_editing_vox_papercut.mp4`](02-vox-papercut/out/vibe_editing_vox_papercut.mp4) |
 
 ## B3-01 ACID CHROME
 
@@ -56,3 +57,32 @@ python3 build.py sound                  # music + SFX + mux -> out/vibe_editing_
 > I typed "make it crazy." and this is what came out. 🧪⚡
 > Chrome, type tunnels, 3D logo, the whole soundtrack: all code, one prompt. No After Effects. No Premiere.
 > #vibeediting #motiondesign #3dart #kinetictypography #creativecoding #acidgraphics
+
+## B3-02 VIBE EDITING, EXPLAINED (Vox-style paper cut)
+
+**Look:** a grid-paper desk with halftone die-cut stickers (film strip, scissors, clock, video clip, clapperboard),
+torn paper, masking tape, a yellow highlighter, red marker notes, rubber stamps and ransom-note lettering. Paper moves
+on twos for a stop-motion feel. A taped chapter tag, the top-right label and torn-paper captions sit on every frame.
+
+| Time | Chapter | What happens (cued to the narration) |
+|---|---|---|
+| 0–9.5 s | `CH.01 THE CUT` | Ransom-note cover → "100+ YEARS OF EDITING = one thing." Scissors snip the film strip and a CUT. stamp lands. Tape splices it, a timeline slides up, then keyframes pile up everywhere |
+| 9.5–12.5 s | `CH.02 THE GRIND` | HOURS: a halftone clock spinning, red tally marks, a cursor clicking, "= 1 min" of video |
+| 12.5–17 s | `CH.03 THE VIBE` | WHAT IF: a video clip and cursor get a red X. DESCRIBE THE VIBE: "make it feel like a 90s music video" typed on paper |
+| 17–26.3 s | `CH.04 THE PROGRAM` | VIBE EDITING in ransom letters, "A PROGRAM BY IDEABRO STUDIO", a clapperboard ("you = the director"), four polaroids (captions / motion / animation / ads) wired to "> one prompt" |
+| 26.3–30.4 s | `CH.05 THE SHIFT` | NO stamped on the timeline, which tears in half. NO on the keyframes, which blow away. JUST YOU & the vibe. |
+| 30.4–35.7 s | end card | VIBE EDITING, BY IDEABRO STUDIO, LINK IN BIO →, an ENROLL NOW stamp |
+
+**Sound:** Kokoro narration (`af_heart`), a lo-fi bed from `common/music.py` that holds back its drums until "what if
+you just described the vibe", and synthesised paper foley (snips, stamps, tears, tape, typewriter, clock ticks,
+clicks). Mastered to −14 LUFS.
+
+```bash
+cd 02-vox-papercut
+python3 build.py stills 2.4 9.3 16.8   # preview frames -> out/stills/
+python3 build.py all                   # picture + mix -> out/vibe_editing_vox_papercut.mp4 (~5 min on 4 cores)
+```
+Narration lives in `script.py`. Change a line and every cue moves with the voice.
+
+**Caption:** For 100 years, editing meant cutting. ✂️ Then timelines. Then thousands of keyframes. What if you just
+described the vibe? #vibeediting #explainer #collage #papercut #videoediting #ai
