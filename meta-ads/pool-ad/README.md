@@ -1,7 +1,7 @@
 # Pool ad: "This is my video editing setup" (Meta ad, 9:16)
 
 Edited with the Vibe Editing System from two raw phone takes (77.2 s of footage) into a 34.8 s ad:
-1080x1920, 30 fps, H.264 + AAC, -14 LUFS. Output: `out/pool_ad_v1.mp4`.
+1080x1920, 30 fps, H.264 + AAC, -14 LUFS. Output: `out/pool_ad_v2.mp4`.
 
 ## What was cut and why
 | from | kept | why |
@@ -24,6 +24,9 @@ Edited with the Vibe Editing System from two raw phone takes (77.2 s of footage)
 | 28–31.9 s | CTA: comment box types "SYSTEM", huge "SYSTEM" behind you, "I'll DM you the details" |
 | 31.9–34.8 s | Receipt end card with this video's real numbers + THE VIBE EDITING SYSTEM · Comment "SYSTEM" |
 
+Framing stays above the chest: every shot is a face-centred crop that ends at the collarbones
+(also the before/after panels, the paper sticker and the phone screen).
+
 Captions sit **above your head**, not at the bottom: Meta's Reels ad UI covers the bottom ~35% of the screen.
 All text stays inside the top 14% / bottom 35% safe zones, except the end-card CTA pill.
 
@@ -37,7 +40,7 @@ pops, ticks, ding, splash, typing. Everything is synthesised, so there is nothin
 python3 edl.py                    # pick lines from both takes -> work/a_roll.mp4, matte, voice, edl.json
 python3 scene.py stills 1.5 9 22  # check frames
 python3 scene.py render           # picture -> work/picture.mp4
-python3 mixdown.py work/picture.mp4 out/pool_ad_v1.mp4
+python3 mixdown.py work/picture.mp4 out/pool_ad_v2.mp4
 ```
 `raw/` (your footage) and `work/` are not committed. Transcripts use PocketSphinx forced alignment (the usual
 Whisper model download is blocked in this environment), and the person matte uses MediaPipe's selfie segmenter.
