@@ -1,0 +1,15 @@
+# Vibe Editing: keep heavy media out of git
+raw/
+work/
+out/
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.npy
+*.npz
+*.onnx
+__pycache__/
+.DS_Store
+# keep tiny final stills if you like:
+!out/stills/*.png
