@@ -1,0 +1,6 @@
+node_modules/
+# Pinterest pins are third-party images used for reference only. Keep written briefs, not images.
+references/**/*.jpg
+references/**/*.png
+references/**/*.webp
+references/**/pins.json

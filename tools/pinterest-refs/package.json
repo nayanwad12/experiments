@@ -1,0 +1,8 @@
+{
+  "name": "pinterest-refs",
+  "private": true,
+  "description": "Pull Pinterest pins into a local folder as style references",
+  "dependencies": {
+    "playwright-core": "1.56.1"
+  }
+}
