@@ -64,6 +64,25 @@ def _decode(path, pix, w=SW, h=SH, ss=None, to=None):
 
 ROLL = _decode("work/a_roll.mp4", "rgba")
 MATTE = _decode("work/a_matte.mp4", "gray")
+
+
+def _keep_speaker(m):
+    """drop matte blobs that aren't the speaker (other swimmers, the ball): keep the largest component."""
+    import cv2
+    out = np.empty_like(m)
+    for i, f in enumerate(m):
+        n, lab, st, _ = cv2.connectedComponentsWithStats((f[::4, ::4] > 60).astype(np.uint8), 8)
+        if n <= 2:
+            out[i] = f
+            continue
+        big = 1 + int(np.argmax(st[1:, cv2.CC_STAT_AREA]))
+        keep = cv2.resize((lab == big).astype(np.uint8), (f.shape[1], f.shape[0]), interpolation=cv2.INTER_NEAREST)
+        keep = cv2.dilate(keep, np.ones((9, 9), np.uint8))
+        out[i] = f * keep
+    return out
+
+
+MATTE = _keep_speaker(MATTE)
 RAW_MINI = _decode("work/a_raw.mp4", "rgba", 300, 534)                       # inside the phone graphic
 SPLIT_A, SPLIT_B = 22.95, 27.95
 RAW_SPLIT = _decode("work/a_raw.mp4", "rgba", ss=SPLIT_A - 0.5, to=SPLIT_B + 0.5)   # RAW side of before/after
@@ -183,20 +202,38 @@ ZOOM = [(0.0, 1.22, 1.0, 0.55), (0.55, 1.0, 1.03, 1.3),
         (T_CTA, 1.10, 1.07, 0.5), (T_COMMENT - 0.05, 1.0, 1.03, 2.0)]
 
 
+# Framing: never show below the collarbones. The visible source window always ends above this line
+# (source px, per take: take 1 sits higher in the water than take 2).
+BOTTOM_LIMIT = {1: 1045, 2: 1095}
+BASE_Z = 1.25
+
+
+def take_at(t):
+    for sgm in E["segments"]:
+        if sgm["out_in"] <= t < sgm["out_out"]:
+            return sgm["take"]
+    return E["segments"][-1]["take"]
+
+
 def camera(t):
-    hx, ht = head(t)
-    return keyz(t, ZOOM), hx, ht + 300          # anchor ~ the face
+    """-> (zoom, left, top): the source window shown full-frame. Face-centred, clamped above the chest."""
+    z = BASE_Z * keyz(t, ZOOM)
+    i = fidx(t)
+    hx, ht = HEAD_X[i], HEAD_TOP[i]
+    wh, ww = SH / z, SW / z
+    top = ht + 210 - 0.56 * wh
+    top = max(0.0, min(top, BOTTOM_LIMIT[take_at(t)] - wh))
+    left = clamp(hx - ww / 2, 0, SW - ww)
+    return z, left, top
 
 
-def cam_xform(c, z, ax, ay):
-    c.translate(ax, ay)
-    c.scale(z, z)
-    c.translate(-ax, -ay)
-    c.scale(K0, K0)
+def cam_xform(c, z, left, top):
+    c.scale(K0 * z, K0 * z)
+    c.translate(-left, -top)
 
 
-def to_screen(px, py, z, ax, ay):
-    return (px * K0 - ax) * z + ax, (py * K0 - ay) * z + ay
+def to_screen(px, py, z, left, top):
+    return (px - left) * K0 * z, (py - top) * K0 * z
 
 
 def draw_footage(c, t, img=None, paint=None):
@@ -216,9 +253,9 @@ def draw_person(c, t):
 
 
 def head_screen_top(t):
-    z, ax, ay = camera(t)
-    hx, ht = head(t)
-    return to_screen(hx / K0, ht / K0, z, ax, ay)
+    z, left, top = camera(t)
+    i = fidx(t)
+    return to_screen(HEAD_X[i], HEAD_TOP[i], z, left, top)
 
 
 # ---------------------------------------------------------------- generic drawing helpers
@@ -358,7 +395,7 @@ def caption_hidden(t):
     return any(a <= t < b for a, b in hide)
 
 
-CAP_Y = 735          # above the head: Meta Reels ads cover the bottom 35% with UI
+CAP_Y = 790          # above the head: Meta Reels ads cover the bottom 35% with UI
 
 
 def draw_captions(c, t, y=CAP_Y, scale=1.0):
@@ -459,7 +496,7 @@ def torn_path(y_top, flip=False):
     return p
 
 
-STICKER_K, STICKER_DX, STICKER_DY = 1.5, 0, 165
+STICKER_K, STICKER_DX, STICKER_DY = 1.5, 0, 360       # sticker bottom stays above the chest
 
 
 def draw_sticker(c, t, y_off):
@@ -506,11 +543,13 @@ def phone(c, t, x, y, w, h, k):
     inset = 14
     c.save()
     c.clipRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(inset, inset, w - 2 * inset, h - 2 * inset), 44, 44), True)
-    fr = RAW_MINI[fidx(T_STEP1 - 9.0 + t * 1.0, len(RAW_MINI))] if False else RAW_MINI[fidx(t - T_STEP1 + 0.6, len(RAW_MINI))]
+    fr = RAW_MINI[fidx(t - T_STEP1 + 0.6, len(RAW_MINI))]
     img = skia.Image.fromarray(np.ascontiguousarray(fr), colorType=skia.kRGBA_8888_ColorType)
-    sw = w - 2 * inset
-    sh = sw * 534 / 300
-    c.drawImageRect(img, skia.Rect.MakeXYWH(inset, inset + (h - 2 * inset - sh) / 2, sw, sh), LIN)
+    sw, shh = w - 2 * inset, h - 2 * inset
+    src_h = 534 * 1000 / 1280                                   # crop above the chest
+    src_w = src_h * sw / shh
+    src = skia.Rect.MakeXYWH(max(0, 122 - src_w / 2), 0, src_w, src_h)
+    c.drawImageRect(img, src, skia.Rect.MakeXYWH(inset, inset, sw, shh), LIN)
     # REC overlay
     blink = 1 if int(t * 2) % 2 == 0 else 0.25
     rr(c, inset + 22, inset + 26, 150, 46, 23, skia.Color(0, 0, 0, 140))
@@ -781,14 +820,14 @@ def split_scene(c, t):
     ki = ease_in_out_cubic(prog(t, SPLIT_A, 0.42))
     ko = ease_in_out_cubic(prog(t, SPLIT_B - 0.30, 0.34))
     k = ki * (1 - ko)
-    hx, ht = head(t)
-    # FINAL panel: right side, width 1080 -> 540
+    z, left, top = camera(t)
+    hx = to_screen(HEAD_X[fidx(t)], 0, z, left, top)[0]        # head x on screen, full-frame
+    # FINAL panel: right side, width 1080 -> 540, head kept centred in the panel
     wR = lerp(1080, 540, k)
     xR = 1080 - wR
     c.save()
     c.clipRect(skia.Rect.MakeXYWH(xR, 0, wR, 1920))
-    c.translate(xR + wR / 2 - lerp(540, hx, k), 0)
-    c.translate(lerp(0, 0, k), 0)
+    c.translate(lerp(0, xR + wR / 2 - hx, k), 0)
     draw_footage(c, t)
     c.restore()
     if k <= 0:
@@ -800,16 +839,16 @@ def split_scene(c, t):
     i = int(clamp(round((t - (SPLIT_A - 0.5)) * FPS), 0, len(RAW_SPLIT) - 1))
     img = skia.Image.fromarray(np.ascontiguousarray(RAW_SPLIT[i]), colorType=skia.kRGBA_8888_ColorType)
     c.translate(xL + 270 - hx, 0)
-    c.scale(K0, K0)
+    cam_xform(c, z, left, top)                                  # same chest-safe framing as the edit
     c.drawImage(img, 0, 0, CUBIC)
     c.restore()
     c.save()
     c.translate(xL, 0)
     # raw-camera overlay: REC + timecode, desaturated look handled by the source (ungraded)
     blink = 1 if int(t * 2) % 2 == 0 else 0.3
-    c.drawCircle(56, 1338, 11, skia.Paint(Color=col("red", blink), AntiAlias=True))
+    c.drawCircle(56, 468, 10, skia.Paint(Color=col("red", blink), AntiAlias=True))
     tc = 25.70 + (t - SPLIT_A)
-    text(c, f"00:00:{int(tc):02d}:{int((tc % 1) * 30):02d}", 80, 1340, size=30, font=F_MONO, fill=col("white"),
+    text(c, f"00:00:{int(tc):02d}:{int((tc % 1) * 30):02d}", 78, 470, size=26, font=F_MONO, fill=col("white"),
          align="left")
     c.restore()
     # divider
@@ -930,7 +969,7 @@ def draw(c, t):
         draw_footage(c, t)
         # ----- big text behind the person
         ht = head_screen_top(t)[1]
-        bottom = min(ht + 95, 900)
+        bottom = min(ht + 95, 1050)
         drew = False
         if t < T_TODO + 0.1:
             big_stack(c, t, [("this is my video", F_SERIF, 112, col("white"), at("this is my") - 0.02, 0),
