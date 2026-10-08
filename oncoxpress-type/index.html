@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OncoXpress — Type Ad</title>
+<style>
+  html, body { margin: 0; background: #fff; }
+  canvas { display: block; width: 100vw; height: auto; max-height: 100vh; object-fit: contain; }
+  #tc { position: fixed; right: 12px; bottom: 10px; font: 12px ui-monospace, monospace; color: #888; }
+  body.render #tc { display: none; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<div id="tc"></div>
+<script>if (location.search.includes('render')) document.body.className = 'render';</script>
+<script src="type.js"></script>
+</body>
+</html>
