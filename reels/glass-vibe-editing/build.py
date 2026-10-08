@@ -82,7 +82,7 @@ def sheet():
 
 
 def layer():
-    node(["--workers", "4", "-o", str(HERE / "work" / "layer.mp4")])
+    node(["--workers", "2", "-o", str(HERE / "work" / "layer.mp4")])
 
 
 def sound():
