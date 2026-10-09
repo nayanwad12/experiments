@@ -1,5 +1,26 @@
 # ADEX OOH Creative Challenge: Hinglish reel edit
 
+**v2 premium: [`out/adex_ooh_premium.mp4`](out/adex_ooh_premium.mp4)** (`premium.py`). This is the same cut as v1, with a new look and sound design.
+- **Look:** white + orange (#FF6B1A) kinetic type with one motion-graphics system. Every word rises through a mask and leaves upward. Big Anton type sits behind the speaker or in each shot's free space. Accents use Instrument Serif italic in orange, and the HUD uses JetBrains Mono (brand, chapter 01–06, progress line).
+- **Transitions:** an orange slab wipe on every shot change.
+- **Word-locked graphics:**
+  - an idea bulb that draws itself
+  - "where?" map pins
+  - ADEX and an OOH billboard behind the speaker
+  - BORING / BRAND? and YEH KYA? with reaction bursts
+  - city / brand / product / location brief cards
+  - a radar scan for "us city pe, us location pe… already kya chal raha hai"
+  - an INSIGHT → OOH IDEA flow
+  - a crossed-out billboard
+  - observation / insight / OOH-thinking icons
+  - WINNER? behind the speaker, then a crossed-out certificate
+  - a billboard that powers on for "come alive on ADEX OOH Media"
+  - WORK WITH US, creativity, JOIN US, and a REGISTER NOW button with a cursor click
+- **Sound:** a new "tech" music bed with matching SFX. Mastered to -14 LUFS, with light grain and a warm grade.
+- **Render:** `python3 premium.py stills 5.9 13.9` · `python3 premium.py render` → `out/adex_ooh_premium.mp4`
+
+## v1 (minimal, white + neon green)
+
 One raw multi-speaker phone video (48.9 s, 1080x1920, 6 shots) in, a finished minimal edit out:
 **[`out/adex_ooh_edit.mp4`](out/adex_ooh_edit.mp4)**, 41.1 s, 1080x1920, 30 fps, H.264 + AAC, -14 LUFS.
 

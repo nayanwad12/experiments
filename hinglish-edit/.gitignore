@@ -8,3 +8,4 @@ out/*
 !out/adex_ooh_edit.mp4
 models/
 __pycache__/
+!out/adex_ooh_premium.mp4
