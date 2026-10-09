@@ -1,10 +1,10 @@
 """SYSTEM reel, "record study" cut: the same edit (cuts, timing, voice) restyled as an animated
 torn-paper editorial poster.
 
-Aged paper, the speaker cut out on torn white paper with a grimy print treatment, a black ink smear
-breaking into halftone behind them, live ASCII art sampled from the footage, Space Mono editorial
-type (title, "REC. STUDY 0X", three-line verse), red barcode ladder as the progress bar, crosshair
-registration marks, torn-strip glitches. All text sits inside the Instagram Reels safe area.
+Aged paper, the speaker cut out on torn white paper with a muted print treatment, a still ASCII-art
+field sampled from the footage, Space Mono editorial type (title, "REC. STUDY 0X", three-line verse),
+red barcode ladder as the progress bar, crosshair registration marks. Calm by design: nothing boils,
+flickers or glitches. All text sits inside the Instagram Reels safe area.
 
     python3 poster.py stills 3.2 20     -> out/stills (half res)
     python3 poster.py render            -> out/system_reel_poster.mp4
@@ -99,31 +99,6 @@ PAPER_RGB = (PAPER_TEX[..., None] * PAPER).astype(np.float32)
 _g = np.random.default_rng(5)
 GRAIN = [(_g.standard_normal((H // 2, W // 2)).astype(np.float32)) for _ in range(4)]
 TORN = [_fbm(H // 2, W // 2, 30 + i, (1.2, 3, 7), (0.45, 0.35, 0.3)) for i in range(3)]
-SMEAR = [_fbm(H // 2, W // 2, 40 + i, (6, 16, 40), (0.3, 0.4, 0.4)) for i in range(3)]
-DIRT = np.clip(1 - 0.5 * (_up(np.random.default_rng(9).random((H // 4, W // 4)).astype(np.float32),
-                              cv2.INTER_NEAREST) > 0.985) - 0.06 * _up(_fbm(H // 2, W // 2, 50, (3, 10), (0.5, 0.5))),
-               0.4, 1.1).astype(np.float32)
-
-
-def _dot_field(cell):
-    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-    u, v = (xx + yy) / math.sqrt(2), (xx - yy) / math.sqrt(2)
-    du, dv = (u % cell) - cell / 2, (v % cell) - cell / 2
-    return (np.sqrt(du ** 2 + dv ** 2) / (cell * 0.7071)).astype(np.float32)
-
-
-DOTS = _dot_field(11)
-
-
-def halftone(v):
-    """coverage (0..1, full res) -> AM halftone dot mask."""
-    return (DOTS < np.sqrt(np.clip(v, 0, 1)) * 0.98).astype(np.float32)
-
-
-def boil(t, n=3, fps=8):
-    return int(t * fps) % n
-
-
 # ================================================================== the print treatment
 P_S = 0.88
 P_TX = W * (1 - P_S) / 2 + 70
@@ -164,30 +139,20 @@ def treat(rgb):
     return f
 
 
-def compose_person(t, src, base, bg_noise_k=0):
-    """paper base (H,W,3 float) -> + ink smear/halftone, torn white backing, treated person."""
+def compose_person(t, src, base):
+    """paper base (H,W,3 float) -> torn white backing + treated person."""
     M = place_matrix(t)
     rgb = cv2.warpAffine(src.rgb, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
     al = cv2.warpAffine(src.alpha, M, (W, H), flags=cv2.INTER_LINEAR).astype(np.float32) / 255
     a_s = cv2.resize(al, (W // 2, H // 2), interpolation=cv2.INTER_AREA)
-    b = boil(t)
-    # ink smear around the figure, heavier low down, breaking up into halftone dots
-    near = cv2.GaussianBlur(cv2.dilate((a_s > 0.5).astype(np.float32), np.ones((81, 81), np.uint8)), (0, 0), 26)
-    yy = np.linspace(0, 1, H // 2, dtype=np.float32)[:, None]
-    low = np.clip((yy - 0.38) / 0.3, 0, 1)
-    v = near * (0.42 + 0.35 * low + 0.75 * np.clip(SMEAR[b], -2.5, 2.5)) - 0.4 + bg_noise_k * near
-    ink = _up(np.clip(v * 5, 0, 1))
-    dots = halftone(_up(np.clip((v + 0.4) / 0.4, 0, 1) ** 1.3 * (v < 0)) * 0.95)
-    cover = np.maximum(ink, dots)[..., None]
-    out = base * (1 - cover) + INK * cover
-    # torn white backing paper
+    # torn white backing paper (fixed edge, no boil)
     torn = cv2.GaussianBlur(cv2.dilate((a_s > 0.4).astype(np.float32), np.ones((15, 15), np.uint8)), (0, 0), 1.6)
-    tm = _up(((torn + TORN[b] * 0.33 * (torn > 0.05)) > 0.55).astype(np.float32))
-    sh = np.roll(np.roll(tm, 7, 0), 5, 1)
-    out *= (1 - 0.35 * sh * (1 - tm))[..., None]
+    tm = _up(((torn + TORN[0] * 0.25 * (torn > 0.05)) > 0.55).astype(np.float32))
+    sh = cv2.GaussianBlur(np.roll(np.roll(tm, 6, 0), 4, 1), (0, 0), 6)
+    out = base * (1 - 0.16 * sh * (1 - tm))[..., None]
     out = out * (1 - tm[..., None]) + (WHITE_P * PAPER_TEX[..., None] ** 0.5) * tm[..., None]
-    # the person, printed: muted + paper texture + dirt
-    pr = treat(rgb) * (PAPER_TEX ** 0.8 * DIRT)[..., None]
+    # the person, printed: muted + a little paper texture
+    pr = treat(rgb) * (PAPER_TEX ** 0.5)[..., None]
     a3 = al[..., None]
     out = out * (1 - a3) + pr * a3
     return out, al
@@ -213,7 +178,7 @@ _AMASK = {}
 def ascii_mask(t, full=False):
     if full:
         return np.ones((A_ROWS, A_COLS), bool)
-    b = int(t * 2.5) % 4
+    b = 0
     if b not in _AMASK:
         n = _fbm(A_ROWS, A_COLS, 70 + b, (1.0, 2.5), (0.5, 0.5))
         m = np.zeros((A_ROWS, A_COLS), bool)
@@ -223,8 +188,13 @@ def ascii_mask(t, full=False):
     return _AMASK[b]
 
 
+_PLATE = []
+
+
 def draw_ascii(c, t, src_rgb, full=False, color=INK_C, a=0.85, bars=None):
-    idx = ascii_grid(src_rgb)
+    if not _PLATE:                                     # one still plate: the field never flickers
+        _PLATE.append(ascii_grid(E.Src(1.0).rgb))
+    idx = _PLATE[0]
     m = ascii_mask(t, full)
     f = kit.font("sm", AC_SIZE)
     p = fill(color, a)
@@ -530,31 +500,14 @@ def draw(c, t, f):
     beh = skia.Surface(W, H)
     with beh as bc:
         bc.clear(skia.ColorTRANSPARENT)
-        rew = E.REW_A <= t < E.REW_B
-        frz = E.FRZ_A <= t < E.FRZ_B
-        draw_ascii(bc, t, src.rgb, full=frz, a=0.92 if not frz else 0.6)
+        draw_ascii(bc, t, src.rgb, a=0.85)
         behind_type(bc, t)
     barr = beh.makeImageSnapshot().toarray(colorType=skia.kRGBA_8888_ColorType).astype(np.float32)
     ba = barr[..., 3:4] / 255
     base = PAPER_RGB * (1 - ba) + barr[..., :3] * ba
-    out, al = compose_person(t, src, base, bg_noise_k=0.25 if frz else 0.0)
-    if rew:                                               # the take dissolves into ASCII while it rewinds
-        out = PAPER_RGB.copy()
+    out, al = compose_person(t, src, base)
     c.drawImage(np_img(out), 0, 0)
-    if rew:
-        draw_ascii(c, t, src.rgb, full=True, color=INK_C, a=1.0)
     overlays(c, t, g)
-    # looks
-    if E.SORRY.s <= t < E.SORRY.s + 0.3:
-        g["tear"] = 1 - (t - E.SORRY.s) / 0.3
-    if E.FRZ_A <= t < E.FRZ_A + 0.5:
-        g["tear"] = 1 - (t - E.FRZ_A) / 0.5
-        g["flash"] = 0.7 * max(0, 1 - (t - E.FRZ_A) / 0.12)
-    for st in [E.chapter_iv(n)[0] for n in range(4)] + [E.SYSDID.w(1), E.BIG.w(1), E.CTA_A]:
-        if st <= t < st + 0.16:
-            g["tear"] = max(g.get("tear", 0), 0.6 * (1 - (t - st) / 0.16))
-    if t < 0.15:
-        g["flash"] = 1 - t / 0.15
     return g
 
 
@@ -562,7 +515,7 @@ def behind_type(c, t):
     for n in range(4):
         a, b = E.chapter_iv(n)
         end = E.STEP_ENDS[n] if n < 3 else E.READY.e
-        if a <= t < end and not (E.BIG.w(1) - 0.05 <= t < E.BIG.e + 0.4):
+        if a <= t < end and not (E.BIG.w(1) - 0.05 <= t < E.BIG.e + 0.4) and not (E.FRZ_A <= t < E.FRZ_B):
             k = e_out(prog(t, a, 0.4))
             outline_num(c, f"0{n + 1}", 700, 1180, 760, a=0.9 * k * (1 - prog(t, end - 0.3, 0.3)))
     if E.FOUR.w(3) - 0.05 <= t < E.STEPS[0].s:
@@ -577,10 +530,10 @@ def behind_type(c, t):
             c.drawString(s, -f.measureText(s) / 2, yy, f, fill(INK_C))
         c.restore()
     if E.FRZ_A <= t < E.FRZ_B:
-        f = kit.font("smb", 250)
-        for s, yy in (("EVEN", 820), ("THIS.", 1080)):
-            k = e_out(prog(t, E.FRZ_A + (0 if s == "EVEN" else 0.12), 0.25))
-            c.drawString(s, 600 - f.measureText(s) / 2 + (1 - k) * 300, yy, f, fill(RED_C, k))
+        f = kit.font("smb", 210)
+        for s_, yy in (("EVEN", 900), ("THIS.", 1120)):
+            k = e_out(prog(t, E.FRZ_A + (0 if s_ == "EVEN" else 0.12), 0.25))
+            c.drawString(s_, 690 - f.measureText(s_) / 2, yy, f, fill(RED_C, k))
     if E.MUSIC.w(1) <= t < E.STEPS[2].s:              # ASCII-bar equaliser
         beat = 60 / 124
         for i in range(18):
@@ -603,26 +556,16 @@ def overlays(c, t, g):
         c.drawPath(path, fill("#000000", 0.25, blur=10))
         c.drawPath(path, fill(PAPER_C))
     draw_title_block(c, t, short=split)
-    crosshair(c, SX1 - 30, SY0 + 40, rot=t * 20)
-    crosshair(c, SX0 + 26, SY1 - 20, rot=-t * 20)
+    crosshair(c, SX1 - 30, SY0 + 40)
+    crosshair(c, SX0 + 26, SY1 - 20)
     red_ladder(c, t)
     # step 1: recording tag + the stumble
     if E.REC.s - 0.05 <= t < E.MOK1.e + 0.2:
         if int(t * 2.5) % 2 == 0:
             c.drawCircle(SX1 - 200, SY0 + 120, 11, fill(RED_C))
         mono(c, "REC  00:00:%02d" % int(t - E.REC.s + 12), SX1 - 180, SY0 + 131, 28, RED_C, bold=True)
-    if E.SORRY.s <= t < E.REW_A:
-        k = e_back(prog(t, E.SORRY.s, 0.25))
-        c.save()
-        c.translate(SX1 - 190, SY0 + 160)
-        c.rotate(-5)
-        c.scale(k, k)
-        mono(c, "ERR. TAKE 01", 0, 0, 34, RED_C, bold=True, anchor="c")
-        c.drawRect(skia.Rect.MakeXYWH(-130, 12, 260, 4), fill(RED_C))
-        c.restore()
     if E.REW_A <= t < E.REW_B:
-        mono(c, "<< REWIND", SX1, SY0 + 140, 40, RED_C, bold=True, anchor="r")
-        mono(c, "cutting the mistake", SX1, SY0 + 184, 26, INK_C, anchor="r")
+        mono(c, "<< REWIND", SX1, SY0 + 140, 34, INK_C, bold=True, anchor="r")
     if E.MOK2.w(2) <= t < E.STEPS[1].s:
         marker_check(c, SX1 - 120, SY0 + 170, 120, prog(t, E.MOK2.w(2), 0.25))
     # step 3: crosshair lock on "zooms in"
@@ -630,7 +573,7 @@ def overlays(c, t, g):
         k = e_io(prog(t, E.ZOOMS.s - 0.05, 0.35))
         fx, fy = FACE_P[0], FACE_P[1] - 70
         x, y = lerp(SX1 - 30, fx, k), lerp(SY0 + 40, fy, k)
-        crosshair(c, x, y, r=lerp(26, 120, k), rot=k * 90, color=RED_C)
+        crosshair(c, x, y, r=lerp(26, 120, k), color=RED_C)
         if k >= 1:
             mono(c, "LOCK", x + 130, y - 90, 26, RED_C, bold=True)
     if E.TEXT.s <= t < E.THEMUSIC.s + 0.2:
@@ -680,42 +623,10 @@ def overlays(c, t, g):
 
 
 # ================================================================== post
-_TEAR = {}
-
-
-def _tear_mask(seed):
-    if seed not in _TEAR:
-        g = np.random.default_rng(seed)
-        xs = np.sort(g.uniform(80, W - 80, 6)).astype(int)
-        offs = g.integers(-140, 140, len(xs) + 1)
-        yy = np.arange(H)
-        band = np.zeros((H, W), np.float32)
-        for b in xs:
-            jit = (np.sin(yy * 0.05 + b) * 4 + g.standard_normal(H).cumsum() * 0.3).astype(int)
-            wid = (4 + 3 * np.abs(np.sin(yy * 0.13 + b))).astype(int)
-            for y in range(0, H, 2):
-                x0 = int(clamp(b + jit[y] - wid[y], 0, W - 1))
-                x1 = int(clamp(b + jit[y] + wid[y], 0, W - 1))
-                band[y:y + 2, x0:x1] = 1
-        _TEAR[seed] = (xs, offs, band)
-    return _TEAR[seed]
-
-
 def post(rgb, g, f):
     out = rgb.astype(np.float32)
-    s = rgb.shape[1] / W
-    if g.get("tear", 0) > 0.02:
-        xs, offs, band = _tear_mask(f // 6)
-        k = g["tear"]
-        edges = [0] + [int(x * s) for x in xs] + [rgb.shape[1]]
-        for i in range(len(edges) - 1):
-            out[:, edges[i]:edges[i + 1]] = np.roll(out[:, edges[i]:edges[i + 1]], int(offs[i] * k * s), axis=0)
-        bm = cv2.resize(band, (rgb.shape[1], rgb.shape[0]), interpolation=cv2.INTER_NEAREST)[..., None]
-        out = out * (1 - bm) + WHITE_P * bm
-    if g.get("flash"):
-        out = out + (WHITE_P - out) * g["flash"]
     gr = cv2.resize(GRAIN[(f // 2) % 4], (rgb.shape[1], rgb.shape[0]))
-    out += gr[..., None] * 7
+    out += gr[..., None] * 3.5
     return np.clip(out, 0, 255).astype(np.uint8)
 
 
@@ -723,17 +634,6 @@ FILM = kit.Film(draw, E.TOTAL, FPS, post=post, out_dir=E.OUT)
 
 
 # ================================================================== audio
-def tear_sfx(dur=0.32, seed=0):
-    g = np.random.default_rng(seed)
-    n = int(dur * ak.SR)
-    x = g.standard_normal(n).astype(np.float32)
-    x = ak.filt(ak.filt(x, "hp", 900), "lp", 6000)
-    crackle = (g.random(n) > 0.985).astype(np.float32)
-    crackle = np.convolve(crackle, np.ones(120) / 40, "same")
-    env = np.minimum(1, np.linspace(0, 6, n)) * np.exp(-np.linspace(0, 4, n))
-    return (x * (0.35 + crackle) * env * 0.6).astype(np.float32)
-
-
 def sfx_list():
     S = []
 
@@ -744,16 +644,14 @@ def sfx_list():
     for s in SECS[1:]:
         a(s[0], "typing", -16, dur=0.45)
     a(0.02, "typing", -16, dur=0.5)
-    a(E.SYSDID.w(1), clip=tear_sfx(seed=1), gain=-6)
+    a(E.SYSDID.w(1), "swish", -14)
     a(E.SPLIT_A, "whoosh", -12)
     a(E.SAME.s, "click", -10)
     a(E.NOAPP.s, "pop", -14)
     a(E.SPLIT_B - 0.3, "whoosh", -12)
     for n in range(4):
-        a(E.chapter_iv(n)[0], clip=tear_sfx(seed=10 + n), gain=-8)
+        a(E.chapter_iv(n)[0], "swish", -14)
     a(E.REC.s, "shutter", -10)
-    a(E.SORRY.s, "glitch", -7)
-    a(E.SORRY.s + 0.02, clip=tear_sfx(seed=3), gain=-6)
     a(E.REW_A, "downlifter", -9)
     a(E.REW_B - 0.05, "click", -6)
     a(E.MOK2.w(2), "tick", -10)
@@ -765,8 +663,7 @@ def sfx_list():
         a(tk, "tick", -10)
     a(E.ZOOMS.s, "shutter", -12)
     a(E.EVEN.s - 0.6, "riser", -11, dur=0.6 + E.FRZ_A - E.EVEN.s)
-    a(E.FRZ_A, "impact", -6)
-    a(E.FRZ_A, clip=tear_sfx(0.45, seed=7), gain=-4)
+    a(E.FRZ_A, "impact", -12)
     a(E.FRZ_B - 0.08, "whoosh", -11)
     a(E.CHECK.w(1), "tick", -9)
     a(E.SAYIT.w(2), "typing", -15, dur=0.4)
@@ -775,7 +672,7 @@ def sfx_list():
     a(E.GRID_A, "whoosh", -10)
     a(E.EVERY.w(1), "shutter", -12)
     a(E.GRID_B - 0.3, "whoosh", -10)
-    a(E.CTA_A, clip=tear_sfx(seed=9), gain=-7)
+    a(E.CTA_A, "swish", -14)
     a(E.COMMENT.w(1), "typing", -13, dur=0.35)
     a(E.COMMENT.e + 0.08, "click", -7)
     a(E.SEND.e + 0.1, "tick", -9)
