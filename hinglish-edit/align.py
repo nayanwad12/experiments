@@ -14,7 +14,7 @@ HERE = Path(__file__).resolve().parent
 SEGS = [  # (start, end, text) on the raw clock
     (0.78, 2.97, "Mind mein ek new creative idea hai, lekin"),
     (2.97, 4.62, "samajh nahi aa raha ki show kahan karein?"),
-    (4.62, 7.59, "Isliye ADEX lekar aaya hai new OOH Creative Challenge."),
+    (4.62, 7.59, "Isliye Adaix lekar aaya hai new OOH Creative Challenge."),
     (7.88, 8.90, "Make a boring brand..."),
     (10.31, 10.89, "Boring brand?"),
     (11.72, 12.33, "Yeh kya?"),
@@ -24,7 +24,7 @@ SEGS = [  # (start, end, text) on the raw clock
     (23.08, 26.79, "Find the insight and turn this insight into an OOH idea."),
     (27.40, 33.00, "We're not just looking for a creative billboard, we are looking for observation, insight "
                    "and creative OOH thinking."),
-    (34.99, 42.82, "Aur winner? Sirf certificate nahi. Your idea could actually come alive on ADEX OOH Media, "
+    (34.99, 42.82, "Aur winner? Sirf certificate nahi. Your idea could actually come alive on Adaix OOH Media, "
                    "and also you get a chance to work with us."),
     (43.53, 45.93, "If you want to show your creativity, join us"),
     (46.31, 47.37, "and register now!"),
@@ -32,7 +32,7 @@ SEGS = [  # (start, end, text) on the raw clock
 PRON = {
     "mein": "M EY N", "ek": "EY K", "hai": "HH EH", "lekin": "L EY K IH N", "samajh": "S AH M AH JH",
     "nahi": "N AH HH IY", "aa": "AA", "raha": "R AH HH AA", "ki": "K IY", "kahan": "K AH HH AA N",
-    "karein": "K AH R EY N", "isliye": "IH S L IY EY", "adex": "AE D EH K S", "lekar": "L EY K AH R",
+    "karein": "K AH R EY N", "isliye": "IH S L IY EY", "adaix": "AE D EH K S", "lekar": "L EY K AH R",
     "aaya": "AA Y AA", "ooh": "OW OW EY CH", "yeh": "Y EH", "kya": "K Y AA", "ruko": "R UH K OW",
     "batati": "B AH T AA T IY", "hoon": "HH UW N", "pe": "P EY", "chal": "CH AH L", "aur": "AW R",
     "sirf": "S IH R F", "main": "M EY N",

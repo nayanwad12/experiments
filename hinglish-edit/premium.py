@@ -1,8 +1,8 @@
-"""ADEX OOH Creative Challenge: premium kinetic edit (v2). White + orange, one motion-graphics system.
+"""ADAIX OOH Creative Challenge: premium kinetic edit (v2). White + orange, one motion-graphics system.
 
     python3 premium.py stills 1.0 4.2 ...    -> out/stills_v2/*.png  (half res)
     python3 premium.py sheet                 -> out/sheet_v2.png
-    python3 premium.py render [--draft]      -> out/adex_ooh_premium.mp4
+    python3 premium.py render [--draft]      -> out/adaix_ooh_premium.mp4
 
 Same cut, words and person matte as edit.py (v1). The design system:
   colour   white type, orange (#FF6B1A) for the spoken word, keywords and every graphic accent;
@@ -243,7 +243,7 @@ GROUPS = [
     ("new *creative* /idea/ hai,", {}),
     ("lekin samajh | nahi aa raha", {}),
     ("ki show *kahan* karein?", {}),
-    ("Isliye ADEX", {"hide": True}),
+    ("Isliye ADAIX", {"hide": True}),
     ("lekar aaya hai new", {}),
     ("OOH | /Creative/ | Challenge.", {"sizes": [0, 124, 92]}),
     ("Make a | ^boring^ brand...", {}),
@@ -271,7 +271,7 @@ GROUPS = [
     ("Sirf ~certificate~ | nahi.", {}),
     ("Your /idea/ could", {}),
     ("actually | come *alive*", {}),
-    ("on #ADEX# #OOH# | Media,", {}),
+    ("on #ADAIX# #OOH# | Media,", {}),
     ("and also you", {}),
     ("get a /chance/", {}),
     ("to work with us.", {"hide": True}),
@@ -414,8 +414,8 @@ def hud(c, t, sh):
         return
     f1, f2 = font("monob", 26), font("mono", 22)
     c.drawRect(skia.Rect.MakeXYWH(64, HUD_Y - 19, 14, 14), paint(ORANGE, a))
-    c.drawString("ADEX", 90, HUD_Y - 4, f1, paint(WHITE, a))
-    c.drawString("OOH CREATIVE CHALLENGE", 90 + f1.measureText("ADEX") + 14, HUD_Y - 4, f2, paint(WHITE, 0.62 * a))
+    c.drawString("ADAIX", 90, HUD_Y - 4, f1, paint(WHITE, a))
+    c.drawString("OOH CREATIVE CHALLENGE", 90 + f1.measureText("ADAIX") + 14, HUD_Y - 4, f2, paint(WHITE, 0.62 * a))
     # chapter, right-aligned, re-reveals on every shot change
     t_ch = 0.25 if sh == 0 else TRANS[sh - 1]
     num, name = f"0{sh + 1}", CHAPTERS[sh]
@@ -436,7 +436,7 @@ def fade_io(t, t0, t1, din=0.25, dout=0.18):
     return e_out(clamp((t - t0) / din)) * (1 - e_in(clamp((t - (t1 - dout)) / dout)))
 
 
-# ---- shot 1 (idea, where, ADEX, OOH billboard)
+# ---- shot 1 (idea, where, ADAIX, OOH billboard)
 def g_bulb(c, t):
     t0, t1 = os_(5) - 0.08, os_(8)
     if not t0 <= t < t1:
@@ -493,12 +493,12 @@ def g_pins(c, t):
             c.restore()
 
 
-def g_adex(c, t):                                       # behind the speaker
+def g_adaix(c, t):                                       # behind the speaker
     t0, t1 = os_(16) - 0.08, os_(21) - 0.02
     if not t0 <= t < t1:
         return
-    kblock(c, t, [[T("isliye", os_(16) - 0.05, 120, ORANGE, "italic")],
-                  [T("ADEX", os_(17) - 0.06, 270, WHITE)]], 770, 390, t_out=t1 - 0.18)
+    kblock(c, t, [[T("isliye", os_(16) - 0.05, 104, ORANGE, "italic")],
+                  [T("ADAIX", os_(17) - 0.06, 165, WHITE)]], 872, 400, t_out=t1 - 0.18)
 
 
 def billboard(c, x, y, w, h, k, a=1.0, legs=None, lit=0.0, flicker=1.0):
@@ -782,13 +782,13 @@ def g_alive(c, t):                                      # billboard rises behind
     dim = 0.35 + 0.65 * on * flick
     kblock(c, t, [[T("YOUR", os_(94) - 0.04, 170, WHITE), T("IDEA", os_(95) - 0.04, 170, ORANGE, glow=on > 0)]],
            x + w / 2, y + h / 2 - 20, t_out=t1 - 0.18, a=dim)
-    if t >= os_(101) - 0.08:                             # "on ADEX OOH Media": the media plate
+    if t >= os_(101) - 0.08:                             # "on ADAIX OOH Media": the media plate
         kp = clamp((t - os_(101) + 0.08) / 0.3)
         pw = 560
         c.drawRRect(rrect(540 - pw / 2 * e_out(kp), y + h + 26, pw * e_out(kp), 64, 32), paint(ORANGE, a))
         if kp > 0.5:
             f = font("monob", 30)
-            s = "ADEX OOH MEDIA"
+            s = "ADAIX OOH MEDIA"
             c.drawString(s, 540 - f.measureText(s) / 2, y + h + 69, f, paint(INK, a * clamp(kp * 2 - 1)))
 
 
@@ -835,7 +835,7 @@ def g_cta(c, t):
     t0 = os_(123) - 0.06
     if t < t0:
         return
-    kblock(c, t, [[T("ADEX", t0, 190, WHITE)],
+    kblock(c, t, [[T("ADAIX", t0, 190, WHITE)],
                   [T("OOH CREATIVE CHALLENGE", t0 + 0.12, 44, ORANGE, "monob")]], 540, 520, lead=0.9)
     k = clamp((t - REG["os"] + 0.1) / 0.4)
     if k <= 0:
@@ -891,7 +891,7 @@ def cursor(c, x, y):
     c.restore()
 
 
-BEHIND = [g_adex, g_ooh, g_billboard_x, g_trio, g_winner, g_alive]          # under the person matte
+BEHIND = [g_adaix, g_ooh, g_billboard_x, g_trio, g_winner, g_alive]          # under the person matte
 FRONT = [g_bulb, g_pins, g_man, g_ruko, g_cards, g_radar, g_flow, g_certificate, g_work, g_creativity, g_join, g_cta]
 BEHIND_SPANS = [(os_(16) - 0.1, os_(25)), (os_(76) - 0.1, os_(79) + 0.3), (os_(83) - 0.12, TRANS[3]),
                 (os_(89) - 0.1, os_(91)), (os_(94) - 0.1, os_(104))]
@@ -899,7 +899,6 @@ BEHIND_SPANS = [(os_(16) - 0.1, os_(25)), (os_(76) - 0.1, os_(79) + 0.3), (os_(8
 
 # ================================================================== camera
 PUNCH = [
-    (os_(17), oe_(17) + 0.15, 1.08),          # ADEX
     (os_(29), oe_(30), 1.12),                 # Boring brand?
     (os_(31), oe_(32) + 0.4, 1.22),           # Yeh kya?
     (os_(55), oe_(55), 1.06),                 # already
@@ -1030,7 +1029,7 @@ def sfx_list():
     for j, (_, _, d, _) in enumerate(PINS):
         a(os_(13) + d + 0.15, "pop", -13)
     a(os_(16) - 0.05, "swish", -14)                      # isliye
-    a(os_(17) - 0.04, "impact", -14)                     # ADEX
+    a(os_(17) - 0.04, "impact", -14)                     # ADAIX
     a(os_(21) + 0.05, "swish", -13)                      # billboard draws
     a(os_(22), "ding", -18)                              # lamps on
     a(oe_(27) + 0.05, "downlifter", -15)                 # boring drains
@@ -1122,7 +1121,7 @@ def main():
         draft = "--draft" in sys.argv
         pic = FILM.render(OUT / ("draft_v2_picture.mp4" if draft else "picture_v2.mp4"), draft=draft)
         aud = build_audio()
-        finish(pic, aud, OUT / ("draft_v2.mp4" if draft else "adex_ooh_premium.mp4"))
+        finish(pic, aud, OUT / ("draft_v2.mp4" if draft else "adaix_ooh_premium.mp4"))
 
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
-"""ADEX OOH Creative Challenge: the full edit of the raw Hinglish take (1080x1920, 30 fps).
+"""ADAIX OOH Creative Challenge: the full edit of the raw Hinglish take (1080x1920, 30 fps).
 
     python3 edit.py info                  cut list + output length
     python3 edit.py stills 1.0 4.2 ...    -> out/stills/*.png  (half res)
     python3 edit.py sheet                 -> out/sheet.png
     python3 edit.py audio                 -> work/mix.wav
-    python3 edit.py render [--draft]      -> out/adex_ooh_edit.mp4
+    python3 edit.py render [--draft]      -> out/adaix_ooh_edit.mp4
 
 Look: minimal. The footage carries the piece; captions are white InterTight Black with the spoken word lit
 neon green, keywords in neon (sans) or neon serif italic, and a few word-locked caption gags (a sagging
@@ -225,7 +225,7 @@ GROUPS = [
     ("new *creative* /idea/ hai,", {}),
     ("lekin samajh | nahi aa raha", {}),
     ("ki *show* kahan karein?", {}),
-    ("Isliye | *ADEX*", {"sizes": [70, 190], "fx": "slam"}),
+    ("Isliye | *ADAIX*", {"sizes": [70, 190], "fx": "slam"}),
     ("lekar aaya hai new", {}),
     ("OOH | /Creative/ | Challenge.", {"sizes": [0, 150, 104], "fx": "stack"}),
     ("Make a | ^boring^ brand...", {}),
@@ -253,7 +253,7 @@ GROUPS = [
     ("Sirf ~certificate~ | nahi.", {}),
     ("Your /idea/ could", {}),
     ("actually | come *alive*", {}),
-    ("on *ADEX* *OOH* | Media,", {}),
+    ("on *ADAIX* *OOH* | Media,", {}),
     ("and also you", {}),
     ("get a *chance*", {}),
     ("to *work* *with* *us.*", {}),
@@ -561,7 +561,7 @@ def cta(c, t):
     y = 1500
     # kicker
     ka = e_out(clamp((t - t0) / 0.35))
-    s = "ADEX  ·  OOH CREATIVE CHALLENGE"
+    s = "ADAIX  ·  OOH CREATIVE CHALLENGE"
     f = font("bold", 34)
     tw = sum(f.measureText(ch) + 6 for ch in s)
     xx = 540 - tw / 2
@@ -638,7 +638,7 @@ def cursor(c, x, y):
 
 # emphasis camera moves + shakes, word-locked
 PUNCH += [
-    (P(17)["os"], P(17)["oe"] + 0.15, 1.1),        # ADEX
+    (P(17)["os"], P(17)["oe"] + 0.15, 1.1),        # ADAIX
     (P(29)["os"], P(30)["oe"], 1.14),              # Boring brand?
     (P(31)["os"], P(32)["oe"] + 0.4, 1.26),        # Yeh kya?
     (P(55)["os"], P(55)["oe"], 1.07),              # already
@@ -706,7 +706,7 @@ def sfx_list():
     a(0.0, "swish", -14)
     for tt in TRANS:
         a(tt - 0.2, "whoosh", -13, dur=0.45)
-    a(P(17)["os"] - 0.02, "impact", -15)                  # ADEX
+    a(P(17)["os"] - 0.02, "impact", -15)                  # ADAIX
     a(P(22)["os"] - 0.05, "swish", -11)                   # OOH rises behind her
     a(P(23)["os"], "sparkle", -17)
     a(P(27)["oe"] + 0.05, "downlifter", -14)              # boring sags
@@ -794,7 +794,7 @@ def main():
         draft = "--draft" in sys.argv
         pic = FILM.render(OUT / ("draft_picture.mp4" if draft else "picture.mp4"), draft=draft)
         aud = build_audio()
-        finish(pic, aud, OUT / ("draft.mp4" if draft else "adex_ooh_edit.mp4"))
+        finish(pic, aud, OUT / ("draft.mp4" if draft else "adaix_ooh_edit.mp4"))
 
 
 if __name__ == "__main__":
