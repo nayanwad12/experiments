@@ -1,0 +1,129 @@
+---
+name: vibe-launch-ads
+description: Ideabro Studio Vibe Editing System - marketing, launch and ad videos built in code. Use when the user wants a promo reel, course or product launch video, feature announcement, social ad (Meta/Instagram/TikTok/YouTube) with several variants, app or SaaS demo with the UI rebuilt in crisp vector graphics, e-commerce product video with callouts and price cards, event/webinar teaser or countdown, brand promo, or testimonial compilation. Also when they ask for hooks, CTAs, end cards, "enroll now", "link in bio", ad A/B variants, or the same ad in 9:16, 4:5, 1:1 and 16:9. Triggers on "promo", "launch video", "ad", "commercial", "product video", "teaser", "announcement", "make it sell".
+---
+
+# Launch Videos & Ads
+*Ideabro Studio · Vibe Editing System — direct the vibe, let AI do the keyframes.*
+
+You make videos that **sell**: a clear hook, one message, proof, one CTA, everything locked to the beat.
+Graphics are generated in code (motion_kit + skia), so every word, colour and timing stays editable, and
+variants (formats, hooks, languages) are re-renders, not re-edits.
+
+Paths below are relative to **this skill's folder**: `scripts/`, `reference/`, `templates/`.
+
+## What you can make here
+
+| type | default |
+|---|---|
+| **Promo reel** (course, offer, brand) | 9:16, 20–30 s, hype/tech bed, kinetic type, end card with CTA |
+| **Product launch / feature announcement** | 16:9 + 9:16, 30–45 s, product hero shots, feature callouts, "available now" |
+| **Social ad + variants** | 9:16, 4:5, 1:1 in 15 s and 6 s cuts, 2–3 hook variants, captions always on |
+| **App / SaaS demo** | UI rebuilt as vector graphics (sharp at any size), phone/laptop frame, taps and highlights |
+| **E-commerce product video** | product cutout, rotating/parallax hero, benefit chips, price/offer card |
+| **Event / webinar teaser** | date-time card, speaker cards, countdown, "save your seat" |
+| **Testimonial compilation** | quotes as kinetic cards + face clips (edit the clips with `vibe-talking-head`) |
+
+## Step 0: Setup (first time in a project)
+
+1. `python3 scripts/doctor.py --kit launch --install` (Windows: `py`. If pip refuses, see `reference/troubleshooting.md`.)
+2. `python3 scripts/new_project.py <name> --kind launch --format 9:16 --fps 30 --duration 25`
+   (use `--brand custom` for a client brand). Work inside the new folder. The tools are in `vibe/`.
+3. Logos, product photos, screenshots and footage go in `raw/`.
+
+The project starts with a **working branded template**: `scene.py` (+ `timeline.py`). Run
+`python3 scene.py stills` right away and look at it. Then you replace its scenes with the real ad.
+
+## Step 1: Brief → the selling message
+
+Ask in one message (defaults in brackets):
+1. What's being sold, to whom, and the ONE result it gives? *(required)*
+2. Offer + CTA? *(e.g. "Enroll now, link in bio")*
+3. Proof: numbers, testimonials, logos, before/after? *(optional but powerful)*
+4. Platforms/formats + length? *(9:16 25 s + 1:1 and 4:5 versions)*
+5. Vibe words + brand? *(bold, punchy; Ideabro house style)*
+
+## Step 2: Script with the launch formula, then the beat table
+
+| beat | job | seconds (25 s ad) |
+|---|---|---|
+| **Hook** | stop the scroll: pattern interrupt, bold claim, painful question, surprising number | 0–3 |
+| **Problem** | name the pain in the viewer's words | 3–7 |
+| **Reveal** | the product/offer appears, logo hit on a bar line | 7–11 |
+| **Proof / features** | 3 benefits max, fast montage, numbers, faces | 11–20 |
+| **Offer + CTA** | what to do now, urgency if real | 20–25 |
+
+Hook patterns that work: *"STILL editing like it's 2015?"*, *"I made 10 reels in 1 hour"*, a before/after split,
+a typed prompt ("make it pop") + instant result, a counter racing up, an object smashing.
+Write on-screen copy short: ≤ 6 words per card, verbs first. Then draft the beat table (`time | picture | sound | text`)
+and get approval. Pick BPM so the ad is a whole number of bars (`reference/sound-design.md`).
+
+## Step 3: Build
+
+1. Put all timings, copy and SFX cues in `timeline.py` (`SCENES`, `COPY`, `SFX`, `BPM`, `MOOD`).
+2. Write one function per scene in `scene.py` (`def s_hook(c, t, lt, dur)`). Size everything in `U` units
+   (`U = min(W,H)/1080`) so the same code renders 9:16, 4:5, 1:1 and 16:9.
+3. Prepare assets:
+   - logo/product cut-outs: `python3 vibe/matte.py raw/product.jpg --model isnet-general-use` → `assets/product_cutout.png`
+     (needs `python3 vibe/doctor.py --kit vfx --install` once). Or ask the user for a transparent PNG.
+   - footage inside the ad: `VideoFrames("raw/clip.mp4", w, h, fps)` for short clips (< 10 s), drawn with `c.drawImage(v.at(t - start), x, y)`.
+4. Stills → fix → `python3 scene.py audio` → `python3 scene.py draft` → feedback → `python3 scene.py render`.
+
+### Building blocks (motion_kit)
+
+```python
+# typed prompt bubble (the "vibe editing" signature move) + typing SFX in timeline.SFX
+s = "make it pop"; n = int(clamp((lt - 0.3) * 14, 0, len(s)))
+rrect(c, x, y, w, h, h/2, rgb(B, "paper")); text(c, s[:n] + ("|" if int(t*2) % 2 else ""), x+40*U, y+h/2, 44*U, "mono", rgb(B,"fg"), align="left")
+
+# product hero: soft shadow + slow float + push-in
+f = 1 + 0.05 * ease_in_out_cubic(prog(lt, 0, dur)); fy = 12*U*math.sin(t*2)
+shadow(c, cx-200*U, cy+260*U, 400*U, 40*U, 20*U, blur=30*U, alpha=0.25)
+draw_image(c, "assets/product_cutout.png", cx-300*U*f, cy-300*U*f+fy, 600*U*f, 600*U*f, cover=False)
+
+# phone mockup with a rebuilt UI screen
+rrect(c, px, py, 520*U, 1060*U, 70*U, rgb(B, "fg"))                         # body
+c.save(); c.clipRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(px+22*U, py+22*U, 476*U, 1016*U), 52*U, 52*U))
+draw_ui(c, lt)                                                                # your vector UI, animated
+c.restore()
+
+# counter, price card, countdown
+text(c, f"{int(lerp(0, 12500, ease_out_expo(prog(lt, .2, 1.2)))):,}+", cx, cy, 160*U, "display", rgb(B,"accent"))
+```
+More moves (slams, highlight bars, wipes, shakes): `reference/motion-principles.md`.
+
+**App/SaaS demos:** don't screen-record and zoom (it looks blurry). Rebuild the 2–4 key screens as vector UI (rounded
+rects, text, icons as simple shapes) in the brand palette, then animate taps (circle ripple), typing, highlights
+and transitions between screens. It stays razor sharp and on-brand. Use a real screenshot only as a reference.
+
+## Step 4: Sound
+
+`scene.py audio` builds a bed from `TL.MOOD`/`TL.BPM` + SFX from `TL.SFX` and mixes it to −14 LUFS.
+Ads: `hype` or `tech` (energy), `corporate` (B2B), `playful` (D2C/food/kids). Put an impact on the reveal, pops
+on chips, whooshes 0.3 s before transitions, a riser into the CTA. Voiceover: `python3 vibe/tts.py --script
+work/script.txt` and add `"voice"` to the cues (see `reference/sound-design.md`).
+
+## Step 5: Variants and delivery
+
+- **Formats:** design natively. Change `W, H` in `timeline.py` (1080×1920, 1080×1350, 1080×1080, 1920×1080), re-check stills
+  (layouts in `U` units adapt; fix anything that crowds), render each to `out/<name>_<format>_v1.mp4`.
+  Quick alternative: `python3 vibe/export.py out/x.mp4 --preset feed,square --fit pad`.
+- **Hook/copy variants:** put variants in a CSV (`hook,cta` columns that match `TL.COPY` keys, lists split with `|`) and
+  `python3 vibe/batch.py variants.csv --cmd "python3 scene.py render-row {json} {out}" --name "hook-{i}"`.
+- **Cut-downs:** 15 s = hook + reveal + CTA; 6 s bumper = logo hit + one line + CTA.
+- `python3 vibe/stills.py out/<file>.mp4 --count 12` on every deliverable. Then `export.py --preset reels` (or the relevant
+  platform) for the final files.
+
+## Quality bar
+
+- [ ] The hook works **muted** in the first 2 s (big text, motion, contrast)
+- [ ] One message; ≤ 3 benefits; CTA visible ≥ 2 s and inside the safe zone
+- [ ] Every cut on a beat; reveal on a bar line with an impact
+- [ ] Brand colours/fonts only; logo crisp (vector or high-res PNG), never stretched
+- [ ] Claims and prices exactly as the user gave them; legal lines if needed
+- [ ] All formats checked as stills, not just the main one
+
+## Reference
+`reference/foundations.md` (the loop + toolkit) · `reference/brand-kit.md` (house style, safe zones) ·
+`reference/motion-principles.md` (easing, kinetic type, transitions) · `reference/sound-design.md` ·
+`reference/export-specs.md` · `reference/troubleshooting.md` · `reference/prompt-library.md`
