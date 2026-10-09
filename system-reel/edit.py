@@ -1315,7 +1315,9 @@ def sfx_list():
     return S
 
 
-def build_audio():
+def build_audio(sfx=None, mood="hype", name="mix.wav", seed=11):
+    """voice cut to the EDL + music bed (muffled until "add music") + sfx, -> work/<name>.
+    sfx: [{t, kind | clip, gain_db, pan?, dur?}] (defaults to this edit's list)."""
     SR = ak.SR
     work = HERE / "work"
     vpath = work / "voice_clean.wav"
@@ -1344,10 +1346,10 @@ def build_audio():
         seg = seg[: max(0, n - i0)]
         voice[i0:i0 + len(seg)] += seg
     # music: muffled until "add music", then the full bed slams in
-    bed = ak.music_bed("hype", seconds=TOTAL + 2, intro_bars=0, seed=11)[:n]
+    bed = ak.music_bed(mood, seconds=TOTAL + 2, intro_bars=0, seed=seed)[:n]
     if len(bed) < n:
         bed = np.pad(bed, ((0, n - len(bed)), (0, 0)))
-    low = np.stack([ak.filt(bed[:, ch], "low", 520) for ch in range(2)], 1)
+    low = np.stack([ak.filt(bed[:, ch], "lp", 520) for ch in range(2)], 1)
     drop = int(MUSIC.w(1) * SR)
     env = np.zeros(n, np.float32)
     env[drop:] = 1
@@ -1361,14 +1363,17 @@ def build_audio():
     fo = int(1.2 * SR)
     mus[-fo:] *= np.linspace(1, 0, fo)[:, None]
     out = voice + mus * ak.db(-13)
-    for s in sfx_list():
-        kind = s["kind"]
-        clip = ak.SFX[kind](s["dur"]) if "dur" in s and kind in ("whoosh", "riser", "typing") else ak.SFX[kind]()
+    for s in (sfx if sfx is not None else sfx_list()):
+        kind = s.get("kind")
+        if "clip" in s:
+            clip = s["clip"]
+        else:
+            clip = ak.SFX[kind](s["dur"]) if "dur" in s and kind in ("whoosh", "riser", "typing") else ak.SFX[kind]()
         ak.place(out, clip, s["t"], s["gain_db"], s.get("pan", 0.0))
     peak = np.max(np.abs(out)) or 1
     if peak > 0.98:
         out = np.tanh(out / peak * 1.2) / math.tanh(1.2) * 0.98
-    path = work / "mix.wav"
+    path = work / name
     ak.write_wav(path, out)
     print("->", path)
     return path
