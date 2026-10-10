@@ -84,11 +84,11 @@ def torn_rect(x, y, w, h, seed, amp=14):
     p.moveTo(*top[0])
     for q in top[1:]:
         p.lineTo(*q)
-    for q in torn_line(y, y + h, x + w, seed + 3, amp * 0.3, 60):
+    for q in torn_line(y, y + h, x + w, seed + 3, amp * 1.6, 30):
         p.lineTo(x + w + (q[1] - (x + w)), q[0])
     for q in bot:
         p.lineTo(*q)
-    for q in torn_line(y + h, y, x, seed + 5, amp * 0.3, 60):
+    for q in torn_line(y + h, y, x, seed + 5, amp * 1.6, 30):
         p.lineTo(x + (q[1] - x), q[0])
     p.close()
     return p
@@ -152,7 +152,11 @@ def _layout(chunk):
     items = []
     for w in chunk["words"]:
         size = EMPH if w["k"] in TL.EMPHASIS else BASE
-        items.append([w, size, font("impact", size).measureText(w["k"])])
+        tw = font("impact", size).measureText(w["k"])
+        if tw > 860:                       # long single words must fit inside the frame (with pop scale)
+            size *= 860 / tw
+            tw = 860
+        items.append([w, size, tw])
     lines, cur, cw = [], [], 0
     for it in items:
         add = it[2] + (GAP * it[1] if cur else 0)
