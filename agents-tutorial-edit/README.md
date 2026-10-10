@@ -54,4 +54,4 @@ python3 asr.py turbo && python3 align.py segs.json      # asr.py prints segments
 python3 build.py && python3 render_audio.py && python3 render_video.py
 ```
 
-Raw footage, audio, and rendered videos stay out of git.
+The finished videos are in `final/`. Raw footage and intermediate audio stay out of git.
