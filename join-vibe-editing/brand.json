@@ -1,0 +1,32 @@
+{
+  "name": "Ideabro Studio",
+  "product": "Vibe Editing System",
+  "tagline": "Direct the vibe. Let AI do the keyframes.",
+  "colors": {
+    "ink": "#0B0B0D",
+    "paper": "#F2EEE3",
+    "white": "#FFFFFF",
+    "lime": "#D4FF3F",
+    "periwinkle": "#C4C6FF",
+    "blush": "#FFCFD8",
+    "ice": "#C8F0EC",
+    "orange": "#FF5A1F",
+    "blue": "#1F5BFF",
+    "navy": "#0A1E66"
+  },
+  "roles": {
+    "bg": "paper",
+    "fg": "ink",
+    "accent": "blue",
+    "accent2": "periwinkle",
+    "caption": "white",
+    "caption_hi": "blue"
+  },
+  "fonts": {
+    "display": "Unbounded:900",
+    "impact": "Anton",
+    "body": "Inter Tight:400,700",
+    "mono": "JetBrains Mono:700",
+    "serif": "Instrument Serif:400"
+  }
+}

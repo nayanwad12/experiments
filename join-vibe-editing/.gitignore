@@ -1,0 +1,6 @@
+# footage, intermediates and renders stay local (large)
+raw/
+work/
+out/stills/
+*.mov
+__pycache__/
