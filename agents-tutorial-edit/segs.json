@@ -1,0 +1,734 @@
+[
+{
+"s": 1.13,
+"e": 23.58,
+"lang": "en",
+"text": "So this is a tutorial video on how to use agents which are provided in the course resources and also how you can use this to create talking head creator videos, launch videos, motion graphics, stylist animation, VFX, AI footage and film, music, voice, sound and bulk videos. So these are the agents which we are"
+},
+{
+"s": 23.66,
+"e": 38.26,
+"lang": "en",
+"text": "going to use in this particular tutorial so i just want to show the tutorial first and this is the video this is the video like it's a talking ad video and the ai edited it for me and"
+},
+{
+"s": 38.86,
+"e": 43.9,
+"lang": "en",
+"text": "this is a comparison video like the original one versus the vibe edited one"
+},
+{
+"s": 45.1,
+"e": 47.45,
+"lang": "en",
+"text": "and this is also a comparison video."
+},
+{
+"s": 48.81,
+"e": 58.68,
+"lang": "en",
+"text": "This is a launch video. So we are going to learn how to use this type of agent skills which are there in the course resources. So"
+},
+{
+"s": 59.08,
+"e": 71.58,
+"lang": "en",
+"text": "what you have to do is you just have these are the agents and this is the markdown file which is a combined version of all the files"
+},
+{
+"s": 72.75,
+"e": 73.18,
+"lang": "en",
+"text": "Thank you."
+},
+{
+"s": 77.45,
+"e": 89.24,
+"lang": "en",
+"text": "which I explained in the previous lectures if you have seen the lectures so now we are going to use these nine skills this one two three seven eight"
+},
+{
+"s": 89.96,
+"e": 97.88,
+"lang": "en",
+"text": "one two three four five six seven eight nine these are the nine skills which are we are going to use so what you have to do is you just have to click on this"
+},
+{
+"s": 99.11,
+"e": 101.4,
+"lang": "en",
+"text": "and you just have to download it"
+},
+{
+"s": 101.96,
+"e": 104.12,
+"lang": "en",
+"text": "you just have to click on download"
+},
+{
+"s": 104.39,
+"e": 126.04,
+"lang": "en",
+"text": "and it will open a drive link and you're going to get this video downloaded and you just have to open your cloud code terminal so i'm just using my cloud code terminal on web and you just have to paste this skill and you have to write install this skill for me so this is a skill which is which has every set of instructions we are going to use this"
+},
+{
+"s": 126.12,
+"e": 126.9,
+"lang": "en",
+"text": "so"
+},
+{
+"s": 127.24,
+"e": 142.36,
+"lang": "en",
+"text": "which has every set of instruction which we are going to use in this particular tutorial so you just have to start with installing this particular skill so this is the skill you have to start here it is also written as start here"
+},
+{
+"s": 142.76,
+"e": 148.47,
+"lang": "en",
+"text": "and suppose you want to create a video like this suppose you want to create a video like this"
+},
+{
+"s": 148.91,
+"e": 150.62,
+"lang": "en",
+"text": "It's a talking head video."
+},
+{
+"s": 151.18,
+"e": 155.51,
+"lang": "en",
+"text": "so what you have to do is you just have to say that install this skill"
+},
+{
+"s": 156.71,
+"e": 159.74,
+"lang": "en",
+"text": "and you just have to click send"
+},
+{
+"s": 160.07,
+"e": 165.85,
+"lang": "en",
+"text": "and then you have to download this talking head scale which is there in this course"
+},
+{
+"s": 179.91,
+"e": 181.59,
+"lang": "en",
+"text": "you just have to click here"
+},
+{
+"s": 182.73,
+"e": 184.92,
+"lang": "en",
+"text": "on the stocking hadron"
+},
+{
+"s": 187.72,
+"e": 190.3,
+"lang": "en",
+"text": "format and you just have to download this"
+},
+{
+"s": 191.08,
+"e": 210.26,
+"lang": "en",
+"text": "you have to download the complete folder you are not supposed to download the inside file you are just download this folder as zip and it will get downloaded to your folder and you just have to paste it here this is this skill is already installed and you are just going to install this talking head"
+},
+{
+"s": 211.37,
+"e": 221.82,
+"lang": "en",
+"text": "install this skill as well you just have to click on enter and then it will install this particular skill as well"
+},
+{
+"s": 224.3,
+"e": 227.96,
+"lang": "en",
+"text": "so this is the starting point and"
+},
+{
+"s": 228.36,
+"e": 243.38,
+"lang": "en",
+"text": "This is the starting point and you can see this is the playbook for 8 video types which we have here. So this is the starting point and this is the 8 video formats."
+},
+{
+"s": 243.72,
+"e": 246.33,
+"lang": "en",
+"text": "which you can use and"
+},
+{
+"s": 246.7,
+"e": 255.93,
+"lang": "en",
+"text": "this is also installed and what you have to do next is you just have to upload your video so let me find one video which i want to edit"
+},
+{
+"s": 256.46,
+"e": 258.3,
+"lang": "en",
+"text": "so let me just"
+},
+{
+"s": 264.94,
+"e": 268.09,
+"lang": "en",
+"text": "so this is the video file which i'm going to attach here"
+},
+{
+"s": 269.93,
+"e": 275.64,
+"lang": "en",
+"text": "so this is my video which you can see this is my video editing setup right now i'm supp"
+},
+{
+"s": 276.3,
+"e": 277.53,
+"lang": "en",
+"text": "So this is the video I have attached"
+},
+{
+"s": 279.05,
+"e": 288.47,
+"lang": "en",
+"text": "We just have to describe since the skill is already installed. We just have to describe in simple plain words what we want in this particular video. So let me just type that."
+},
+{
+"s": 291.11,
+"e": 299.7,
+"lang": "en",
+"text": "So I just wrote the instruction which I want to give. Like I just want to edit this in kinetic caption styles in white and blue captions."
+},
+{
+"s": 303.72,
+"e": 308.98,
+"lang": "en",
+"text": "have to write like also I just want to add behind captions"
+},
+{
+"s": 310.06,
+"e": 322.2,
+"lang": "en",
+"text": "And then I just add that I want a consistent motion graphics of white color and I want a fast pacing background music and also add relevant sound effects and add an ending card with the message with the message."
+},
+{
+"s": 323.95,
+"e": 349.21,
+"lang": "en",
+"text": "join vibe editing and i also want to add paper cut animation in between so what is the process this is the process so i started with installing this particular skill and then i started with this particular skill so you have to start here and then you just have to go to second skill if you if you don't want to create talking head you can just skip this part and you can install this and or this or this or this anything you can do"
+},
+{
+"s": 349.45,
+"e": 356.12,
+"lang": "en",
+"text": "so I just have to click enter and then it will start editing the video for me"
+},
+{
+"s": 366.76,
+"e": 379.99,
+"lang": "en",
+"text": "So this is the similar process. So if you want to like create motion graphics, then you can just install this skill. But first you have to install this skill. This will guide your cloud code terminal that we are using a system by."
+},
+{
+"s": 380.59,
+"e": 386.1,
+"lang": "en",
+"text": "idea bro studios and that system is going to edit the videos so these are them"
+},
+{
+"s": 386.47,
+"e": 398.49,
+"lang": "en",
+"text": "eight specific skills for individual tasks so this is the new set of tutorial this is a new set of module which we are adding in this particular course and this is the important stuff"
+},
+{
+"s": 399.08,
+"e": 399.58,
+"lang": "en",
+"text": "*Dramatic music"
+},
+{
+"s": 399.85,
+"e": 417.66,
+"lang": "en",
+"text": "So now it has started the editing and I am just going to show. If I want to make any iteration in the video, I can just type in the chat box. Because since we have already installed this particular skill system, then it is going to make this thing happen."
+},
+{
+"s": 425.93,
+"e": 431.77,
+"lang": "en",
+"text": "so now it is creating the video it will take around 12 to 15 minutes and if you have videos"
+},
+{
+"s": 431.98,
+"e": 435.03,
+"lang": "en",
+"text": "of a longer duration then it can take more time"
+},
+{
+"s": 436.39,
+"e": 440.89,
+"lang": "en",
+"text": "so similarly you if you want to create a launch video then you have to click on this"
+},
+{
+"s": 442.35,
+"e": 444.63,
+"lang": "en",
+"text": "and you just have to download"
+},
+{
+"s": 448.2,
+"e": 449.88,
+"lang": "en",
+"text": "let me create another"
+},
+{
+"s": 453.07,
+"e": 454.68,
+"lang": "en",
+"text": "let me create another"
+},
+{
+"s": 455.34,
+"e": 456.47,
+"lang": "en",
+"text": "clot project"
+},
+{
+"s": 460.01,
+"e": 461.85,
+"lang": "en",
+"text": "let me create this"
+},
+{
+"s": 470.25,
+"e": 472.44,
+"lang": "en",
+"text": "install this skill for me"
+},
+{
+"s": 474.35,
+"e": 485.02,
+"lang": "en",
+"text": "So since we have already installed the first skill then you just have to go to each process. So whatever videos you are going to create you just have to install that particular skill."
+},
+{
+"s": 486.83,
+"e": 501.11,
+"lang": "en",
+"text": "i hope this will help this this is already described in the library it is already described in retail prompting guide but since i'm recording this video tutorial so if you will get an idea how you have to actually do this particular thing"
+},
+{
+"s": 501.87,
+"e": 508.98,
+"lang": "en",
+"text": "Now it is installing the launch videos and this video is under processing and it is just checking the things."
+},
+{
+"s": 511.24,
+"e": 519.26,
+"lang": "en",
+"text": "So I'm going to create a launch video for let's suppose I want to create a launch video for H&M"
+},
+{
+"s": 527.43,
+"e": 537.78,
+"lang": "en",
+"text": "then I just have to click the link of H&M and then since this is already installed, make a 30 second add for"
+},
+{
+"s": 538.41,
+"e": 539.35,
+"lang": "ar",
+"text": "\u0627\u062a\u0634\u0627\u0646 \u0627\u0648"
+},
+{
+"s": 542.25,
+"e": 546.42,
+"lang": "en",
+"text": "this is the link i've already installed this is the link which we have to paste"
+},
+{
+"s": 547.85,
+"e": 549.14,
+"lang": "en",
+"text": "Naird is going to do the work"
+},
+{
+"s": 549.77,
+"e": 550.14,
+"lang": "en",
+"text": "and"
+},
+{
+"s": 550.6,
+"e": 552.6,
+"lang": "en",
+"text": "make it fast"
+},
+{
+"s": 554.28,
+"e": 555.74,
+"lang": "en",
+"text": "please sing with it"
+},
+{
+"s": 556.62,
+"e": 557.4,
+"lang": "en",
+"text": "you"
+},
+{
+"s": 559.79,
+"e": 560.18,
+"lang": "en",
+"text": "background build"
+},
+{
+"s": 563.85,
+"e": 569.85,
+"lang": "en",
+"text": "So you just have to write in your lame language that you are going to create this particular thing."
+},
+{
+"s": 570.54,
+"e": 573.5,
+"lang": "en",
+"text": "so and also add"
+},
+{
+"s": 575.05,
+"e": 577.21,
+"lang": "en",
+"text": "add big kinetic"
+},
+{
+"s": 577.55,
+"e": 579.26,
+"lang": "en",
+"text": "captions"
+},
+{
+"s": 581.51,
+"e": 583.96,
+"lang": "en",
+"text": "follow the theme of the website"
+},
+{
+"s": 587.56,
+"e": 589.34,
+"lang": "en",
+"text": "so i just wrote this and"
+},
+{
+"s": 594.63,
+"e": 596.25,
+"lang": "en",
+"text": "interactive"
+},
+{
+"s": 597.74,
+"e": 598.14,
+"lang": "en",
+"text": "Punch."
+},
+{
+"s": 602.63,
+"e": 615.99,
+"lang": "en",
+"text": "So I just wrote this. So if you want to be specific in certain color scheme, certain color formats, certain design system, then you can just upload the design system here. It will understand because since we have already installed this particular scale, this is enough thing."
+},
+{
+"s": 616.78,
+"e": 625.21,
+"lang": "en",
+"text": "so this is enough it has all the instruction which we are going to use so you just have to click on send so this is our project going"
+},
+{
+"s": 626.19,
+"e": 634.84,
+"lang": "en",
+"text": "So it is already doing the work and we have started one other thing which is running our skill wipe launch ads. So this is a skill."
+},
+{
+"s": 635.08,
+"e": 638.78,
+"lang": "en",
+"text": "by idea pro studios and it is just creating a launch video"
+},
+{
+"s": 640.17,
+"e": 660.51,
+"lang": "en",
+"text": "so if you want to be specific if you want to like create 16:9 launch like 16:9 aspect ratio then you can just specify if you don't specify it will take a random case so if you want to be specific add more and more instructions like you just have to write in lame language and there's no need to like make"
+},
+{
+"s": 660.59,
+"e": 670.97,
+"lang": "en",
+"text": "certain things in you just don't have to generate a prompt for anything because skills has already things"
+},
+{
+"s": 671.31,
+"e": 676.31,
+"lang": "en",
+"text": "so you can use the tools built for our systems and there's everything here"
+},
+{
+"s": 680.43,
+"e": 682.42,
+"lang": "en",
+"text": "So it is running the system and..."
+},
+{
+"s": 683.56,
+"e": 684.73,
+"lang": "en",
+"text": "Let me just check."
+},
+{
+"s": 686.7,
+"e": 690.1,
+"lang": "en",
+"text": "Yes, you just have to read for like 15 minutes or something."
+},
+{
+"s": 691.56,
+"e": 692.95,
+"lang": "en",
+"text": "depends upon the"
+},
+{
+"s": 693.8,
+"e": 698.04,
+"lang": "en",
+"text": "duration of video and the types of animations which we are going to"
+},
+{
+"s": 698.25,
+"e": 699.22,
+"lang": "en",
+"text": "create"
+},
+{
+"s": 703.53,
+"e": 723.77,
+"lang": "en",
+"text": "so similarly similarly we can use this motion graphics similarly we can create a proper motion graphics video using this if you want to create animations you can create animations using this if you want certain sound effects to be used you can just install this particular scale so you can even you can use a thumb combination of this"
+},
+{
+"s": 723.91,
+"e": 742.52,
+"lang": "en",
+"text": "I can use combination of talking head and motion graphics and music sound and voice. I can use bulk and automated videos and this. So I can use combination of them and I can also use standalone. So first you have to install this particular system and then it is going to end the work."
+},
+{
+"s": 742.95,
+"e": 744.38,
+"lang": "en",
+"text": "So"
+},
+{
+"s": 745.16,
+"e": 746.52,
+"lang": "en",
+"text": "since"
+},
+{
+"s": 747.24,
+"e": 753.88,
+"lang": "en",
+"text": "let me cut to the part where the things are already done so it will take around"
+},
+{
+"s": 754.06,
+"e": 755.86,
+"lang": "en",
+"text": "12 to 15 minutes"
+},
+{
+"s": 759.27,
+"e": 764.79,
+"lang": "en",
+"text": "so it has done the editing for me so i have uploaded this video"
+},
+{
+"s": 765.26,
+"e": 769.3,
+"lang": "en",
+"text": "and this is the edit it has given me so i'm talking about the"
+},
+{
+"s": 770.31,
+"e": 774.55,
+"lang": "en",
+"text": "Right now I'm supposed to be editing"
+},
+{
+"s": 774.95,
+"e": 786.3,
+"lang": "en",
+"text": "This is my video editing setup. Right now I'm supposed to be editing videos but I don't edit anymore. I built a system that does it for me. Here is how it works."
+},
+{
+"s": 787.27,
+"e": 788.54,
+"lang": "en",
+"text": "so it is just loading"
+},
+{
+"s": 788.84,
+"e": 811.39,
+"lang": "en",
+"text": "Before I jumped in, I recorded one video on my phone, told my system what I wanted in one line and then came here. While I'm screwing, it cuts the pauses, removes my mistakes, add the text, the music, everything. And it's done. The video you just watched, same system. I didn't edit a single second of it. Want to see how my system works? Comment system and I will send you the details."
+},
+{
+"s": 811.59,
+"e": 812.18,
+"lang": "en",
+"text": "See the view."
+},
+{
+"s": 818.73,
+"e": 819.64,
+"lang": "en",
+"text": "I did everything."
+},
+{
+"s": 820.3,
+"e": 827.35,
+"lang": "en",
+"text": "this is the output it can give so this is the magic by our skill which we have created and"
+},
+{
+"s": 827.56,
+"e": 829.5,
+"lang": "en",
+"text": "this is the scale i'm talking about"
+},
+{
+"s": 829.8,
+"e": 830.46,
+"lang": "en",
+"text": "Hacked."
+},
+{
+"s": 831.59,
+"e": 833.4,
+"lang": "en",
+"text": "so much of things to do."
+},
+{
+"s": 833.58,
+"e": 847.22,
+"lang": "en",
+"text": "you can do literally any type of video editing if you want to fix the template you can just fix this template and you can just add another video and you can just edit in the same style"
+},
+{
+"s": 848.75,
+"e": 850.17,
+"lang": "en",
+"text": "also there is one thing"
+},
+{
+"s": 851.31,
+"e": 852.79,
+"lang": "en",
+"text": "if i talk about the"
+},
+{
+"s": 853.1,
+"e": 857.69,
+"lang": "en",
+"text": "launch video of H&M because H&M has blocked there."
+},
+{
+"s": 858.19,
+"e": 863.38,
+"lang": "en",
+"text": "because Claude is not able to access to the H&M website they have blocked the"
+},
+{
+"s": 864.11,
+"e": 890.59,
+"lang": "en",
+"text": "third party agent access so I just so since we can't do this if I talk about the snitch video then they have enabled their access but H&M has blocked their access so we can't access the website so I just uploaded the individual cut of the photo so I just uploaded the group of photos and it will make an individual cut out of it so since it has now started again the things"
+},
+{
+"s": 890.67,
+"e": 891.06,
+"lang": "es",
+"text": "Gracias."
+},
+{
+"s": 893.55,
+"e": 895.22,
+"lang": "en",
+"text": "so now it is creating a"
+},
+{
+"s": 897.29,
+"e": 917.76,
+"lang": "en",
+"text": "video for us a launch video for us so this is the main thing and this is the video it has done it it has made a this is my video editing setup right now i'm supposed to be editing videos but i don't edit anymore i built a system that does it for me here's how it works before i jumped in i recorded one video on my phone"
+},
+{
+"s": 917.99,
+"e": 921.66,
+"lang": "en",
+"text": "told my system what i wanted in one line and in"
+},
+{
+"s": 921.9,
+"e": 928.06,
+"lang": "en",
+"text": "Came here. While I'm swimming, it cuts the pauses, removes my mistakes, add the text, the music, everything."
+},
+{
+"s": 928.33,
+"e": 935.29,
+"lang": "en",
+"text": "and it's done. The video you just watched, same system. I didn't edit a single second of it. Want to see how my system works?"
+},
+{
+"s": 936.14,
+"e": 937.34,
+"lang": "en",
+"text": "this is the similar procedure"
+},
+{
+"s": 951.21,
+"e": 953.82,
+"lang": "en",
+"text": "website access was blocked so now it is creating another ad"
+},
+{
+"s": 956.94,
+"e": 957.59,
+"lang": "en",
+"text": "I just need them"
+},
+{
+"s": 958.03,
+"e": 976.18,
+"lang": "en",
+"text": "H&M.com we can't access they have their restrictions on agent access so AI models can't directly access they have blocked the things so you can if it's not available then you just have to take a screenshot and take a screenshot of the cutout of whatever you want to be in whatever you"
+},
+{
+"s": 976.94,
+"e": 985.66,
+"lang": "en",
+"text": "including the video and like this like this you have to work so yeah this is the main tutorial and I'm also going to share the"
+},
+{
+"s": 989.0,
+"e": 993.4,
+"lang": "en",
+"text": "H&M launch video in the next part so just stay"
+}
+]
