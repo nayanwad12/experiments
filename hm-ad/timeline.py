@@ -46,19 +46,22 @@ COPY = {
     "hook_c": ["STYLE", "THAT", "MOVES", "FAST."],
     "problem": ["NOTHING", "TO", "WEAR?"],
     "problem_fix": "EVERYTHING",
-    "reveal_sub": "NEW ARRIVALS",
+    "reveal_sub": "CAMPUS CLASSICS",
+    "promo": "FLAT 25% OFF | MEMBER PRICES",       # verbatim from the site header
     # app captions: (local beat, word)
     "app_caps": [(0, "SHOP."), (2, "TAP."), (4, "SCROLL."), (6, "LOVE IT."), (7, "ADD."), (10, "BAG."),
                  (12, "CHECKOUT."), (13, "DONE.")],
-    "tabs": ["WOMEN", "MEN", "KIDS", "HOME", "BEAUTY"],
-    "products": ["Peplum twill jacket", "Tiered maxi dress", "Wide-leg jeans", "Printed T-shirt"],
-    "categories": ["WOMEN", "MEN", "DENIM", "JACKETS", "PRINTS", "NEW IN"],
+    "tabs": ["LADIES", "MEN", "KIDS", "HOME", "BEAUTY"],
+    "products": ["Varsity jacket", "Wool-blend varsity jacket", "Denim jacket", "Rugby shirt"],
+    "categories": ["LADIES", "MEN", "DENIM", "JACKETS", "PRINTS", "NEW IN"],
     # promise words: (local beat inside the second half of montage, lines)
     "promise": [(0, ["FASHION"]), (1, ["&"]), (2, ["QUALITY"]), (3, ["AT THE"]), (4, ["BEST", "PRICE."])],
     "outfit_caps": [(0, "MIX."), (2, "MATCH."), (4, "OWN IT."), (6, "YOUR STYLE.")],
-    "end_sub": "NEW ARRIVALS ARE IN",
+    "end_sub": "CAMPUS CLASSICS",
+    "member": "Join now and get 10% off your first purchase!",   # verbatim from the site footer
+    "member_cta": "SIGN UP NOW",
     "cta": "SHOP NOW",
-    "url": "hm.com",
+    "url": "hm.com/en_in",
 }
 
 # big hits: camera shake + white flash

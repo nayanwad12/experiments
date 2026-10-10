@@ -15,3 +15,4 @@ __pycache__/
 !out/stills/*.png
 # third-party product photos (H&M) - kept local, repo is public
 assets/products/
+assets/site/

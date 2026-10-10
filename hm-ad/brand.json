@@ -17,11 +17,14 @@
     "rust": "#B5552B",
     "sky": "#A9C6DE",
     "skin": "#E3CDB8",
-    "packshot": "#F3F3F3"
+    "packshot": "#F3F3F3",
+    "navgrey": "#9E9E9E",
+    "divider": "#3E3E3E",
+    "panel": "#141414"
   },
   "roles": {
-    "bg": "paper",
-    "fg": "ink",
+    "bg": "black",
+    "fg": "paper",
     "accent": "red",
     "accent2": "sand",
     "caption": "paper",
