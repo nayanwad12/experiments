@@ -16,7 +16,7 @@ import skia
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "vibe"))
 import audio_kit as ak  # noqa: E402
-from motion_kit import (Stage, clamp, ease_in_back, ease_in_cubic, ease_in_out_cubic, ease_out_back,  # noqa: E402
+from motion_kit import (Stage, paint, clamp, ease_in_back, ease_in_cubic, ease_in_out_cubic, ease_out_back,  # noqa: E402
                         ease_out_bounce, ease_out_cubic, ease_out_expo, lerp, noise1, prog, pulse, rgb, rrect,
                         shadow, text, text_width)
 
@@ -96,6 +96,43 @@ def line(c, cx, cy, s, pts, col, w):
     for x, y in pts[1:]:
         p.lineTo(cx + x * s, cy + y * s)
     c.drawPath(p, fpaint(col, stroke=w))
+
+
+# ------------------------------------------------------------------ real product cutouts (assets/products)
+import numpy as np  # noqa: E402
+from motion_kit import image as load_image  # noqa: E402
+
+PROD_DIR = Path("assets/products")
+_SWATCH = {}
+
+
+def prod_img(name):
+    return load_image(str(PROD_DIR / f"{name}.png"))
+
+
+def prod(c, name, cx, cy, max_w, max_h, alpha=1.0, drop_shadow=True):
+    """draw a product cutout fitted inside max_w x max_h, centred on (cx, cy)."""
+    img = prod_img(name)
+    s = min(max_w / img.width(), max_h / img.height())
+    w, h = img.width() * s, img.height() * s
+    if drop_shadow and alpha > 0:
+        c.drawOval(skia.Rect.MakeXYWH(cx - w * 0.38, cy + h * 0.44, w * 0.76, h * 0.08),
+                   paint(skia.Color(0, 0, 0, int(55 * alpha)), blur=10 * U))
+    p = skia.Paint(AntiAlias=True, Alphaf=clamp(alpha))
+    c.drawImageRect(img, skia.Rect.MakeWH(img.width(), img.height()), skia.Rect.MakeXYWH(cx - w / 2, cy - h / 2, w, h),
+                    skia.SamplingOptions(skia.CubicResampler.Mitchell()), p)
+    return w, h
+
+
+def swatch(name):
+    """the product's main colour (mean of opaque pixels) for colour dots."""
+    if name not in _SWATCH:
+        from PIL import Image
+        a = np.asarray(Image.open(PROD_DIR / f"{name}.png").convert("RGBA")).reshape(-1, 4)
+        a = a[a[:, 3] > 200][:, :3]
+        r, g, b_ = (int(v) for v in np.median(a, axis=0))
+        _SWATCH[name] = skia.Color(r, g, b_)
+    return _SWATCH[name]
 
 
 # ------------------------------------------------------------------ garments (vector, unit box -0.5..0.5)
@@ -212,6 +249,10 @@ def flash(c, t):
 
 
 # ------------------------------------------------------------------ scenes
+HOOK_PRODUCTS = ["men_02_black_varsity_jacket", "women_07_yellow_tiered_maxi_dress",
+                 "men_10_houndstooth_varsity_jacket", "women_04_yellow_boat_neck_top"]
+
+
 def s_hook(c, t, lt, dur):
     bi, bl = beat_of(lt)
     if bi < 4:
@@ -232,12 +273,18 @@ def s_hook(c, t, lt, dur):
     else:
         i = min(3, bi - 4)
         c.clear(INK if i % 2 == 0 else RED)
+        kp = ease_out_back(prog(bl, 0, 0.25))
+        c.save()
+        c.translate(W / 2, H / 2 + 330 * U + (1 - kp) * 400 * U)
+        c.rotate((1 - kp) * (15 if i % 2 else -15) + (4 if i % 2 else -4))
+        prod(c, HOOK_PRODUCTS[i], 0, 0, 720 * U, 760 * U * (0.85 + 0.15 * kp), drop_shadow=False)
+        c.restore()
         w = TL.COPY["hook_c"][i]
         size = fit(w, "display", W * 0.8, 340 * U)
         k = prog(bl, 0, 0.16)
         bump = 1 + 0.03 * pulse(t, TL.BPM)
         c.save()
-        c.translate(W / 2, H / 2)
+        c.translate(W / 2, H / 2 - 330 * U)
         c.rotate(-4 if i % 2 else 4)
         c.scale(bump, bump)
         # echo outlines behind the word for speed
@@ -272,10 +319,10 @@ def s_problem(c, t, lt, dur):
     bi, bl = beat_of(lt)
     rail_y = 380 * U
     c.drawRect(skia.Rect.MakeXYWH(60 * U, rail_y - 6 * U, W - 120 * U, 12 * U), skia.Paint(Color=INK, AntiAlias=True))
-    kinds = [("tee", HEX["camel"]), ("dress", HEX["red"]), ("blazer", HEX["ink"]), ("hoodie", HEX["sage"]),
-             ("jeans", HEX["denim"])]
+    kinds = ["women_01_archives_sweatshirt", "men_02_black_varsity_jacket", "women_03_teal_boat_neck_top",
+             "men_06_green_rugby_shirt", "women_06_tie_neck_blouse"]
     n = len(kinds)
-    for i, (kind, col) in enumerate(kinds):
+    for i, kind in enumerate(kinds):
         x = W / 2 + (i - (n - 1) / 2) * 196 * U
         swing = 5 * math.sin(t * 5 + i)
         hanger(c, x, rail_y + 14 * U, swing)
@@ -285,7 +332,7 @@ def s_problem(c, t, lt, dur):
             c.save()
             c.translate(x, rail_y + 14 * U)
             c.rotate(swing)
-            garment(c, kind, 0, 230 * U + drop, 300 * U, col)
+            prod(c, kind, 0, 205 * U + drop, 200 * U, 280 * U, drop_shadow=False)
             c.restore()
     # words
     words = TL.COPY["problem"]
@@ -353,7 +400,9 @@ TILE_W = (SW - 3 * GAP) / 2
 TILE_IMG = 330 * U
 TILE_H = TILE_IMG + 70 * U
 SCROLL = HERO_H + 8 * U
-PRODUCTS = [("blazer", HEX["camel"]), ("dress", HEX["red"]), ("jeans", HEX["denim"]), ("tee", HEX["cream"])]
+PRODUCTS = ["women_08_khaki_peplum_jacket", "women_07_yellow_tiered_maxi_dress", "women_02_wide_leg_jeans",
+            "women_12_espresso_club_tee"]
+PACK = rgb(HEX["packshot"])
 
 
 def tile_xy(i):
@@ -428,31 +477,30 @@ def draw_screen(c, lt, sx, sy):
         ox = -page * SW
         hx, hy = sx + ox, sy + CONTENT_TOP
         c.drawRect(skia.Rect.MakeXYWH(hx, hy, SW, HERO_H + 600 * U), skia.Paint(Color=rgb(HEX["blush"])))
-        garment(c, "hoodie", hx + SW * 0.68, hy + 280 * U, 360 * U, HEX["sage"])
-        garment(c, "kids", hx + SW * 0.25, hy + 330 * U, 230 * U, HEX["cream"])
+        prod(c, "men_10_houndstooth_varsity_jacket", hx + SW * 0.7, hy + 330 * U, 330 * U, 330 * U)
+        prod(c, "women_01_archives_sweatshirt", hx + SW * 0.3, hy + 360 * U, 270 * U, 270 * U)
         text(c, "The new season", hx + 36 * U, hy + 80 * U, size=46 * U, font="body", fill=INK, align="left")
         text(c, "is here", hx + 36 * U, hy + 132 * U, size=46 * U, font="body", fill=INK, align="left")
     # WOMEN page (slides in from right), scrolls
     ox = (1 - page) * SW
     cx0, cy0 = sx + ox, sy + CONTENT_TOP - scroll
     c.drawRect(skia.Rect.MakeXYWH(cx0, cy0, SW, HERO_H), skia.Paint(Color=rgb(HEX["sand"])))
-    garment(c, "dress", cx0 + SW * 0.3, cy0 + 300 * U, 420 * U, HEX["red"])
-    garment(c, "blazer", cx0 + SW * 0.72, cy0 + 290 * U, 400 * U, HEX["ink"])
+    prod(c, "women_07_yellow_tiered_maxi_dress", cx0 + SW * 0.3, cy0 + 300 * U, 300 * U, 400 * U)
+    prod(c, "women_08_khaki_peplum_jacket", cx0 + SW * 0.72, cy0 + 300 * U, 330 * U, 330 * U)
     text(c, "Women", cx0 + 36 * U, cy0 + 70 * U, size=28 * U, font=REGULAR, fill=INK, align="left")
     text(c, "New Arrivals", cx0 + 36 * U, cy0 + 118 * U, size=50 * U, font="body", fill=INK, align="left")
     bx, by = cx0 + 36 * U, cy0 + HERO_H - 100 * U
     c.drawRect(skia.Rect.MakeXYWH(bx, by, 200 * U, 64 * U), skia.Paint(Color=INK))
     text(c, "Shop now", bx + 100 * U, by + 32 * U, size=26 * U, font="body", fill=WHITE)
     names = TL.COPY["products"]
-    for i, (kind, col) in enumerate(PRODUCTS):
+    for i, pname in enumerate(PRODUCTS):
         x, y = tile_xy(i)
         x, y = cx0 + x, cy0 + y
-        c.drawRect(skia.Rect.MakeXYWH(x, y, TILE_W, TILE_IMG), skia.Paint(Color=rgb(HEX["sand"])))
-        garment(c, kind, x + TILE_W / 2, y + TILE_IMG / 2 + 6 * U, TILE_IMG * 0.8, col)
+        c.drawRect(skia.Rect.MakeXYWH(x, y, TILE_W, TILE_IMG), skia.Paint(Color=PACK))
+        prod(c, pname, x + TILE_W / 2, y + TILE_IMG / 2, TILE_W * 0.8, TILE_IMG * 0.84, drop_shadow=False)
         text(c, names[i], x + 4 * U, y + TILE_IMG + 30 * U, size=24 * U, font=REGULAR, fill=INK, align="left")
         # colour dots
-        for j, dc in enumerate((col, HEX["ink"], HEX["cream"])):
-            c.drawCircle(x + 14 * U + j * 26 * U, y + TILE_IMG + 60 * U, 8 * U, fpaint(rgb(dc)))
+        c.drawCircle(x + 14 * U, y + TILE_IMG + 60 * U, 8 * U, fpaint(swatch(pname)))
         # heart (tile 0 gets loved)
         hx, hy = x + TILE_W - 38 * U, y + 38 * U
         loved = i == 0 and tapped(lt, 6)
@@ -518,10 +566,10 @@ def draw_screen(c, lt, sx, sy):
         c.drawRect(skia.Rect.MakeXYWH(sx, dy, SW, 2000 * U), skia.Paint(Color=WHITE))
         text(c, "Shopping bag (3)", sx + 36 * U, dy + 70 * U, size=36 * U, font="body", fill=INK, align="left")
         for j, i in enumerate((1, 2, 3)):
-            kind, col = PRODUCTS[i]
+            pname = PRODUCTS[i]
             ry = dy + 130 * U + j * 190 * U
-            c.drawRect(skia.Rect.MakeXYWH(sx + 36 * U, ry, 140 * U, 170 * U), skia.Paint(Color=SAND))
-            garment(c, kind, sx + 106 * U, ry + 88 * U, 140 * U, col)
+            c.drawRect(skia.Rect.MakeXYWH(sx + 36 * U, ry, 140 * U, 170 * U), skia.Paint(Color=PACK))
+            prod(c, pname, sx + 106 * U, ry + 85 * U, 120 * U, 150 * U, drop_shadow=False)
             text(c, names[i], sx + 200 * U, ry + 50 * U, size=28 * U, font="body", fill=INK, align="left")
             text(c, "Size M  ·  Qty 1", sx + 200 * U, ry + 94 * U, size=24 * U, font=REGULAR, fill=GREY,
                  align="left")
@@ -632,20 +680,20 @@ def s_app(c, t, lt, dur):
     caption(c, lt, TL.COPY["app_caps"], 400 * U, max_size=160 * U)
 
 
-MONTAGE = [  # (bg, fg, garment, colour)
-    (SAND, INK, "dress", HEX["red"]),
-    (INK, WHITE, "blazer", HEX["camel"]),
-    (RED, WHITE, "kids", HEX["cream"]),
-    (STONE, INK, "vase", HEX["cream"]),
-    (INK, WHITE, "lipstick", HEX["red"]),
-    (RED, WHITE, "sneaker", HEX["paper"]),
+MONTAGE = [  # (bg, fg, product) - one per category in TL.COPY["categories"]
+    (INK, WHITE, "women_07_yellow_tiered_maxi_dress"),
+    (SAND, INK, "men_02_black_varsity_jacket"),
+    (RED, WHITE, "men_12_navy_denim_jacket"),
+    (INK, WHITE, "men_10_houndstooth_varsity_jacket"),
+    (RED, WHITE, "women_12_espresso_club_tee"),
+    (STONE, INK, "women_08_khaki_peplum_jacket"),
 ]
 
 
 def s_montage(c, t, lt, dur):
     bi, bl = beat_of(lt)
     if bi < 6:
-        bg, fg, kind, col = MONTAGE[bi]
+        bg, fg, pname = MONTAGE[bi]
         c.clear(bg)
         word = TL.COPY["categories"][bi]
         k = prog(bl, 0, 0.16)
@@ -655,7 +703,8 @@ def s_montage(c, t, lt, dur):
         c.save()
         c.translate(W / 2, 1150 * U + (1 - kg) * 500 * U)
         c.rotate((1 - kg) * (12 if bi % 2 else -12) + 3 * math.sin(lt * 8))
-        garment(c, kind, 0, 0, 640 * U * (0.9 + 0.1 * kg) * (1.45 if kind == "lipstick" else 1), col)
+        sc = 0.9 + 0.1 * kg
+        prod(c, pname, 0, 0, 700 * U * sc, 760 * U * sc)
         c.restore()
         slam(c, word, W / 2, 560 * U, k, size, fill=fg, from_scale=1.7)
         text(c, f"0{bi + 1} / 06", 80 * U, 330 * U, size=30 * U, font="body", fill=fg, align="left", tracking=0.1)
@@ -679,9 +728,11 @@ def s_montage(c, t, lt, dur):
             slam(c, w, W / 2, y, k, size, fill=fg, rot=-6 if li else 6, from_scale=2.0)
 
 
-OUT_TOPS = [("tee", HEX["camel"]), ("blazer", HEX["ink"]), ("hoodie", HEX["sage"]), ("tee", HEX["red"]),
-            ("blazer", HEX["camel"]), ("hoodie", HEX["blush"]), ("tee", HEX["paper"]), ("blazer", HEX["red"])]
-OUT_BOTS = [("jeans", HEX["denim"]), ("skirt", HEX["ink"]), ("jeans", HEX["camel"]), ("jeans", HEX["ink"])]
+OUT_TOPS = ["women_01_archives_sweatshirt", "women_03_teal_boat_neck_top", "women_06_tie_neck_blouse",
+            "women_04_yellow_boat_neck_top", "women_11_green_pocket_tee", "women_12_espresso_club_tee",
+            "men_06_green_rugby_shirt", "men_01_pinstripe_shirt"]
+OUT_BOTS = ["women_02_wide_leg_jeans", "women_05_olive_barrel_trousers", "women_10_striped_pull_on_trousers",
+            "men_05_cream_trousers"]
 
 
 def s_outfit(c, t, lt, dur):
@@ -689,26 +740,18 @@ def s_outfit(c, t, lt, dur):
     bi, bl = beat_of(lt)
     bi = min(bi, 7)
     cx = W / 2
-    # stage disc
-    c.drawOval(skia.Rect.MakeXYWH(cx - 300 * U, 1370 * U, 600 * U, 70 * U), fpaint(SAND))
-    # mannequin
-    skin = rgb(HEX["skin"])
-    c.drawCircle(cx, 600 * U, 62 * U, fpaint(skin))
-    rrect(c, cx - 22 * U, 640 * U, 44 * U, 60 * U, 10 * U, skin)
-    # bottoms swap every 2 beats, tops every beat; new piece slides in sideways
-    bk, bc = OUT_BOTS[(bi // 2) % len(OUT_BOTS)]
+    c.drawRect(skia.Rect.MakeXYWH(cx - 330 * U, 560 * U, 660 * U, 880 * U), skia.Paint(Color=PACK))
+    # bottoms swap every 2 beats, tops every beat; new piece slides in sideways (flat lay)
+    bk = OUT_BOTS[(bi // 2) % len(OUT_BOTS)]
     kb = ease_out_expo(prog(lt, (bi // 2) * 2 * BEAT, 0.22))
     dirb = 1 if (bi // 2) % 2 else -1
-    garment(c, bk, cx + (1 - kb) * dirb * 700 * U, 1150 * U, 500 * U, bc)
-    garment(c, "sneaker", cx - 70 * U, 1395 * U, 150 * U, HEX["paper"])
-    garment(c, "sneaker", cx + 80 * U, 1395 * U, 150 * U, HEX["paper"])
-    tk, tc = OUT_TOPS[bi]
+    prod(c, bk, cx + (1 - kb) * dirb * 700 * U, 1130 * U, 360 * U, 560 * U, drop_shadow=False)
+    tk = OUT_TOPS[bi]
     kt = ease_out_expo(prog(bl, 0, 0.2))
     dirt = 1 if bi % 2 else -1
     if kt < 1 and bi > 0:                                  # previous top leaves
-        pk, pc = OUT_TOPS[bi - 1]
-        garment(c, pk, cx - kt * dirt * 900 * U, 900 * U, 540 * U, pc)
-    garment(c, tk, cx + (1 - kt) * dirt * 900 * U, 900 * U, 540 * U, tc)
+        prod(c, OUT_TOPS[bi - 1], cx - kt * dirt * 900 * U, 800 * U, 560 * U, 470 * U, drop_shadow=False)
+    prod(c, tk, cx + (1 - kt) * dirt * 900 * U, 800 * U, 560 * U, 470 * U, drop_shadow=False)
     # arrow controls with a tap on every beat
     for side in (-1, 1):
         ax = cx + side * 430 * U
@@ -721,18 +764,29 @@ def s_outfit(c, t, lt, dur):
             r = lerp(48, 110, ease_out_cubic(bl / 0.35)) * U
             c.drawCircle(ax, 900 * U, r, fpaint(skia.Color(229, 0, 16, int(200 * (1 - bl / 0.35))), stroke=5 * U))
     # swatches showing the current colour
-    sw = [c_ for _, c_ in OUT_TOPS[:6]]
-    for i, sc in enumerate(sw):
-        x = cx + (i - 2.5) * 86 * U
-        c.drawCircle(x, 1490 * U, 26 * U, fpaint(rgb(sc)))
-        c.drawCircle(x, 1490 * U, 26 * U, fpaint(SAND, stroke=2 * U))
-        if OUT_TOPS[bi][1] == sc:
-            c.drawCircle(x, 1490 * U, 36 * U, fpaint(INK, stroke=4 * U))
+    for i, nm in enumerate(OUT_TOPS):
+        x = cx + (i - 3.5) * 78 * U
+        c.drawCircle(x, 1490 * U, 24 * U, fpaint(swatch(nm)))
+        c.drawCircle(x, 1490 * U, 24 * U, fpaint(SAND, stroke=2 * U))
+        if i == bi:
+            c.drawCircle(x, 1490 * U, 34 * U, fpaint(INK, stroke=4 * U))
     caption(c, lt, TL.COPY["outfit_caps"], 380 * U, max_size=170 * U)
+
+
+STRIP = ["women_07_yellow_tiered_maxi_dress", "men_02_black_varsity_jacket", "women_01_archives_sweatshirt",
+         "men_12_navy_denim_jacket", "women_06_tie_neck_blouse", "men_10_houndstooth_varsity_jacket",
+         "women_03_teal_boat_neck_top", "men_11_olive_utility_coat", "women_08_khaki_peplum_jacket"]
 
 
 def s_endcard(c, t, lt, dur):
     c.clear(WHITE)
+    ks = ease_out_expo(prog(lt, 0.1, 0.5))
+    step = 230 * U
+    off = lt * 160 * U
+    for i, nm in enumerate(STRIP * 2):
+        x = 140 * U + i * step - off
+        if -step < x < W + step:
+            prod(c, nm, x, 420 * U + (1 - ks) * -300 * U, 200 * U, 240 * U, alpha=ks, drop_shadow=False)
     bump = 1 + 0.03 * pulse(t, TL.BPM)
     kl = prog(lt, 0.0, 0.22)
     c.save()
@@ -807,6 +861,6 @@ if __name__ == "__main__":
         if not Path("work/mix.wav").exists():
             build_audio()
         suffix = f"_{TL.W}x{TL.H}" if os.environ.get("VIBE_SIZE") else ""
-        S.render(draw, f"out/hm-ad_v1{suffix}.mp4", audio="work/mix.wav")
+        S.render(draw, f"out/hm-ad_v2{suffix}.mp4", audio="work/mix.wav")
     else:
         sys.exit(__doc__)

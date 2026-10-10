@@ -16,7 +16,8 @@
     "cream": "#EFE6D8",
     "rust": "#B5552B",
     "sky": "#A9C6DE",
-    "skin": "#E3CDB8"
+    "skin": "#E3CDB8",
+    "packshot": "#F3F3F3"
   },
   "roles": {
     "bg": "paper",

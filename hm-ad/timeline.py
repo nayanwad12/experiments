@@ -51,8 +51,8 @@ COPY = {
     "app_caps": [(0, "SHOP."), (2, "TAP."), (4, "SCROLL."), (6, "LOVE IT."), (7, "ADD."), (10, "BAG."),
                  (12, "CHECKOUT."), (13, "DONE.")],
     "tabs": ["WOMEN", "MEN", "KIDS", "HOME", "BEAUTY"],
-    "products": ["Linen-blend blazer", "Satin slip dress", "Wide-leg jeans", "Relaxed cotton tee"],
-    "categories": ["WOMEN", "MEN", "KIDS", "HOME", "BEAUTY", "SPORT"],
+    "products": ["Peplum twill jacket", "Tiered maxi dress", "Wide-leg jeans", "Printed T-shirt"],
+    "categories": ["WOMEN", "MEN", "DENIM", "JACKETS", "PRINTS", "NEW IN"],
     # promise words: (local beat inside the second half of montage, lines)
     "promise": [(0, ["FASHION"]), (1, ["&"]), (2, ["QUALITY"]), (3, ["AT THE"]), (4, ["BEST", "PRICE."])],
     "outfit_caps": [(0, "MIX."), (2, "MATCH."), (4, "OWN IT."), (6, "YOUR STYLE.")],
