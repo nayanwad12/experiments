@@ -13,3 +13,5 @@ __pycache__/
 .DS_Store
 # keep tiny final stills if you like:
 !out/stills/*.png
+# third-party product photos (H&M) - kept local, repo is public
+assets/products/
