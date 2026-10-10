@@ -1,0 +1,37 @@
+{
+  "name": "H&M",
+  "tagline": "Fashion and quality at the best price",
+  "colors": {
+    "ink": "#222222",
+    "paper": "#FFFFFF",
+    "red": "#E50010",
+    "stone": "#FAF9F8",
+    "sand": "#EFEBE6",
+    "grey": "#767676",
+    "black": "#000000",
+    "camel": "#C8A27A",
+    "denim": "#4F6D8F",
+    "sage": "#9DAF8F",
+    "blush": "#E8C4C0",
+    "cream": "#EFE6D8",
+    "rust": "#B5552B",
+    "sky": "#A9C6DE",
+    "skin": "#E3CDB8"
+  },
+  "roles": {
+    "bg": "paper",
+    "fg": "ink",
+    "accent": "red",
+    "accent2": "sand",
+    "caption": "paper",
+    "caption_hi": "red",
+    "paper": "paper"
+  },
+  "fonts": {
+    "display": "Archivo Black",
+    "impact": "Anton",
+    "body": "Inter Tight:400,700",
+    "mono": "Inter Tight:700",
+    "serif": "Playfair Display:700i"
+  }
+}
