@@ -1,4 +1,4 @@
-"""OncoXpress brand film (40 s, 16:9, 24 fps): Apple-style, white captions, motion graphics, SFX.
+"""OncoXpress brand film (40 s, 16:9, 24 fps): Apple-style, white + green graphics and captions, SFX.
 
     python3 vo.py              # once: tighten the narration -> work/vo_edit.wav + work/vo_lines.json
     python3 build.py all       # = timeline base overlay audio final sheet
@@ -25,6 +25,8 @@ GRADE = ("eq=contrast=1.04:saturation=0.92:brightness=0.01,"
          "colorbalance=rs=0.01:bs=-0.02:rh=0.015:bh=-0.012,"
          "curves=all='0/0.015 0.25/0.235 0.75/0.775 1/0.985'")
 FINISH = "noise=alls=3:allf=t,vignette=angle=PI/5.5"
+# the generator's visible sparkle mark sits at the same spot in every 1280x720 source clip
+DELOGO = "delogo=x=1130:y=570:w=60:h=60"
 
 # Output timeline. "src": footage (src range in seconds); "gfx": graphic drawn by scene.js on black.
 SHOTS = [
@@ -110,7 +112,7 @@ def base():
                 "-frames:v", n, "-c:v", "libx264", "-crf", "14", "-pix_fmt", "yuv420p", out)
         else:
             speed = (s["b"] - s["a"]) / (n / FPS)
-            chain = f"trim=start={s['a']}:end={s['b']},setpts=(PTS-STARTPTS)/{speed:.5f}"
+            chain = f"{DELOGO},trim=start={s['a']}:end={s['b']},setpts=(PTS-STARTPTS)/{speed:.5f}"
             # gentle slow motion: motion-compensated in-betweens instead of duplicated frames
             chain += f",minterpolate=fps={FPS}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir" if speed < 0.95 else f",fps={FPS}"
             z = s.get("zoom", 1.0)
@@ -129,7 +131,7 @@ def base():
     # graded portrait still for the profile graphic
     src, t = FACE
     run("ffmpeg", "-v", "error", "-y", "-ss", t, "-i", HERE / f"raw/{src}.mp4", "-frames:v", 1, "-vf",
-        f"scale={W}:{H}:flags=lanczos,{GRADE},unsharp=5:5:0.35", HERE / "work/face.jpg")
+        f"{DELOGO},scale={W}:{H}:flags=lanczos,{GRADE},unsharp=5:5:0.35", HERE / "work/face.jpg")
 
 
 def overlay():

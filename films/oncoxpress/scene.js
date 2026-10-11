@@ -37,8 +37,8 @@ const ICON = {
 const icon = (k, size = 30) =>
   `<svg width="${size}" height="${size}" viewBox="0 0 32 32" fill="none" stroke="url(#ig)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
 el('div', '', `<svg width="0" height="0" style="position:absolute"><defs>
-  <linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a48bff"/><stop offset="1" stop-color="#4aa3ff"/></linearGradient>
-  <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b6cff"/><stop offset="1" stop-color="#2f8cff"/></linearGradient>
+  <linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c9a4b"/><stop offset="1" stop-color="#3fd17f"/></linearGradient>
+  <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c9a4b"/><stop offset="1" stop-color="#3fd17f"/></linearGradient>
 </defs></svg>`);
 
 // OncoXpress mark: an "O" ring crossed by an "X", drawn with strokes so it can animate on.
@@ -50,7 +50,7 @@ function logo(parent, h) {
         <circle class="ring" cx="50" cy="50" r="38" stroke="url(#lg)" stroke-width="11" pathLength="1"
                 stroke-dasharray="1" transform="rotate(-90 50 50)"/>
         <path class="x1" d="M74 20 L128 80" stroke="url(#lg)" stroke-width="11" pathLength="1" stroke-dasharray="1"/>
-        <path class="x2" d="M128 20 L74 80" stroke="#f5f5f7" stroke-width="11" pathLength="1" stroke-dasharray="1"/>
+        <path class="x2" d="M128 20 L74 80" stroke="#0b2e1c" stroke-width="11" pathLength="1" stroke-dasharray="1"/>
       </svg>
       <div class="word" style="font-size:${h * 0.78}px;font-weight:680;letter-spacing:-0.035em;white-space:nowrap">
         ${[...'Onco'].map(c => `<span>${c}</span>`).join('')}${[...'Xpress'].map(c => `<span class="grad">${c}</span>`).join('')}
@@ -74,7 +74,7 @@ function logo(parent, h) {
 const G1 = shot('questions');
 const g1 = el('div', 'layer');
 const scrim = el('div', 'layer', '', g1);
-css(scrim, { background: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,.25), rgba(0,0,0,.7))' });
+css(scrim, { background: 'radial-gradient(ellipse at 50% 45%, rgba(255,255,255,.62), rgba(255,255,255,.88))' });
 const qwrap = el('div', 'layer', '', g1);
 const QS = [
   ['What does this mean?', 250, 250, 58, 0.15],
@@ -91,11 +91,11 @@ const qEls = QS.map(([txt, x, y, size]) => {
 
 // ---------------------------------------------------------------- G2 care options UI
 const G2 = shot('options');
-const g2 = el('div', 'layer black');
+const g2 = el('div', 'layer white');
 const w2 = el('div', 'win', '', g2);
 css(w2, { left: '340px', top: '110px', width: '1240px', height: '720px' });
 w2.innerHTML = `<div class="bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-  <div class="title">${icon('heart', 24)} OncoXpress <span style="color:#6e6e73;font-weight:500">· Care Plan</span></div></div>`;
+  <div class="title">${icon('heart', 24)} OncoXpress <span style="color:#66786d;font-weight:500">· Care Plan</span></div></div>`;
 const lab2 = el('div', 'label abs', 'Your options, explained', w2);
 css(lab2, { left: '44px', top: '100px' });
 const CARDS = [
@@ -112,7 +112,7 @@ const cEls = CARDS.map(([ic, h, p], i) => {
 
 // ---------------------------------------------------------------- G3 guidance -> care circle
 const G3 = shot('guidance');
-const g3 = el('div', 'layer black');
+const g3 = el('div', 'layer white');
 const stack = el('div', 'layer', '', g3);
 const WORDS = [['Guidance.', 0], ['Thoughtful decisions.', 1], ['Support.', 2]];
 const wEls = WORDS.map(([w, i]) => {
@@ -124,10 +124,10 @@ const circle = el('div', 'layer', '', g3);
 const CX = 960, CY = 450;
 const NODES = [['Oncologist', 520, 290], ['Care coordinator', 520, 620], ['Family', 1400, 290], ['Friends', 1400, 620]];
 const svg3 = el('div', 'layer', `<svg width="1920" height="1080">${NODES.map(([, x, y]) =>
-  `<line x1="${CX}" y1="${CY}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.22)" stroke-width="2" pathLength="1" stroke-dasharray="1"/>`).join('')}</svg>`, circle);
+  `<line x1="${CX}" y1="${CY}" x2="${x}" y2="${y}" stroke="rgba(18,161,80,.35)" stroke-width="2" pathLength="1" stroke-dasharray="1"/>`).join('')}</svg>`, circle);
 const lines3 = [...svg3.querySelectorAll('line')];
-const you = el('div', 'node', `<div style="width:190px;height:190px;border-radius:50%;padding:5px;background:linear-gradient(135deg,#8b6cff,#2f8cff);margin:0 auto">
-  <div style="width:100%;height:100%;border-radius:50%;background:#000;display:grid;place-items:center;font-size:40px;font-weight:700;letter-spacing:-0.02em">You</div></div>`, circle);
+const you = el('div', 'node', `<div style="width:190px;height:190px;border-radius:50%;padding:5px;background:linear-gradient(135deg,#0c9a4b,#3fd17f);margin:0 auto">
+  <div style="width:100%;height:100%;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:40px;font-weight:700;letter-spacing:-0.02em;color:#0b2e1c">You</div></div>`, circle);
 css(you, { left: CX + 'px', top: CY + 'px' });
 const nEls = NODES.map(([n, x, y], i) => {
   const d = el('div', 'node', `<div class="ring">${icon(['plan', 'team', 'heart', 'ask'][i], 40)}</div><div class="nm">${n}</div>`, circle);
@@ -139,24 +139,24 @@ you.dataset.base = 'translate(-50%,-50%)';
 
 // ---------------------------------------------------------------- G4 logo reveal
 const G4 = shot('logo');
-const g4 = el('div', 'layer black');
+const g4 = el('div', 'layer white');
 const glow4 = el('div', 'layer', '', g4);
-css(glow4, { background: 'radial-gradient(circle at 50% 50%, rgba(110,90,255,.28), rgba(0,0,0,0) 38%)' });
+css(glow4, { background: 'radial-gradient(circle at 50% 50%, rgba(63,209,127,.22), rgba(255,255,255,0) 38%)' });
 const L4 = logo(g4, 120);
 css(L4.box, { left: '50%', top: '50%' });
 L4.box.dataset.base = 'translate(-50%,-50%)';
 
 // ---------------------------------------------------------------- G5 the person behind the diagnosis
 const G5 = shot('profile');
-const g5 = el('div', 'layer black');
+const g5 = el('div', 'layer white');
 const w5 = el('div', 'win', '', g5);
 css(w5, { left: '330px', top: '130px', width: '1260px', height: '700px' });
 w5.innerHTML = `<div class="bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-  <div class="title">${icon('heart', 24)} OncoXpress <span style="color:#6e6e73;font-weight:500">· Patient profile</span></div></div>`;
+  <div class="title">${icon('heart', 24)} OncoXpress <span style="color:#66786d;font-weight:500">· Patient profile</span></div></div>`;
 const info = el('div', 'abs', '', w5);
 css(info, { left: '560px', top: '112px', width: '650px' });
 const nm = el('div', '', `<div style="font-size:64px;font-weight:700;letter-spacing:-0.035em">Meera</div>
-  <div style="font-size:26px;color:#86868b;margin-top:6px">More than a diagnosis</div>`, info);
+  <div style="font-size:26px;color:#0c9a4b;margin-top:6px;font-weight:550">More than a diagnosis</div>`, info);
 const lab5 = el('div', 'label', 'What matters to her', info);
 css(lab5, { marginTop: '40px', marginBottom: '18px' });
 const chipBox = el('div', '', '', info);
@@ -165,7 +165,7 @@ const chips = ['Grandmother of two', 'Loves her garden', 'Morning appointments',
   .map(c => el('div', 'chip', c, chipBox));
 const rows = [['team', 'Care team', '4 people, one plan'], ['plan', 'Next step', 'Consultation · Thu, 10:30']].map(([ic, a, b]) => {
   const r = el('div', '', `<div class="icon" style="width:52px;height:52px">${icon(ic, 28)}</div>
-    <div><div style="font-size:20px;color:#86868b">${a}</div><div style="font-size:26px;font-weight:600;margin-top:2px">${b}</div></div>`, info);
+    <div><div style="font-size:20px;color:#66786d">${a}</div><div style="font-size:26px;font-weight:600;margin-top:2px">${b}</div></div>`, info);
   css(r, { display: 'flex', gap: '18px', alignItems: 'center', marginTop: '26px' });
   return r;
 });
@@ -176,16 +176,16 @@ const FACE_TO = { x: 384, y: 220, w: 460, h: 560 };
 
 // ---------------------------------------------------------------- G6 end card
 const G6 = shot('endcard');
-const g6 = el('div', 'layer black');
+const g6 = el('div', 'layer white');
 const glow6 = el('div', 'layer', '', g6);
-css(glow6, { background: 'radial-gradient(ellipse at 50% 46%, rgba(110,90,255,.22), rgba(0,0,0,0) 45%)' });
+css(glow6, { background: 'radial-gradient(ellipse at 50% 46%, rgba(63,209,127,.16), rgba(255,255,255,0) 45%)' });
 const L6 = logo(g6, 104);
 css(L6.box, { left: '50%', top: '380px', transform: 'translate(-50%,-50%)' });
 L6.box.dataset.base = 'translate(-50%,-50%)';
 const tag = el('div', 'abs', 'See the person behind the diagnosis.', g6);
-css(tag, { left: 0, right: 0, top: '480px', textAlign: 'center', fontSize: '42px', fontWeight: 500, color: '#a1a1a6', letterSpacing: '-0.02em' });
+css(tag, { left: 0, right: 0, top: '480px', textAlign: 'center', fontSize: '42px', fontWeight: 500, color: '#4f6358', letterSpacing: '-0.02em' });
 const cta = el('div', 'abs', `Take your next step <span style="font-weight:500">→</span>`, g6);
-css(cta, { left: '50%', top: '600px', padding: '22px 44px', borderRadius: '999px', background: '#f5f5f7', color: '#000',
+css(cta, { left: '50%', top: '600px', padding: '22px 44px', borderRadius: '999px', background: '#12a150', color: '#fff', boxShadow: '0 14px 34px rgba(18,161,80,.3)',
   fontSize: '30px', fontWeight: 620, letterSpacing: '-0.015em', whiteSpace: 'nowrap' });
 cta.dataset.base = 'translateX(-50%)';
 
@@ -193,11 +193,13 @@ cta.dataset.base = 'translateX(-50%)';
 const cap = el('div', '', '');
 cap.id = 'cap';
 const capPages = TL.captions.map(p => {
-  const d = el('div', '', p.words.map(w => `<span>${w.w}</span>`).join(''), cap);
+  const d = el('div', '', `<span class="pill">${p.words.map(w => `<span class="w">${w.w}</span>`).join('')}</span>`, cap);
   css(d, { position: 'absolute', left: 0, right: 0, bottom: 0 });
-  return { p, d, spans: [...d.querySelectorAll('span')] };
+  return { p, d, pill: d.querySelector('.pill'), spans: [...d.querySelectorAll('.w')] };
 });
-const fade = el('div', 'layer black');
+const fade = el('div', 'layer');
+fade.style.background = '#000';
+const fadeOut = el('div', 'layer white');
 
 // ---------------------------------------------------------------- frame
 const show = (e, s, t) => { e.style.display = t >= s.s && t < s.e ? 'block' : 'none'; return t >= s.s && t < s.e; };
@@ -224,8 +226,8 @@ window.renderFrame = function (t) {
     cEls.forEach((c, i) => {
       reveal(c, expo(prog(k, 0.3 + i * 0.13, 0.9 + i * 0.13)), { y: 30, blur: 10, scale: 0.97 });
       const hl = i === 0 ? inout(prog(k, 1.1, 1.4)) : 0;
-      c.style.borderColor = `rgba(139,108,255,${0.09 + hl * 0.7})`;
-      c.style.boxShadow = `0 0 ${hl * 60}px rgba(110,90,255,${hl * 0.35})`;
+      c.style.borderColor = `rgba(18,161,80,${0.09 + hl * 0.8})`;
+      c.style.boxShadow = `0 0 ${hl * 50}px rgba(18,161,80,${hl * 0.25})`;
     });
   }
   // G3
@@ -278,17 +280,21 @@ window.renderFrame = function (t) {
     reveal(cta, expo(prog(k, 1.35, 1.95)), { y: 20, blur: 8, scale: 0.94 });
   }
   // captions (hidden while the logo itself says the name)
-  capPages.forEach(({ p, d, spans }) => {
+  capPages.forEach(({ p, d, pill, spans }) => {
     const on = t >= p.s && t < p.e && p.words[0].w !== 'OncoXpress.';
     d.style.display = on ? 'block' : 'none';
     if (!on) return;
     d.style.opacity = 1 - prog(t, p.e - 0.12, p.e);
+    const pin = expo(prog(t, p.s - 0.02, p.s + 0.25));
+    css(pill, { opacity: pin, transform: `scale(${lerp(0.94, 1, pin)})` });
     spans.forEach((s, i) => {
-      const a = expo(prog(t, p.words[i].s - 0.08, p.words[i].s + 0.3));
-      css(s, { opacity: a, filter: a >= 1 ? 'none' : `blur(${(1 - a) * 8}px)`, transform: `translateY(${(1 - a) * 12}px)` });
+      // the whole line sits in the pill; each word lights up to full white as it is spoken
+      const a = expo(prog(t, p.words[i].s - 0.06, p.words[i].s + 0.22));
+      css(s, { opacity: lerp(0.5, 1, a), transform: `translateY(${(1 - a) * 3}px)` });
     });
   });
   // open from black, close to black
-  fade.style.opacity = Math.max(1 - expo(prog(t, 0.0, 0.7)), inout(prog(t, 39.3, 40.0)));
+  fade.style.opacity = 1 - expo(prog(t, 0.0, 0.7));
+  fadeOut.style.opacity = inout(prog(t, 39.3, 40.0));
 };
 window.ready = document.fonts.ready;

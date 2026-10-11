@@ -2,7 +2,7 @@
 
 `out/oncoxpress_brand_film_40s.mp4`: 1920×1080, 24 fps, H.264 + AAC, mixed to −14 LUFS. `out/sheet.png` is a contact sheet.
 
-**Look:** Apple-style. Black graphic cards, Inter type, a purple-to-blue accent, white word-by-word captions, one clean grade with light grain across all footage.
+**Look:** Apple-style in white and green. White graphic cards, Inter type, a green accent, and white captions on a green pill, with each word lighting up as it's spoken. One clean grade with light grain across all footage.
 
 ## Edit
 | time | picture | narration |
@@ -20,7 +20,7 @@
 | 32.3 | **G5** her face zooms back into a patient profile | …see the person behind the diagnosis. |
 | 36.0 | **G6** end card + "Take your next step" | Connect with OncoXpress to take your next step. |
 
-All laptop and phone screens in the AI clips had garbled UI and text. Those shots are not used; G1–G6 replace them with real graphics.
+The generator's ✦ watermark is painted out of every clip (`DELOGO` in `build.py`). All laptop and phone screens in the AI clips had garbled UI and text. Those shots are not used; G1–G6 replace them with real graphics.
 
 **Narration cuts:** the 49.7 s narration was fitted to 40 s (`vo.py`):
 - three lines dropped: "In moments like these.", "And knowing what to ask can make a difference.", "The journey may not always be easy."
@@ -40,4 +40,3 @@ python3 build.py all   # timeline, base (footage), overlay (Playwright), audio, 
 ## Placeholders to swap
 - The logo is a stand-in (an "O" ring crossed by an "X", with an "OncoXpress" wordmark). Replace the `logo()` function in `scene.js` with the real mark.
 - "Meera" and her profile details in G5 are illustrative.
-- The ✦ generator watermark in the AI clips is left as delivered.
