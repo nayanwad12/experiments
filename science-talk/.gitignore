@@ -1,0 +1,6 @@
+raw/
+work/
+out/
+assets/img/
+__pycache__/
+*.npy
