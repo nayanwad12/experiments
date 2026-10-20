@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vibe Editing Logo Trailer</title>
+<style>
+  @font-face { font-family: "Unbounded"; src: url(fonts/Unbounded-Black.ttf); }
+  @font-face { font-family: "Anton"; src: url(fonts/Anton.ttf); }
+  @font-face { font-family: "Instrument Serif"; src: url(fonts/InstrumentSerif-Italic.ttf); font-style: italic; }
+  @font-face { font-family: "JetBrains Mono"; src: url(fonts/JetBrainsMono-Bold.ttf); }
+  @font-face { font-family: "Inter Tight"; src: url(fonts/InterTight-Black.ttf); }
+  @font-face { font-family: "Montserrat"; src: url(fonts/Montserrat-Black.ttf); }
+  @font-face { font-family: "Luckiest Guy"; src: url(fonts/LuckiestGuy-Regular.ttf); }
+  @font-face { font-family: "Syne"; src: url(fonts/Syne-ExtraBold.ttf); }
+  @font-face { font-family: "Tilt Neon"; src: url(fonts/TiltNeon.ttf); }
+  @font-face { font-family: "Press Start 2P"; src: url(fonts/PressStart2P.ttf); }
+  @font-face { font-family: "Playfair Display"; src: url(fonts/PlayfairDisplay-BlackItalic.ttf); font-style: italic; }
+  @font-face { font-family: "Bungee"; src: url(fonts/Bungee.ttf); }
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #out { display: block; }
+  body:not(.render) #out { width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.78vh; margin: auto; }
+  body:not(.render) { display: grid; place-items: center; height: 100vh; }
+  #bar { position: fixed; left: 0; right: 0; bottom: 0; height: 4px; background: #d4ff3f; transform-origin: left; }
+  #hint { position: fixed; top: 10px; left: 12px; color: #888; font: 12px monospace; }
+  body.render #bar, body.render #hint { display: none; }
+</style>
+</head>
+<body>
+<canvas id="out" width="1920" height="1080"></canvas>
+<div id="bar"></div>
+<div id="hint">space: play/pause · ←/→: scrub · (audio from out/audio.wav)</div>
+<script src="trailer.js"></script>
+</body>
+</html>
