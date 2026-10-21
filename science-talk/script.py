@@ -113,7 +113,7 @@ def build():
         if cuts and 0 <= a - cuts[-1][1] <= MAX_GAP:
             cuts[-1][1] = b
         else:
-            if cuts and a < cuts[-1][1]:
+            if cuts and cuts[-1][0] <= a < cuts[-1][1]:      # overlapping forward range: start after it
                 a = cuts[-1][1]
             cuts.append([a, b])
     out, t = [], 0.0
