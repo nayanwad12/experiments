@@ -1,0 +1,7 @@
+raw/
+work/
+models/
+out/*
+!out/vibe_reel.mp4
+!out/vibe_reel_comparison.mp4
+__pycache__/
