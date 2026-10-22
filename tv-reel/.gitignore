@@ -1,0 +1,10 @@
+out/
+work/
+src/
+models/
+fonts/
+stills*/
+__pycache__/
+*.mp4
+*.wav
+*.npy
