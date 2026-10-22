@@ -273,13 +273,23 @@ class _Src:
         return self._m("raw", lambda: rgba(self.raw))
 
     def person(self):
-        return self._m("person", lambda: rgba(self.rgb, self.alpha))
+        """cut-out with the edge de-spilled: wall light in the soft hair fringe is darkened like the olive room,
+        and the matte firmed up so no pale haze survives around the head."""
+        def make():
+            a = self.alpha.astype(np.float32) / 255
+            m = 1 - a
+            fac = cv2.merge([1 - m * (1 - WALL_TINT[ch] * 0.7) for ch in range(3)])
+            rgb = cv2.multiply(self.rgb, fac, dtype=cv2.CV_8U)
+            hard = np.clip((a - 0.12) / 0.7, 0, 1)
+            return rgba(rgb, (hard * 255).astype(np.uint8))
+        return self._m("person", make)
 
     def outline(self, px=7, color=CREAM):
         def make():
-            a = alpha_small(self.fi)
+            a = ((alpha_small(self.fi) > 150) * 255).astype(np.uint8)
             k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * px + 1, 2 * px + 1))
-            d = cv2.resize(cv2.dilate(a, k), (W, H), interpolation=cv2.INTER_LINEAR)
+            d = cv2.GaussianBlur(cv2.dilate(a, k), (0, 0), 1.2)
+            d = cv2.resize(d, (W, H), interpolation=cv2.INTER_LINEAR)
             arr = np.zeros((H, W, 3), np.uint8)
             arr[:] = kit.rgb(color)
             return rgba(arr, d)
