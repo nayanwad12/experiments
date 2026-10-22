@@ -25,10 +25,18 @@ RUNS = sorted(E.EDL, key=lambda r: r[0])          # raw order
 GAPS = [(0.0, RUNS[0][0])] + [(a[1], b[0]) for a, b in zip(RUNS, RUNS[1:]) if b[0] - a[1] > 0.02] \
     + [(RUNS[-1][1], SRC1)]
 # boundaries in output order: (out time, removed seconds, is-a-pause)
+def _silence(a, b):
+    """seconds of raw a..b that are not speech (the moved hook and the cut "and yes," are not dead air)."""
+    if b <= a:
+        return 0.0
+    speech = sum(max(0.0, min(b, w["e"]) - max(a, w["s"])) for w in E.WORDS)
+    return max(0.0, (b - a) - speech)
+
+
 BOUNDS = []
 for prev, nxt in zip(E.EDL, E.EDL[1:]):
-    gap = nxt[0] - prev[1]
-    BOUNDS.append((nxt[2], max(0.0, gap) if gap < 5 else 0.0, 0 < gap < 5))
+    sil = _silence(prev[1], nxt[0])
+    BOUNDS.append((nxt[2], sil, sil > 0.05))
 # the hook was lifted from 1:10 and the first 0.8 s / the "and yes," before it are gone too
 REMOVED_TOTAL = SRC1 - E.TOTAL
 

@@ -416,7 +416,7 @@ def dark_ground(kind):
 CAP_Y = 470
 CAP_SIZE = 100
 CAP_OFF = [(0, SEC["s1"])] + [(p.s - 0.06, p.e + 0.12) for p in (S1, S2, S3, S4, S5, S6)] + [
-           (LOOK.s - 0.05, LOOK.e + 0.1), (GONE.s - 0.05, GONE.e + 0.1),
+           (LOOK.s - 0.05, LOOK.e + 0.06), (GONE.s - 0.05, GONE.e + 0.06),
            (SOUND.s - 0.05, SOUND.e + 0.12), (PROOF.w(2) - 0.05, PROOF.e + 0.15), (VE.s - 0.05, VE.e + 0.12),
            (SEC["cta"], TOTAL + 1)]
 KEY = {"system", "raw", "one", "take", "mistakes", "every", "word", "strongest", "front", "two", "seconds",
@@ -907,9 +907,9 @@ def s3_front(c, t):
 
 
 def s3_behind(c, t):
-    if GONE.s - 0.05 <= t < GONE.e + 0.25:
+    if GONE.s - 0.05 <= t < GONE.e + 0.06:
         k = prog(t, GONE.s - 0.05, 0.25)
-        ko = prog(t, GONE.e + 0.05, 0.2)
+        ko = prog(t, GONE.e - 0.06, 0.12)
         c.save()
         c.translate(540, 480)
         s = lerp(1.5, 1.0, e_out(k))
@@ -921,9 +921,9 @@ def s3_behind(c, t):
 
 # ---------------------------------------------------------------- step 4: the look
 def s4_behind(c, t, kind):
-    if LOOK.s - 0.05 <= t < LOOK.e + 0.3:
+    if LOOK.s - 0.05 <= t < LOOK.e + 0.06:
         k = prog(t, LOOK.s - 0.05, 0.3)
-        ko = prog(t, LOOK.e + 0.1, 0.2)
+        ko = prog(t, LOOK.e - 0.06, 0.12)
         glow_text(c, "the look", 540, 490 + (1 - e_out(k)) * 50, 230, CREAM, a=e_out(k) * (1 - ko), rot=-4)
     if BEHIND.s - 0.05 <= t < SWAP.w(1):
         ko = prog(t, SWAP.w(1) - 0.15, 0.15)
@@ -1252,7 +1252,7 @@ def draw(c, t, f):
         g["flash"] = 0.8 * (1 - t / 0.1)
     for st in (DROP_T, PROOF.w(2), GONE.s, H_SIX.s, SAY.w(8)):
         if st <= t < st + 0.1:
-            g["flash"] = max(g.get("flash", 0), 0.45 * (1 - (t - st) / 0.1))
+            g["flash"] = max(g.get("flash", 0), 0.3 * (1 - (t - st) / 0.1))
             g["ca"] = 8
     if SWAP.w(1) <= t < SWAP.w(2) + 0.1:
         g["ca"] = 5
@@ -1294,7 +1294,7 @@ def post(rgb, g, f):
         out = out + (255 - out) * g["flash"]
     out *= _VIG
     out = np.clip(out, 0, 255).astype(np.uint8)
-    return kit.grain(out, f, amt=0.03)
+    return kit.grain(out, f, amt=0.02, scale=3)
 
 
 FILM = kit.Film(draw, TOTAL, FPS, post=post, out_dir=OUT)
@@ -1471,13 +1471,15 @@ def build_audio():
     return path
 
 
-def finish(picture, audio, out):
-    """delivery file: H.264 high, AAC 48k, -14 LUFS (two-pass loudnorm), sized for < 30 MB."""
+def finish(picture, audio, out, vbr="2.9M"):
+    """delivery file: H.264 high, two-pass ~2.9 Mbps (keeps it < 30 MB with the grain), AAC 48k, -14 LUFS."""
     ln = loudnorm_filter(audio)
-    ff("-i", str(picture), "-i", str(audio), "-map", "0:v:0", "-map", "1:a:0", "-c:v", "libx264", "-preset", "slow",
-       "-crf", "21", "-maxrate", "2.8M", "-bufsize", "5.6M", "-pix_fmt", "yuv420p", "-profile:v", "high",
-       "-r", str(FPS), "-af", ln, "-ar", "48000", "-c:a", "aac", "-b:a", "192k", "-shortest",
-       "-movflags", "+faststart", str(out))
+    log = str(HERE / "work" / "x264pass")
+    common = ["-c:v", "libx264", "-preset", "slow", "-b:v", vbr, "-maxrate", "4.5M", "-bufsize", "9M",
+              "-pix_fmt", "yuv420p", "-profile:v", "high", "-r", str(FPS), "-passlogfile", log]
+    ff("-i", str(picture), "-map", "0:v:0", *common, "-pass", "1", "-an", "-f", "null", "/dev/null")
+    ff("-i", str(picture), "-i", str(audio), "-map", "0:v:0", "-map", "1:a:0", *common, "-pass", "2", "-af", ln,
+       "-ar", "48000", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", str(out))
     print("->", out)
 
 
