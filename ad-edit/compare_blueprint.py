@@ -76,12 +76,16 @@ def draw(c, t, f):
     rem, n = C.removed_until(src_t)
     k = prog(t, 0.7, 0.45)
     B.talk_chip(c, f"{rem:3.1f}s of pauses cut", 300, 1470, k, rot=-6, size=40)
-    B.talk_chip(c, f"{n} cuts", 700, 1460, prog(t, 0.8, 0.45), rot=5, size=40)
+    B.talk_chip(c, f"{n} cut" + ("" if n == 1 else "s"), 700, 1460, prog(t, 0.8, 0.45), rot=5, size=40)
     B.talk_chip(c, "0 editing apps", 540, 1555, prog(t, 0.9, 0.45), rot=-3, size=40)
     return {}
 
 
-FILM = kit.Film(draw, E.DUR, E.FPS, post=lambda rgb, g, f: kit.grain(rgb, f, amt=0.015), out_dir=E.OUT)
+def post(rgb, g, f):
+    return kit.grain(rgb, f, amt=0.015)
+
+
+FILM = kit.Film(draw, E.DUR, E.FPS, post=post, out_dir=E.OUT)
 
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "render"
