@@ -21,6 +21,8 @@ import cv2
 import numpy as np
 import skia
 
+cv2.setNumThreads(1)
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent / "reels" / "common"))
@@ -204,27 +206,37 @@ def _lut():
     return [(np.clip(c, 0, 1) * 255).astype(np.uint8) for c in (r, g, b)]
 
 
-LUT = _lut()
+LUT = np.ascontiguousarray(np.stack(_lut(), 1).reshape(256, 1, 3))
 WALL_TINT = np.array([0.50, 0.58, 0.30], np.float32)       # cream wall * this -> olive room
 
 
 def grade(rgb, sat=1.08):
-    o = np.empty_like(rgb)
-    for ch in range(3):
-        o[..., ch] = LUT[ch][rgb[..., ch]]
-    f = o.astype(np.float32)
-    lum = f @ np.array([0.299, 0.587, 0.114], np.float32)
-    f = lum[..., None] + (f - lum[..., None]) * sat
-    return np.clip(f, 0, 255).astype(np.uint8)
+    o = cv2.LUT(rgb, LUT)
+    gray = cv2.cvtColor(cv2.cvtColor(o, cv2.COLOR_RGB2GRAY), cv2.COLOR_GRAY2RGB)
+    return cv2.addWeighted(o, sat, gray, 1 - sat, 0)
 
 
 def rgba(arr, a=None):
-    if a is None:
-        a = np.full(arr.shape[:2], 255, np.uint8)
-    return skia.Image.fromarray(np.ascontiguousarray(np.dstack([arr, a])), colorType=skia.kRGBA_8888_ColorType)
+    out = cv2.cvtColor(arr, cv2.COLOR_RGB2RGBA)
+    if a is not None:
+        out[..., 3] = a
+    return skia.Image.fromarray(out, colorType=skia.kRGBA_8888_ColorType)
 
 
-class Src:
+_SRC = {}
+
+
+def Src(ts, sat=1.08):
+    """cached source frame wrapper (one per frame index + saturation)."""
+    key = (int(clamp(round(ts * FPS), 0, NSRC - 1)), sat)
+    if key not in _SRC:
+        if len(_SRC) > 16:
+            _SRC.pop(next(iter(_SRC)))
+        _SRC[key] = _Src(ts, sat)
+    return _SRC[key]
+
+
+class _Src:
     """one source frame: graded footage, the olive-room version, the cut-out person."""
 
     def __init__(self, ts, sat=1.08):
@@ -233,37 +245,45 @@ class Src:
         self.raw = frame_rgb(self.fi)
         self.rgb = grade(self.raw, sat)
         self._a = None
+        self._memo = {}
 
     @property
     def alpha(self):
         if self._a is None:
-            a = cv2.resize(alpha_small(self.fi), (W, H), interpolation=cv2.INTER_LINEAR)
-            self._a = a
+            self._a = cv2.resize(alpha_small(self.fi), (W, H), interpolation=cv2.INTER_LINEAR)
         return self._a
+
+    def _m(self, key, fn):
+        if key not in self._memo:
+            self._memo[key] = fn()
+        return self._memo[key]
 
     def room(self, strength=0.85):
         """footage with the wall pushed to olive (the person untouched)."""
-        m = (1 - self.alpha.astype(np.float32) / 255)[..., None] * strength
-        f = self.rgb.astype(np.float32)
-        f = f * (1 - m) + f * WALL_TINT * m
-        return rgba(np.clip(f, 0, 255).astype(np.uint8))
+        def make():
+            m = cv2.resize(alpha_small(self.fi), (W, H)).astype(np.float32) * (strength / 255) - strength
+            fac = cv2.merge([1 + m * (1 - WALL_TINT[ch]) for ch in range(3)])     # m = -(1 - a) * strength
+            return rgba(cv2.multiply(self.rgb, fac, dtype=cv2.CV_8U))
+        return self._m(("room", strength), make)
 
     def bg(self):
-        return rgba(self.rgb)
+        return self._m("bg", lambda: rgba(self.rgb))
 
     def raw_img(self):
-        return rgba(self.raw)
+        return self._m("raw", lambda: rgba(self.raw))
 
     def person(self):
-        return rgba(self.rgb, self.alpha)
+        return self._m("person", lambda: rgba(self.rgb, self.alpha))
 
     def outline(self, px=7, color=CREAM):
-        a = alpha_small(self.fi)
-        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * px + 1, 2 * px + 1))
-        d = cv2.resize(cv2.dilate(a, k), (W, H), interpolation=cv2.INTER_LINEAR)
-        arr = np.zeros((H, W, 3), np.uint8)
-        arr[:] = kit.rgb(color)
-        return rgba(arr, d)
+        def make():
+            a = alpha_small(self.fi)
+            k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * px + 1, 2 * px + 1))
+            d = cv2.resize(cv2.dilate(a, k), (W, H), interpolation=cv2.INTER_LINEAR)
+            arr = np.zeros((H, W, 3), np.uint8)
+            arr[:] = kit.rgb(color)
+            return rgba(arr, d)
+        return self._m(("outline", px, color), make)
 
 
 # ================================================================== camera + layout
@@ -1249,7 +1269,7 @@ _VIG = None
 
 def post(rgb, g, f):
     global _VIG
-    if _VIG is None:
+    if _VIG is None or _VIG.shape[:2] != rgb.shape[:2]:
         h, w = rgb.shape[:2]
         yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
         r = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h / 2) / (h / 2)) ** 2)
@@ -1341,11 +1361,11 @@ def sfx_list():
     a(ZOOMS.w(3), "riser", -14, dur=0.6)
     # step 5: the drop
     a(S5.s - 0.55, "riser", -9, dur=0.55 + DROP_T - S5.s)
-    a(DROP_T, "impact", -4)
-    a(DROP_T, "bass_drop", -6)
+    a(DROP_T, "impact", -8)
+    a(DROP_T, "bass_drop", -9)
     a(MUSIC.s, "pop", -14)
-    a(WHOOSH.s - 0.05, "whoosh", -6, dur=0.5)
-    a(HITS.s - 0.01, "impact", -4)
+    a(WHOOSH.e - 0.12, "whoosh", -7, dur=0.45)
+    a(HITS.e - 0.06, "impact", -6)
     a(SCRATCH.s, "glitch", -15)
     a(CLAIMS.w(2), "swish", -11)
     a(CLAIMS.w(4) - 0.1, "impact", -9)
@@ -1386,6 +1406,9 @@ ak.MOODS["retro_b"] = dict(bpm=BPM, scale="major", key="A", prog=[4, 3, 2, 1], d
                            sevenths=True, pump=True)
 
 
+MUSIC_DB, SFX_DB, DUCK_DB = -9, -4, -7
+
+
 def build_audio():
     SR = ak.SR
     work = HERE / "work"
@@ -1417,23 +1440,28 @@ def build_audio():
     mus = np.zeros((n, 2), np.float32)
     la = np.stack([ak.filt(bed_a[:, ch], "low", 1500) for ch in range(2)], 1)
     la = la[:drop]
-    mus[:len(la)] = la * ak.db(-2)
+    la *= np.sqrt(np.mean(bed_a[:drop] ** 2) / (np.mean(la ** 2) + 1e-12)) * ak.db(-1)   # level-match the muffled bed
+    mus[:len(la)] = la
     k = int(0.4 * SR)
     mus[drop - k:drop] *= np.linspace(1, 0.3, k)[:, None]
     lb = bed_b[: n - drop]
     mus[drop:drop + len(lb)] = lb
     fi = int(0.5 * SR)
     mus[:fi] *= np.linspace(0, 1, fi)[:, None]
-    mus *= ak.duck_gain(voice, -11)[:, None]
+    mus *= ak.duck_gain(voice, DUCK_DB)[:, None]
     end = int((TOTAL - 0.05) * SR)
     fo = int(1.0 * SR)
     mus[end - fo:end] *= np.linspace(1, 0, fo)[:, None]
     mus[end:] = 0
-    out = voice + mus * ak.db(-14)
+    mus *= ak.db(MUSIC_DB)
+    fx = np.zeros_like(voice)
     for s in sfx_list():
         kind = s["kind"]
         clip = ak.SFX[kind](s["dur"]) if "dur" in s and kind in ("whoosh", "riser", "typing") else ak.SFX[kind]()
-        ak.place(out, clip, max(0.0, s["t"]), s["gain_db"] - 2, s.get("pan", 0.0))
+        ak.place(fx, clip, max(0.0, s["t"]), s["gain_db"] + SFX_DB, s.get("pan", 0.0))
+    for name, x in (("voice", voice), ("music", mus), ("sfx", fx)):
+        ak.write_wav(work / f"stem_{name}.wav", x)
+    out = voice + mus + fx
     peak = np.max(np.abs(out)) or 1
     if peak > 0.98:
         out = np.tanh(out / peak * 1.2) / math.tanh(1.2) * 0.98
