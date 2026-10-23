@@ -62,7 +62,7 @@ def paste(cv, im, x, y, op=1.0):
     if op <= 0.003: return
     if isinstance(im, Image.Image): im = to_np(im)
     h, w = im.shape[:2]; x = int(round(x)); y = int(round(y))
-    x0, y0, x1, y1 = max(x, 0), max(y, 0), min(x + w, W), min(y + h, H)
+    x0, y0, x1, y1 = max(x, 0), max(y, 0), min(x + w, cv.shape[1]), min(y + h, cv.shape[0])
     if x1 <= x0 or y1 <= y0: return
     s = im[y0 - y:y1 - y, x0 - x:x1 - x]
     a = s[..., 3:4] * op
@@ -420,104 +420,187 @@ def cut_M(si, t, i):
     return np.array([[s, 0, ax * (1 - z) + (540 - ax) * 0.35], [0, s, ay * (1 - z)]], np.float32), top, z
 
 # TV geometry
-TV_SCR = (128, 826, 952, 1252); TV_P = (540.0, 1040.0)
-def tv_M(t, i, k=1.0):
+# TV geometry: a 4:3 CRT. The subject lives entirely inside the screen.
+CAB = (56, 690, 1024, 1588); BEZ = (86, 716, 994, 1386); LIP = (130, 732, 950, 1354)
+TV_SCR = (146, 748, 934, 1338); SW, SH = TV_SCR[2] - TV_SCR[0], TV_SCR[3] - TV_SCR[1]   # 788 x 590
+TV_P = (540.0, 1043.0)
+DIAL = (322, 1414, 758, 1558)
+PAD = 44                                   # overscan so the curved glass never samples outside the picture
+CW, CH = SW + 2 * PAD, SH + 2 * PAD
+CAP_BOTTOM_TV = 636
+SCR_R = 64
+
+def tv_src_M(t, i):
+    """src frame -> screen-content crop coordinates (crop includes the overscan PAD)."""
     top, cx = head(i)
-    fx, fy = cx, top + 210
-    zl = 1.0 + 0.012 * (t - 3.13 if t < 20 else t - 59.07)
-    si = sec_at(t) if sec_at(t) in (1, 10) else (1 if t < 20 else 10)
-    zl *= zoom_level(si, t) if SEC[si].get("zb") else 1.0
-    for te, kind in EVS[si]:
-        pass
-    # alternate tightness on internal cuts
+    si = 1 if t < 30 else 10
     n = sum(1 for te, kd in EVS[si] if kd == "cut" and te <= t)
-    zl *= 1.07 if n % 2 else 1.0
-    s = 1.62 * zl
-    tx, ty = 540 - s * fx, 1010 - s * fy
-    # pose k around TV_P
-    M = np.array([[s * k, 0, TV_P[0] + k * (tx - TV_P[0])], [0, s * k, TV_P[1] + k * (ty - TV_P[1])]], np.float32)
-    return M, top, s * k
+    s = 1.2 * (1.07 if n % 2 else 1.0) * (1 + 0.006 * max(0.0, t - SEC[si]["t0"]))
+    fy = PAD + 50 + 210 * 1.2                       # face centre stays put through punch-ins
+    tx = PAD + SW * 0.5 - s * cx
+    tx = min(max(tx, CW - 720 * s), 0.0)
+    ty = fy - s * (top + 210)
+    ty = min(max(ty, CH - 1280 * s), 0.0)
+    return np.float32([[s, 0, tx], [0, s, ty]]), top, s
 
-# ---------------------------------------------------------------- TV prop (static layers)
+def rr_mask(x0, y0, x1, y1, r, shape=(H, W), ss_=4):
+    hh, ww = shape
+    im = Image.new("L", (ww * ss_ // 2, hh * ss_ // 2), 0)
+    ImageDraw.Draw(im).rounded_rectangle([x0 * ss_ // 2, y0 * ss_ // 2, x1 * ss_ // 2 - 1, y1 * ss_ // 2 - 1], r * ss_ // 2, fill=255)
+    return np.asarray(im.resize((ww, hh), Image.LANCZOS), np.float32) / 255
+
+def _emboss(mask, r):
+    b = cv2.GaussianBlur(mask, (0, 0), r)
+    gy, gx = np.gradient(b)
+    e = -(gx * 0.8 + gy)
+    return e / (np.abs(e).max() + 1e-6)
+
+def _wood():
+    r = np.random.default_rng(21)
+    n1 = cv2.resize(r.normal(0, 1, (H // 60, W // 160)).astype(np.float32), (W, H), interpolation=cv2.INTER_CUBIC)
+    n2 = cv2.resize(r.normal(0, 1, (H // 12, W // 40)).astype(np.float32), (W, H), interpolation=cv2.INTER_CUBIC)
+    g = 0.5 + 0.5 * np.sin(2 * np.pi * (YY / 8.5 + 2.6 * n1 + 0.35 * n2))
+    g = g ** 2.2
+    fine = cv2.GaussianBlur(r.normal(0, 1, (H, W)).astype(np.float32), (0, 0), 6, sigmaY=0.6)
+    base = f3((146, 104, 66)) * (1 - 0.32 * g[..., None]) + f3((96, 66, 42)) * 0.0
+    return base * (1 + 0.05 * fine[..., None])
+
 def build_tv():
-    S2 = 2
-    im = Image.new("RGBA", (W * S2, H * S2), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-    R = lambda *v: [x * S2 for x in v]
-    # antenna
-    for (x2, y2) in [(250, 452), (858, 412)]:
-        d.line(R(540, 742, x2, y2), fill=(70, 70, 72, 255), width=9 * S2)
-        d.line(R(540 - 1, 740, x2 - 1, y2), fill=(175, 175, 178, 255), width=3 * S2)
-        d.ellipse(R(x2 - 9, y2 - 9, x2 + 9, y2 + 9), fill=(60, 60, 62, 255))
-    d.rounded_rectangle(R(450, 716, 630, 768), 16 * S2, fill=(52, 50, 50, 255))
-    d.rounded_rectangle(R(458, 720, 622, 732), 6 * S2, fill=(95, 93, 92, 255))
+    m_cab = rr_mask(*CAB, 50); m_bez = rr_mask(*BEZ, 38); m_lip = rr_mask(*LIP, SCR_R + 14)
+    m_scr = rr_mask(*TV_SCR, SCR_R)
+    m_box = rr_mask(100, 1404, 300, 1568, 18) + rr_mask(780, 1404, 980, 1568, 18)
+    m_dial = rr_mask(*DIAL, 14)
+    m_leg = np.zeros((H, W), np.float32)
+    for x0 in (150, 848):
+        cv2.fillConvexPoly(m_leg, np.int32([[x0, 1580], [x0 + 82, 1580], [x0 + 68, 1648], [x0 + 14, 1648]]), 1.0, cv2.LINE_AA)
+    col = np.zeros((H, W, 3), np.float32)
     # legs
-    for x0 in (150, 850):
-        d.polygon(R(x0, 1530, x0 + 80, 1530, x0 + 66, 1596, x0 + 14, 1596), fill=WOOD_D + (255,))
-    # cabinet
-    d.rounded_rectangle(R(46, 756, 1034, 1546), 44 * S2, fill=WOOD_D + (255,))
-    d.rounded_rectangle(R(52, 760, 1028, 1538), 40 * S2, fill=WOOD + (255,))
-    # bezel (orange) + screen hole
-    d.rounded_rectangle(R(80, 790, 1000, 1290), 30 * S2, fill=(160, 64, 40, 255))
-    d.rounded_rectangle(R(84, 792, 996, 1284), 28 * S2, fill=ORANGE + (255,))
-    d.rounded_rectangle(R(118, 816, 962, 1262), 74 * S2, fill=(222, 214, 200, 255))      # chrome lip
-    d.rounded_rectangle(R(TV_SCR[0], TV_SCR[1], TV_SCR[2], TV_SCR[3]), 66 * S2, fill=(0, 0, 0, 0))
+    col += f3((70, 48, 31)) * m_leg[..., None] * (1 - 0.3 * np.clip((YY[..., None] - 1580) / 70, 0, 1))
+    # wooden cabinet with bevel + top-down light
+    wood = _wood() * (1.08 - 0.16 * np.clip((YY[..., None] - 690) / 900, 0, 1))
+    wood += 0.10 * _emboss(m_cab, 4)[..., None]
+    wood += 0.05 * np.exp(-((YY[..., None] - 712) / 10) ** 2)            # varnish highlight along the top edge
+    col = col * (1 - m_cab[..., None]) + wood * m_cab[..., None]
+    # orange painted bezel
+    bez = f3(ORANGE) * (1.07 - 0.14 * np.clip((YY[..., None] - 716) / 670, 0, 1)) * (1.05 - 0.08 * np.clip((XX[..., None] - 86) / 908, 0, 1))
+    bez += 0.09 * _emboss(m_bez, 3)[..., None] + _paper_noise * 0.01
+    ao = cv2.GaussianBlur(m_lip, (0, 0), 9)[..., None]                    # occlusion where the bezel meets the chrome lip
+    bez *= 1 - 0.25 * np.clip(ao * (1 - m_lip[..., None]) * 2, 0, 1)
+    col = col * (1 - m_bez[..., None]) + bez * m_bez[..., None]
+    # chrome lip: brushed metal gradient
+    ring = np.clip(m_lip - m_scr, 0, 1)[..., None]
+    ny = (YY[..., None] - 732) / 622
+    chrome = f3((205, 202, 196)) * (0.82 + 0.22 * np.cos(ny * 5.5) ** 2) + 0.12 * _emboss(m_lip, 2)[..., None]
+    col = col * (1 - ring) + chrome * ring
     # control panel
-    for x0 in (92, 788):
-        d.rounded_rectangle(R(x0, 1304, x0 + 200, 1506), 18 * S2, fill=(160, 64, 40, 255))
-        d.rounded_rectangle(R(x0 + 3, 1306, x0 + 197, 1502), 16 * S2, fill=ORANGE + (255,))
-        cx, cy = x0 + 100, 1405
-        d.ellipse(R(cx - 64, cy - 64, cx + 64, cy + 64), fill=(60, 58, 56, 255))
-        d.ellipse(R(cx - 58, cy - 58, cx + 58, cy + 58), fill=(214, 210, 202, 255))
-        for a in range(0, 360, 20):
-            r0, r1 = 46, 56
-            d.line(R(cx + r0 * math.cos(math.radians(a)), cy + r0 * math.sin(math.radians(a)),
-                     cx + r1 * math.cos(math.radians(a)), cy + r1 * math.sin(math.radians(a))), fill=(150, 146, 140, 255), width=2 * S2)
-        d.ellipse(R(cx - 38, cy - 38, cx + 38, cy + 38), fill=(236, 232, 226, 255))
-        d.line(R(cx, cy, cx + 26, cy - 22), fill=INK + (255,), width=5 * S2)
-    d.rounded_rectangle(R(310, 1318, 770, 1492), 16 * S2, fill=(38, 36, 34, 255))
-    d.rounded_rectangle(R(326, 1332, 754, 1478), 10 * S2, fill=(18, 18, 17, 255))     # dial window / LED
-    for k in range(9):
-        y = 1338 + k * 16
-        d.line(R(800 - 0, 0, 0, 0), fill=(0, 0, 0, 0))
-    im = down(im)
-    a = to_np(im)
-    # wood grain texture on cabinet area
-    gr = cv2.resize(np.random.default_rng(5).normal(0, 1, (H // 6, 8)).astype(np.float32), (W, H))
-    gr = cv2.GaussianBlur(gr, (0, 0), 1.2)[..., None]
-    wood = (np.abs(a[..., :3] - f3(WOOD)).sum(-1, keepdims=True) < 0.05).astype(np.float32)
-    a[..., :3] *= 1 + 0.06 * gr * wood
-    # top highlight / bottom shade on cabinet
-    a[..., :3] *= (1 + 0.10 * np.clip(1 - (YY[..., None] - 760) / 120, 0, 1) * (YY[..., None] > 760))
-    a[..., :3] *= (1 - 0.18 * np.clip((YY[..., None] - 1430) / 110, 0, 1))
-    return np.clip(a, 0, 1).astype(np.float32)
+    box = f3(ORANGE) * (1.04 - 0.1 * np.clip((YY[..., None] - 1404) / 164, 0, 1)) + 0.12 * _emboss(m_box, 2.5)[..., None]
+    col = col * (1 - m_box[..., None]) + box * m_box[..., None]
+    dial = f3((22, 21, 20)) + 0.05 * np.clip(1 - (YY[..., None] - 1414) / 60, 0, 1) - 0.08 * _emboss(m_dial, 2.5)[..., None]
+    col = col * (1 - m_dial[..., None]) + dial * m_dial[..., None]
+    alpha = np.clip(m_cab + m_leg, 0, 1) * (1 - m_scr)
+    layer = np.concatenate([np.clip(col, 0, 1), alpha[..., None]], -1)
+    # knobs, dial scale, antenna (vector, 2x supersampled)
+    im, d = ss(W, H); S2 = 2
+    for cx in (200, 880):
+        cy = 1486
+        for k in range(14):   # soft drop shadow
+            d.ellipse([(cx - 62 + 4) * S2, (cy - 62 + 6) * S2, (cx + 62 + 4) * S2, (cy + 62 + 6) * S2], fill=(0, 0, 0, 6))
+        for k in range(40):   # turned-metal skirt, lit from top-left
+            rr = 62 - k * 0.6; c = int(120 + 120 * (k / 40) ** 0.7)
+            d.ellipse([(cx - rr - 2 * (k / 40)) * S2, (cy - rr - 2 * (k / 40)) * S2, (cx + rr - 2 * (k / 40)) * S2, (cy + rr - 2 * (k / 40)) * S2], fill=(c, c - 3, c - 8, 255))
+        for a in range(0, 360, 12):
+            r0, r1 = 44, 52
+            d.line([(cx + r0 * math.cos(math.radians(a))) * S2, (cy + r0 * math.sin(math.radians(a))) * S2,
+                    (cx + r1 * math.cos(math.radians(a))) * S2, (cy + r1 * math.sin(math.radians(a))) * S2], fill=(110, 106, 100, 255), width=2 * S2)
+        for k in range(24):   # cap
+            rr = 38 - k * 0.8; c = int(205 + 45 * k / 24)
+            d.ellipse([(cx - rr - 4 * k / 24) * S2, (cy - rr - 4 * k / 24) * S2, (cx + rr - 4 * k / 24) * S2, (cy + rr - 4 * k / 24) * S2], fill=(c, c - 2, c - 6, 255))
+        d.line([cx * S2, cy * S2, (cx + 26) * S2, (cy - 24) * S2], fill=(30, 30, 30, 255), width=5 * S2)
+        d.ellipse([(cx - 22) * S2, (cy - 30) * S2, (cx - 6) * S2, (cy - 20) * S2], fill=(252, 250, 246, 255))
+    # radio dial scale
+    x0, y0, x1, y1 = DIAL
+    for k, lab in enumerate(["54", "60", "70", "80", "100", "120", "140", "160"]):
+        x = x0 + 40 + k * (x1 - x0 - 80) / 7
+        d.line([x * S2, (y0 + 30) * S2, x * S2, (y0 + 54) * S2], fill=(214, 200, 170, 230), width=2 * S2)
+        d.text((x * S2, (y0 + 76) * S2), lab, font=font("mono", 17 * S2), fill=(214, 200, 170, 220), anchor="mm")
+    for k in range(57):
+        x = x0 + 40 + k * (x1 - x0 - 80) / 56
+        d.line([x * S2, (y0 + 38) * S2, x * S2, (y0 + 48) * S2], fill=(214, 200, 170, 150), width=1 * S2)
+    d.text(((x0 + x1) / 2 * S2, (y1 - 26) * S2), "KC  ·  AM  ·  BROADCAST", font=font("mono", 15 * S2), fill=(214, 200, 170, 170), anchor="mm")
+    d.line([(x0 + 250) * S2, (y0 + 14) * S2, (x0 + 250) * S2, (y1 - 46) * S2], fill=(225, 80, 50, 255), width=3 * S2)
+    d.rounded_rectangle([(x0 + 6) * S2, (y0 + 6) * S2, (x1 - 6) * S2, (y0 + 22) * S2], 6 * S2, fill=(255, 255, 255, 16))   # glass glint
+    # antenna: dark plastic dome + chrome rods with ball tips
+    for k in range(20):
+        c = int(40 + 50 * k / 20)
+        d.rounded_rectangle([(450 + k) * S2, (652 + k * 0.6) * S2, (630 - k * 1.3) * S2, (694) * S2], 22 * S2, fill=(c, c, c + 2, 255))
+    for (x2, y2) in [(238, 392), (872, 362)]:
+        d.line([540 * S2, 668 * S2, x2 * S2, y2 * S2], fill=(88, 88, 92, 255), width=9 * S2)
+        d.line([(540 - 2) * S2, (666) * S2, (x2 - 2) * S2, (y2 - 1) * S2], fill=(225, 225, 228, 255), width=3 * S2)
+        d.ellipse([(x2 - 10) * S2, (y2 - 10) * S2, (x2 + 10) * S2, (y2 + 10) * S2], fill=(70, 70, 74, 255))
+        d.ellipse([(x2 - 6) * S2, (y2 - 7) * S2, (x2 - 1) * S2, (y2 - 2) * S2], fill=(240, 240, 240, 255))
+    vec = to_np(down(im))
+    a = vec[..., 3:4]
+    layer[..., :3] = layer[..., :3] * (1 - a) + vec[..., :3] * a
+    layer[..., 3:4] = np.clip(layer[..., 3:4] + a * (1 - layer[..., 3:4]), 0, 1)
+    return layer.astype(np.float32), m_scr
 
-def rr_mask(x0, y0, x1, y1, r):
-    m = np.zeros((H, W), np.uint8)
-    cv2.rectangle(m, (x0 + r, y0), (x1 - r, y1), 255, -1); cv2.rectangle(m, (x0, y0 + r), (x1, y1 - r), 255, -1)
-    for cx, cy in [(x0 + r, y0 + r), (x1 - r, y0 + r), (x0 + r, y1 - r), (x1 - r, y1 - r)]:
-        cv2.circle(m, (cx, cy), r, 255, -1, cv2.LINE_AA)
-    return cv2.GaussianBlur(m, (0, 0), 0.8).astype(np.float32) / 255
+TV, SCR_M = build_tv()
 
-TV = build_tv()
-SCR_M = rr_mask(*TV_SCR, 66)
-def build_glass():
-    g = np.zeros((H, W, 4), np.float32)
-    sl = ((YY.astype(int) % 4) < 1).astype(np.float32)
-    x0, y0, x1, y1 = TV_SCR
-    nx = (XX - (x0 + x1) / 2) / ((x1 - x0) / 2); ny = (YY - (y0 + y1) / 2) / ((y1 - y0) / 2)
-    vig = np.clip((nx ** 2 + ny ** 2) ** 1.6 / 2.2, 0, 1)
-    dark = np.clip(sl * 0.10 + vig * 0.55, 0, 0.8)
-    glare = np.clip(1 - np.sqrt(((XX - 330) / 330) ** 2 + ((YY - 900) / 120) ** 2), 0, 1) ** 2 * 0.10
-    a = np.clip(dark + glare, 0, 1)
-    col = (glare[..., None] * 1.0 + 0) / np.maximum(a[..., None], 1e-4)
-    g[..., :3] = np.clip(col, 0, 1); g[..., 3] = a * SCR_M
-    return g
-GLASS = build_glass()
+# CRT screen model, all in local screen space -------------------------------
+_ly, _lx = np.mgrid[0:SH, 0:SW].astype(np.float32)
+_nx, _ny = (_lx - SW / 2) / (SW / 2), (_ly - SH / 2) / (SH / 2)
+_r2 = _nx ** 2 + _ny ** 2
+_K = 0.045
+CRT_MAPS = []
+for ca in (0.0035, 0.0, -0.0035):            # R, G, B sample slightly different radii -> convergence fringe
+    f = (1 + _K * _r2) * (1 + ca * _r2)
+    CRT_MAPS.append(((PAD + SW / 2 + (_lx - SW / 2) * f).astype(np.float32), (PAD + SH / 2 + (_ly - SH / 2) * f).astype(np.float32)))
+_cy = np.arange(CH, dtype=np.float32)[:, None]
+SCANL = (0.5 + 0.5 * np.cos(2 * np.pi * _cy / 3.0))[..., None] * np.ones((1, CW, 1), np.float32)
+_cx = np.arange(CW)[None, :] % 3
+GRILLE = np.stack([np.where(_cx == c, 1.0, 0.94) for c in range(3)], -1).astype(np.float32) * np.ones((CH, 1, 1), np.float32)
+SCR_LOCAL = rr_mask(0, 0, SW, SH, SCR_R, shape=(SH, SW))
+_dist = cv2.distanceTransform((SCR_LOCAL > 0.5).astype(np.uint8), cv2.DIST_L2, 5)
+CRT_SHADE = ((1 - 0.36 * np.clip(_r2 / 2, 0, 1) ** 1.5) * (1 - 0.62 * np.exp(-_dist / 13)))[..., None].astype(np.float32)
+def _reflect():
+    r = np.zeros((SH, SW), np.float32)
+    u, v = _lx / SW, _ly / SH
+    a = np.deg2rad(-14); xr = (u - 0.24) * np.cos(a) - (v - 0.15) * np.sin(a); yr = (u - 0.24) * np.sin(a) + (v - 0.15) * np.cos(a)
+    r += 0.16 * np.exp(-(xr / 0.22) ** 2 - (yr / 0.045) ** 2)                 # main specular streak
+    r += 0.05 * np.exp(-((u - 0.80) / 0.035) ** 2) * np.clip(1 - np.abs(v - 0.28) / 0.22, 0, 1)   # window reflection
+    r += 0.04 * np.exp(-((u - 0.87) / 0.025) ** 2) * np.clip(1 - np.abs(v - 0.28) / 0.22, 0, 1)
+    r += 0.035 * np.clip(1 - v / 0.5, 0, 1) ** 2                            # sheen on the upper glass
+    r += 0.05 * np.exp(-((v - 0.965) / 0.012) ** 2) * np.clip(1 - np.abs(u - 0.5) / 0.4, 0, 1)   # lower rim glint
+    return r[..., None]
+GLASS_R = _reflect()
+_nr = np.random.default_rng(9)
+CRT_NOISE = [_nr.normal(0, 1, (CH, CW, 1)).astype(np.float32) for _ in range(5)]
+_sp = cv2.GaussianBlur(cv2.dilate(SCR_M, np.ones((31, 31), np.uint8)), (0, 0), 12)
+SPILL = np.clip(_sp - SCR_M, 0, 1)[..., None] * 1.6
+
+def crt(c, t, on=1.0):
+    """Turn a flat picture (CH x CW, with overscan) into what a curved, scanned CRT would show (SH x SW)."""
+    l = (c @ np.array([.299, .587, .114], np.float32))[..., None]
+    c = l + (c - l) * 0.93
+    c = np.clip((c - 0.5) * 1.07 + 0.52, 0, 1) * np.array([1.025, 1.0, 0.965], np.float32)
+    b = cv2.GaussianBlur(c, (0, 0), 5)
+    c = 1 - (1 - c) * (1 - 0.22 * b)                                          # phosphor glow
+    L = (c @ np.array([.299, .587, .114], np.float32))[..., None]
+    c = c * (1 - 0.30 * (1 - 0.55 * L) * SCANL) * GRILLE
+    band = 0.035 * np.exp(-((_cy - ((t * 0.42) % 1.4 - 0.2) * CH) / 70) ** 2)[..., None]
+    c = c * (1 + 0.012 * math.sin(2 * math.pi * 7.7 * t) + band) + CRT_NOISE[int(t * 30) % 5] * 0.016
+    c = np.clip(c * on, 0, 1.2)
+    out = np.empty((SH, SW, 3), np.float32)
+    for ch in range(3):
+        out[..., ch] = cv2.remap(np.ascontiguousarray(c[..., ch]), CRT_MAPS[ch][0], CRT_MAPS[ch][1], cv2.INTER_LINEAR,
+                                 borderMode=cv2.BORDER_CONSTANT, borderValue=0)
+    out = out * CRT_SHADE + 0.018                                              # dark glass never goes fully black
+    return np.clip(1 - (1 - out) * (1 - GLASS_R), 0, 1)
 
 def warp_rgba(im, k, P=TV_P):
     if abs(k - 1) < 1e-3: return im
     M = np.array([[k, 0, P[0] * (1 - k)], [0, k, P[1] * (1 - k)]], np.float32)
-    return cv2.warpAffine(im, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=0)
+    return cv2.warpAffine(im, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
 
 # ---------------------------------------------------------------- captions
 def line_layout(st, ws, maxw=930, scale=1.0):
@@ -548,17 +631,16 @@ def page_layout(pi):
     lines = [line_layout(st, ws) for st, ws, col in p["lines"]]
     gap = 20
     # target block bottom: just tucked behind the head top
-    tops = []
-    for k in range(9):
-        t = p["t0"] + (min(p["t1"], s["t1"]) - p["t0"]) * k / 8
-        i = src_idx(t)
-        if s["kind"] == "tv":
-            M, top, sc = tv_M(t, i); tops.append(M[1, 1] * top + M[1, 2])
-        else:
-            M, top, z = cut_M(si, t, i); tops.append(M[1, 1] * top + M[1, 2])
-    htop = min(tops)
-    # wide last line tucks behind the hair; a narrow one would vanish behind the head, so keep it clear
-    bottom = htop + 30 if (lines[-1]["w"] > 560 and lines[-1]["st"] in "LX") else htop - 8
+    if s["kind"] == "tv":
+        bottom = CAP_BOTTOM_TV            # above the set; the antenna crosses in front
+    else:
+        tops = []
+        for k in range(9):
+            t = p["t0"] + (min(p["t1"], s["t1"]) - p["t0"]) * k / 8
+            M, top, z = cut_M(si, t, src_idx(t)); tops.append(M[1, 1] * top + M[1, 2])
+        htop = min(tops)
+        # wide last line tucks behind the hair; a narrow one would vanish behind the head, so keep it clear
+        bottom = htop + 30 if (lines[-1]["w"] > 560 and lines[-1]["st"] in "LX") else htop - 8
     lim_top = 300
     def total(ls): return sum(l["bot"] - l["top"] for l in ls) + gap * (len(ls) - 1)
     fs = 1.0
@@ -675,82 +757,83 @@ def ev(t, name, g=-20): GFX_EV.append((t, name, g))
 
 def w_(i): return wtime(i)
 
-# section 1: timeline card + clock + reel badge
+# section 1: broadcast graphics drawn *into* the TV picture (timeline lower-third, clock, reel badge)
 T_TL = w_(20)
 ev(T_TL, "swoosh", -24); ev(T_TL + 0.18, "pop", -22)
 ev(w_(21) + 0.05, "drag", -22)
 for k in range(4): ev(w_(24) + 0.06 + k * 0.08, "click", -22)
 ev(w_(27), "pop", -19); ev(w_(27) + 0.05, "ticks", -24)
 ev(w_(31), "pop", -19)
-def gfx_old(cv, t):
+
+def timeline_card(t, cw=690, ch=150):
+    im, d = card(cw, ch, CREAM, INK, 3, 16, GREEN, 7)
+    S2 = 2; fx = (cw - 100) / 770
+    f = font("mono", 18 * S2); fb = font("monox", 19 * S2)
+    d.text((18 * S2, 13 * S2), "TIMELINE — SEQ 01", font=fb, fill=INK + (255,))
+    if t < w_(27): tc = t - 3.13
+    else: tc = 6 * 3600 * eio((t - w_(27)) / 0.6) + (t - 3.13)
+    hh, mm, sc = int(tc // 3600), int(tc % 3600 // 60), int(tc % 60)
+    d.text(((cw - 18) * S2, 13 * S2), "%02d:%02d:%02d" % (hh, mm, sc), font=fb,
+           fill=(ORANGE if t >= w_(27) else INK) + (255,), anchor="ra")
+    tx0, tw = 72, cw - 90
+    rows = [44, 78, 112]
+    for yy, lab in zip(rows, ["V2", "V1", "A1"]):
+        d.text((18 * S2, (yy + 6) * S2), lab, font=f, fill=MUTE + (255,))
+        d.rounded_rectangle([tx0 * S2, yy * S2, (tx0 + tw) * S2, (yy + 28) * S2], 5 * S2, fill=(228, 222, 210, 255))
+    clips = [(0, 150, GREEN), (160, 300, ORANGE), (310, 470, INK), (480, 640, GREEN), (650, 760, WOOD)]
+    drag_u = clamp((t - w_(21) - 0.05) / 0.5)
+    for k, (a_, b_, c_) in enumerate(clips):
+        yy = rows[1]; xs = a_
+        if k == 1: yy = rows[1] - (rows[1] - rows[0]) * eio(drag_u); xs = a_ + 150 * eio(drag_u)
+        d.rounded_rectangle([(tx0 + xs * fx) * S2, (yy + 3) * S2, (tx0 + (xs + b_ - a_) * fx) * S2, (yy + 25) * S2], 5 * S2, fill=tuple(c_) + (255,))
+        if k == 1 and 0 < drag_u and t < w_(23):
+            icon(d, "cursor", (tx0 + (xs + 60) * fx) * S2, (yy + 10) * S2, 28 * S2, INK, CREAM)
+    for x in range(0, tw, 8):
+        hgt = 3 + 9 * abs(math.sin(x * 0.13) * math.sin(x * 0.031 + 1))
+        d.line([(tx0 + x) * S2, (rows[2] + 14 - hgt) * S2, (tx0 + x) * S2, (rows[2] + 14 + hgt) * S2], fill=INK + (200,), width=3 * S2)
+    for k in range(4):
+        ku = t - (w_(24) + 0.06 + k * 0.08)
+        if ku > 0:
+            kx, ky = tx0 + (330 + k * 95) * fx, rows[0] + 14; r_ = 11 * eob(ku / 0.15)
+            d.polygon([(kx * S2, (ky - r_) * S2), ((kx + r_) * S2, ky * S2), (kx * S2, (ky + r_) * S2), ((kx - r_) * S2, ky * S2)],
+                      fill=ORANGE + (255,), outline=INK + (255,))
+    ph = tx0 + (tw - 4) * clamp((t - T_TL) / (11.73 - T_TL))
+    d.line([ph * S2, 38 * S2, ph * S2, (ch - 6) * S2], fill=ORANGE + (255,), width=3 * S2)
+    d.polygon([((ph - 7) * S2, 34 * S2), ((ph + 7) * S2, 34 * S2), (ph * S2, 45 * S2)], fill=ORANGE + (255,))
+    return down(im)
+
+def clock_badge(u):
+    im, d = ss(190, 190); S2 = 2
+    d.ellipse([8 * S2, 8 * S2, 188 * S2, 188 * S2], fill=GREEN + (255,))
+    d.ellipse([0, 0, 180 * S2, 180 * S2], fill=CREAM + (255,), outline=INK + (255,), width=4 * S2)
+    for k in range(12):
+        a = k * math.pi / 6
+        d.line([(90 + 70 * math.sin(a)) * S2, (90 - 70 * math.cos(a)) * S2, (90 + 80 * math.sin(a)) * S2, (90 - 80 * math.cos(a)) * S2],
+               fill=INK + (255,), width=3 * S2)
+    sp = eio(u / 0.6)
+    am = 2 * math.pi * 6 * sp * 12; ah = 2 * math.pi * 6 * sp / 12
+    d.line([90 * S2, 90 * S2, (90 + 62 * math.sin(am)) * S2, (90 - 62 * math.cos(am)) * S2], fill=INK + (255,), width=5 * S2)
+    d.line([90 * S2, 90 * S2, (90 + 42 * math.sin(ah)) * S2, (90 - 42 * math.cos(ah)) * S2], fill=ORANGE + (255,), width=8 * S2)
+    d.ellipse([82 * S2, 82 * S2, 98 * S2, 98 * S2], fill=INK + (255,))
+    return down(im)
+
+def screen_gfx_old(c, t):
+    """c: screen-content crop (CH x CW); local screen coords are offset by PAD."""
     u = t - T_TL
     if u >= 0:
-        cw, ch = 880, 196
-        im, d = card(cw, ch, CREAM, INK, 3, 20, GREEN, 10)
-        S2 = 2
-        f = font("mono", 22 * S2); fb = font("monox", 22 * S2)
-        d.text((22 * S2, 18 * S2), "TIMELINE — SEQ 01", font=fb, fill=INK + (255,))
-        # timecode
-        if t < w_(27): tc = t - 3.13
-        else: tc = 6 * 3600 * eio((t - w_(27)) / 0.6) + (t - 3.13)
-        hh, mm, sc = int(tc // 3600), int(tc % 3600 // 60), int(tc % 60)
-        d.text(((cw - 22) * S2, 18 * S2), "%02d:%02d:%02d" % (hh, mm, sc), font=fb,
-               fill=(ORANGE if t >= w_(27) else INK) + (255,), anchor="ra")
-        tx0, tw = 86, cw - 110
-        for r_, lab in enumerate(["V2", "V1", "A1"]):
-            yy = 58 + r_ * 44
-            d.text((22 * S2, (yy + 8) * S2), lab, font=f, fill=MUTE + (255,))
-            d.rounded_rectangle([tx0 * S2, yy * S2, (tx0 + tw) * S2, (yy + 34) * S2], 6 * S2, fill=(228, 222, 210, 255))
-        clips = [(0, 150, GREEN), (160, 300, ORANGE), (310, 470, INK), (480, 640, GREEN), (650, 760, WOOD)]
-        drag_u = clamp((t - w_(21) - 0.05) / 0.5)
-        for k, (a_, b_, c_) in enumerate(clips):
-            yy = 58 + 44
-            xs = a_
-            if k == 1:
-                yy = 102 - 44 * eio(drag_u); xs = a_ + 150 * eio(drag_u)
-            d.rounded_rectangle([(tx0 + xs) * S2, (yy + 3) * S2, (tx0 + xs + b_ - a_) * S2, (yy + 31) * S2], 6 * S2, fill=tuple(c_) + (255,))
-            if k == 1 and 0 < drag_u < 1.0 + (t < w_(23)):
-                icon(d, "cursor", (tx0 + xs + 60) * S2, (yy + 12) * S2, 34 * S2, INK, CREAM)
-        for x in range(0, tw, 9):   # audio waveform
-            hgt = 4 + 12 * abs(math.sin(x * 0.13) * math.sin(x * 0.031 + 1))
-            d.line([(tx0 + x) * S2, (58 + 88 + 17 - hgt) * S2, (tx0 + x) * S2, (58 + 88 + 17 + hgt) * S2], fill=INK + (200,), width=3 * S2)
-        for k in range(4):
-            ku = t - (w_(24) + 0.06 + k * 0.08)
-            if ku > 0:
-                kx, ky = tx0 + 330 + k * 95, 58 + 17; r_ = 13 * eob(ku / 0.15)
-                d.polygon([((kx) * S2, (ky - r_) * S2), ((kx + r_) * S2, ky * S2), (kx * S2, (ky + r_) * S2), ((kx - r_) * S2, ky * S2)],
-                          fill=ORANGE + (255,), outline=INK + (255,))
-        ph = tx0 + (tw - 4) * clamp((t - T_TL) / (11.73 - T_TL))
-        d.line([ph * S2, 50 * S2, ph * S2, (ch - 8) * S2], fill=ORANGE + (255,), width=3 * S2)
-        d.polygon([((ph - 8) * S2, 46 * S2), ((ph + 8) * S2, 46 * S2), (ph * S2, 58 * S2)], fill=ORANGE + (255,))
-        im = down(im)
-        paste(cv, im, 98, 1160 + 70 * (1 - eoc(u / 0.3)), clamp(u / 0.12))
+        paste(c, timeline_card(t), PAD + 49, PAD + 428 + 50 * (1 - eoc(u / 0.3)), clamp(u / 0.12))
     u = t - w_(27)
-    if u >= 0:   # clock badge
-        im, d = ss(190, 190); S2 = 2
-        d.ellipse([8 * S2, 8 * S2, 188 * S2, 188 * S2], fill=GREEN + (255,))
-        d.ellipse([0, 0, 180 * S2, 180 * S2], fill=CREAM + (255,), outline=INK + (255,), width=4 * S2)
-        for k in range(12):
-            a = k * math.pi / 6; d.line([(90 + 70 * math.sin(a)) * S2, (90 - 70 * math.cos(a)) * S2,
-                                         (90 + 80 * math.sin(a)) * S2, (90 - 80 * math.cos(a)) * S2], fill=INK + (255,), width=3 * S2)
-        sp = eio(u / 0.6)
-        am = 2 * math.pi * 6 * sp * 12 / 12; ah = 2 * math.pi * 6 * sp / 12
-        d.line([90 * S2, 90 * S2, (90 + 62 * math.sin(am * 12 / 6)) * S2, (90 - 62 * math.cos(am * 12 / 6)) * S2], fill=INK + (255,), width=5 * S2)
-        d.line([90 * S2, 90 * S2, (90 + 42 * math.sin(ah)) * S2, (90 - 42 * math.cos(ah)) * S2], fill=ORANGE + (255,), width=8 * S2)
-        d.ellipse([82 * S2, 82 * S2, 98 * S2, 98 * S2], fill=INK + (255,))
-        im = down(im)
-        paste_c(cv, im, 868, 960, eob(u / 0.25), clamp(u / 0.08), rot=-6)
-        lab = text_img("6 HRS", "monox", 30, CREAM, track=2)
-        pl, _ = card(lab.width + 28, 50, INK, None, 0, 25, ORANGE, 0); pl = down(pl); pl.alpha_composite(lab, (14, (50 - lab.height) // 2))
-        paste_c(cv, pl, 868, 1080, eob((u - .15) / .2), clamp((u - .15) / .1))
+    if u >= 0:
+        paste_c(c, clock_badge(u), PAD + 690, PAD + 112, 0.68 * eob(u / 0.25), clamp(u / 0.08), rot=-6)
+        lab = text_img("6 HRS", "monox", 24, CREAM, track=2)
+        pl, _ = card(lab.width + 24, 42, INK, None, 0, 21, ORANGE, 0); pl = down(pl); pl.alpha_composite(lab, (12, (42 - lab.height) // 2))
+        paste_c(c, pl, PAD + 690, PAD + 196, eob((u - .15) / .2), clamp((u - .15) / .1))
     u = t - w_(31)
-    if u >= 0:   # 60s reel badge
+    if u >= 0:
         im, d = card(124, 210, CREAM, INK, 4, 18, GREEN, 8); S2 = 2
         icon(d, "play", 32 * S2, 56 * S2, 60 * S2, INK)
-        fb = font("monox", 28 * S2)
-        d.text((62 * S2, 150 * S2), "0:60", font=fb, fill=ORANGE + (255,), anchor="mm")
-        im = down(im)
-        paste_c(cv, im, 212, 970, eob(u / 0.25), clamp(u / 0.08), rot=5)
+        d.text((62 * S2, 150 * S2), "0:60", font=font("monox", 28 * S2), fill=ORANGE + (255,), anchor="mm")
+        paste_c(c, down(im), PAD + 104, PAD + 150, 0.66 * eob(u / 0.25), clamp(u / 0.08), rot=5)
 
 # section 2: clapper
 ev(w_(42), "clap", -16)
@@ -1036,23 +1119,26 @@ def gfx_system(cv, t):
     im = down(im)
     paste(cv, im, 60, 1150 + 60 * (1 - eoc(u / .3)), clamp(u / .1))
 
-# section 10: LED dial + phone
+# section 10: LED readout in the TV's dial window + an on-screen phone graphic
 T_LED = w_(175); T_PH = w_(182); T_DONE = w_(185)
 ev(T_LED, "blip", -20); ev(T_PH, "pop", -19); ev(T_DONE, "ding", -20)
-def gfx_proof(cv, t, k):
-    if k > 1.01: return
-    if t >= T_LED:
-        u = t - T_LED
-        if t < T_DONE:
-            l1, l2, c = "EDITING APPS OPENED", "0" if u > 0.35 else str(9 - int(u / 0.04) % 10), ORANGE_L
-        else:
-            l1, l2, c = "STATUS", "DONE", LGREEN
-        im1 = text_img(l1, "mono", 22, c, track=2); im2 = word_img(l2, "monox", 72, tuple(c))[0]
-        op = 0.95 if (int(t * 10) % 7 or u > 0.5) else 0.6
-        paste_c(cv, im1, 540, 1360, 1, op); paste_c(cv, im2, 540, 1432, 1, op)
+def gfx_proof(cv, t):
+    if t < T_LED or t > 66.32: return
+    u = t - T_LED
+    if t < T_DONE:
+        l1, l2, c = "EDITING APPS OPENED", "0" if u > 0.35 else str(9 - int(u / 0.04) % 10), ORANGE_L
     else:
-        im1 = text_img("CH 09  ·  PROOF", "mono", 22, (120, 116, 110), track=2)
-        paste_c(cv, im1, 540, 1404, 1, 0.9)
+        l1, l2, c = "STATUS", "DONE", LGREEN
+    x0, y0, x1, y1 = DIAL
+    cv[y0 + 8:y1 - 8, x0 + 8:x1 - 8] = cv[y0 + 8:y1 - 8, x0 + 8:x1 - 8] * 0.04 + f3((12, 12, 11)) * 0.96
+    im1 = text_img(l1, "mono", 20, c, track=2); im2 = word_img(l2, "monox", 62, tuple(c))[0]
+    op = 0.95 if (int(t * 10) % 7 or u > 0.5) else 0.6
+    glow = cv2.GaussianBlur(to_np(im2), (0, 0), 6)
+    paste_c(cv, im1, 540, y0 + 34, 1, op)
+    paste(cv, glow, 540 - glow.shape[1] / 2, y0 + 96 - glow.shape[0] / 2, op * 0.6)
+    paste_c(cv, im2, 540, y0 + 96, 1, op)
+
+def screen_gfx_proof(c, t):
     u = t - T_PH
     if 0 <= u and t < 66.3:
         im, d = card(118, 210, INK, CREAM, 3, 22, GREEN, 7); S2 = 2
@@ -1060,8 +1146,7 @@ def gfx_proof(cv, t, k):
         d.ellipse([46 * S2, 84 * S2, 72 * S2, 110 * S2], fill=(ORANGE_L if int(t * 2) % 2 == 0 else (90, 40, 30)) + (255,))
         d.text((59 * S2, 140 * S2), "REC", font=font("monox", 20 * S2), fill=CREAM + (255,), anchor="mm")
         d.rounded_rectangle([44 * S2, 20 * S2, 74 * S2, 28 * S2], 4 * S2, fill=INK + (255,))
-        im = down(im)
-        paste_c(cv, im, 238, 1010, eob(u / .25), clamp(u / .06), rot=8)
+        paste_c(c, down(im), PAD + 108, PAD + 160, 0.72 * eob(u / .25), clamp(u / .06), rot=8)
 
 # ---------------------------------------------------------------- section renderers
 def render_cut(si, t):
@@ -1091,66 +1176,68 @@ def render_cut(si, t):
     elif si == 8: gfx_system(cv, t)
     return cv, M, top
 
+def tv_floor(cv):
+    sh = np.zeros((H // 4, W // 4), np.float32)
+    cv2.ellipse(sh, (135, 412), (122, 9), 0, 0, 360, 1.0, -1)
+    soft = cv2.resize(cv2.GaussianBlur(sh, (0, 0), 7), (W, H))[..., None]
+    con = np.zeros((H // 2, W // 2), np.float32)
+    for x0 in (191, 889): cv2.ellipse(con, (x0 // 2, 1648 // 2), (34, 4), 0, 0, 360, 1.0, -1)
+    cv2.ellipse(con, (270, 1592 // 2), (230, 5), 0, 0, 360, 0.6, -1)
+    con = cv2.resize(cv2.GaussianBlur(con, (0, 0), 3), (W, H))[..., None]
+    cv *= (1 - 0.32 * soft) * (1 - 0.45 * con)
+    cv *= 1 - 0.10 * radial(540, 1100, 900) * (YY[..., None] > 1100)   # ambient falloff around the set
+
 def render_tv(si, t):
     s = SEC[si]; pal = PAL[s["bg"]]
     cv = bg_static(s["bg"]).copy()
-    k = 1.0
-    if si == 10:
-        k = 1 + 1.45 * (1 - eoc((t - s["t0"]) / 0.55))
-    # floor shadow
-    sh = np.zeros((H // 4, W // 4), np.float32)
-    cv2.ellipse(sh, (135, int(TV_P[1] / 4 + k * (1600 - TV_P[1]) / 4)), (int(125 * k), int(10 * k)), 0, 0, 360, 1, -1)
-    sh = cv2.resize(cv2.GaussianBlur(sh, (0, 0), 5), (W, H))[..., None]
-    cv *= 1 - 0.35 * sh
+    k = 1 + 1.5 * (1 - eoc((t - s["t0"]) / 0.55)) if si == 10 else 1.0
+    tv_floor(cv)
     if k < 1.02:
         draw_label(cv, si, t, pal)
         draw_captions(cv, t, si, pal)
+    # the broadcast picture: footage + on-screen graphics, then the CRT
     i = src_idx(t)
-    M, top, sc = tv_M(t, i, k)
-    fg, al = person_layers(M, i)
-    scr = warp_rgba(SCR_M, k)[..., None] if k != 1 else SCR_M[..., None]
-    # CRT power-off at the end of the proof section
-    crt = 0.0
-    if si == 10 and t > 66.30:
-        crt = clamp((t - 66.30) / 0.26)
-        sy = max(0.006, 1 - eic(clamp(crt / 0.6)))
-        sx = 1 - eic(clamp((crt - 0.55) / 0.45))
-        Mc = np.float32([[sx, 0, 540 * (1 - sx)], [0, sy, 1039 * (1 - sy)]])
-        fg = cv2.warpAffine(fg, Mc, (W, H), borderValue=(0, 0, 0))
-        fg = np.clip(fg * (1 + 2.5 * crt), 0, 1)
-        if crt >= 1: fg[:] = 0.03
-        lit = cv2.warpAffine(np.ones((H, W), np.float32), Mc, (W, H))[..., None]
-        fg = fg * lit + 0.04 * (1 - lit)
-    cv[:] = cv * (1 - scr) + fg * scr
-    g = warp_rgba(GLASS, k) if k != 1 else GLASS
-    a = g[..., 3:4]; cv[:] = cv * (1 - a) + g[..., :3] * a
-    tvl = warp_rgba(TV, k) if k != 1 else TV
-    a = tvl[..., 3:4]; cv[:] = cv * (1 - a) + tvl[..., :3] * a
-    # pop-out: the head breaks out over the bezel
-    st = TV_P[1] + k * (TV_SCR[1] + 30 - TV_P[1])
-    if crt == 0:
-        m = np.clip((st - YY) / 10, 0, 1)
-        ap = np.clip((al - 0.06) / 0.9, 0, 1) * m
-        small = cv2.resize(ap, (W // 4, H // 4), interpolation=cv2.INTER_AREA)
-        shd = cv2.resize(cv2.GaussianBlur(cv2.warpAffine(small, np.float32([[1, 0, 3], [0, 1, 4]]), (W // 4, H // 4)), (0, 0), 3), (W, H))[..., None]
-        cv *= 1 - 0.35 * shd
-        a3 = ap[..., None]; cv[:] = cv * (1 - a3) + fg * a3
-    if si == 1: gfx_old(cv, t)
-    if si == 10: gfx_proof(cv, t, k)
-    return cv, M, top
+    M, top, sc = tv_src_M(t, i)
+    c = cv2.warpAffine(graded(i), M, (CW, CH), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    if si == 1: screen_gfx_old(c, t)
+    if si == 10: screen_gfx_proof(c, t)
+    on = 1.0
+    if si == 10 and t > 66.30:            # power-off: collapse to a bright line, then a dot
+        p = clamp((t - 66.30) / 0.26)
+        sy = max(0.004, 1 - eic(clamp(p / 0.6))); sx = max(0.004, 1 - eic(clamp((p - 0.55) / 0.45)))
+        Mc = np.float32([[sx, 0, CW / 2 * (1 - sx)], [0, sy, CH / 2 * (1 - sy)]])
+        lit = cv2.warpAffine(np.ones((CH, CW), np.float32), Mc, (CW, CH))[..., None]
+        c = cv2.warpAffine(c, Mc, (CW, CH)) * (1 + 2.8 * p) * lit
+        if p >= 1:
+            c = np.zeros_like(c)
+            dot = 1.4 * math.exp(-(t - 66.56) / 0.12)
+            cv2.circle(c, (CW // 2, CH // 2), 5, (dot, dot, dot), -1, cv2.LINE_AA)
+            c = cv2.GaussianBlur(c, (0, 0), 3) * 2
+    scr = crt(c, t, on)
+    x0, y0 = TV_SCR[0], TV_SCR[1]
+    m = SCR_LOCAL[..., None]
+    cv[y0:y0 + SH, x0:x0 + SW] = cv[y0:y0 + SH, x0:x0 + SW] * (1 - m) + scr * m
+    a = TV[..., 3:4]; cv[:] = cv * (1 - a) + TV[..., :3] * a
+    cv += SPILL * 0.07 * scr.mean((0, 1))           # screen light spilling onto the lip and bezel
+    if si == 10: gfx_proof(cv, t)
+    if k > 1.001: cv = warp_rgba(cv, k)
+    Mc = M.copy(); Mc[0, 2] += x0 - PAD; Mc[1, 2] += y0 - PAD
+    return cv, Mc, top
 
 def render_end(t):
     cv = bg_static("green").copy()
     u = t - END0 - 0.05
     pal = PAL["green"]
     # mini TV
-    tvs = cv2.resize(TV[600:1620], (W * 2 // 5, 1020 * 2 // 5), interpolation=cv2.INTER_AREA)
-    im = Image.fromarray((tvs * 255).astype(np.uint8), "RGBA")
+    y0c, sc3 = 350, 3
+    tvs = cv2.resize(TV[y0c:1660], (W // sc3, (1660 - y0c) // sc3), interpolation=cv2.INTER_AREA)
+    im = Image.fromarray((np.clip(tvs, 0, 1) * 255).astype(np.uint8), "RGBA")
     scr = Image.new("RGBA", im.size, (0, 0, 0, 0)); sd = ImageDraw.Draw(scr)
-    sd.rounded_rectangle([TV_SCR[0] * 2 // 5 + 2, (TV_SCR[1] - 600) * 2 // 5 + 2, TV_SCR[2] * 2 // 5 - 2, (TV_SCR[3] - 600) * 2 // 5 - 2], 26, fill=(18, 18, 17, 255))
-    icon(sd, "play", W // 5 - 40, (1039 - 600) * 2 // 5 - 40, 80, LGREEN)
+    bx = [TV_SCR[0] // sc3, (TV_SCR[1] - y0c) // sc3, TV_SCR[2] // sc3, (TV_SCR[3] - y0c) // sc3]
+    sd.rounded_rectangle(bx, 22, fill=(20, 22, 20, 255))
+    icon(sd, "play", (bx[0] + bx[2]) // 2 - 38, (bx[1] + bx[3]) // 2 - 38, 76, LGREEN)
     scr.alpha_composite(im); im = scr
-    paste_c(cv, im, 540, 600, eob(u / .35), clamp(u / .1))
+    paste_c(cv, im, 540, 560, eob(u / .35), clamp(u / .1))
     v = word_img("VIBE", "black", 250, CREAM)[0]
     paste_c(cv, v, 540, 880, 1 + 0.4 * (1 - eoc((u - .12) / .18)), clamp((u - .12) / .05))
     e = word_img("Editing", "serifi", 210, ORANGE_L)[0]
