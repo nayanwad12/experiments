@@ -1209,7 +1209,7 @@ def sfx_list():
     return S
 
 
-MUSIC_DB, SFX_DB, DUCK_DB = -10, 0, -7
+MUSIC_DB, SFX_DB, DUCK_DB = -9, 0, -7
 
 
 def build_audio():
@@ -1222,7 +1222,7 @@ def build_audio():
     bed_a = ak.music_bed("retro_a", seconds=SOUND.s + 2, intro_bars=0, seed=21)
     bed_b = ak.music_bed("retro_b", seconds=TOTAL - SOUND.s + 2, intro_bars=0, seed=23)
     mus = np.zeros((n, 2), np.float32)
-    mus[:drop] = bed_a[:drop] * ak.db(-3)
+    mus[:drop] = bed_a[:drop] * ak.db(1)
     k = int(0.3 * SR)
     mus[drop - k:drop] *= np.linspace(1, 0.4, k)[:, None]
     lb = bed_b[: n - drop] * ak.db(-1)
