@@ -5,3 +5,5 @@ out/*
 !out/vibe_reel.mp4
 !out/vibe_reel_comparison.mp4
 __pycache__/
+!out/vibe_reel_v2.mp4
+!out/vibe_reel_v2_comparison.mp4
