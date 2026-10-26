@@ -717,7 +717,7 @@ _VIG = {}
 
 
 def post(rgb, g, f):
-    key = (rgb.shape[:2], bool(g.get("ring")))
+    key = (rgb.shape[:2], bool(g.get("ring")), bool(g.get("light")))
     if key not in _VIG:
         h, w = rgb.shape[:2]
         yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
@@ -726,7 +726,7 @@ def post(rgb, g, f):
             v = np.clip(1 - (r - 0.86) / 0.12, 0, 1) ** 1.5
         else:
             r = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h * 0.45) / (h / 2)) ** 2)
-            v = 1 - 0.4 * np.clip(r - 0.45, 0, None) ** 1.3
+            v = 1 - (0.12 if g.get("light") else 0.4) * np.clip(r - 0.45, 0, None) ** 1.3   # flat white canvas
         _VIG[key] = v[..., None].astype(np.float32)
     out = rgb.astype(np.float32) * _VIG[key]
     out = np.clip(out, 0, 255).astype(np.uint8)
