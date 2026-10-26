@@ -5,3 +5,5 @@ out/*
 !out/vibe40_ad.mp4
 !out/vibe40_ad_comparison.mp4
 __pycache__/
+!out/vibe40_diary.mp4
+!out/vibe40_diary_comparison.mp4

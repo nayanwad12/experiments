@@ -11,3 +11,11 @@ link below." Same pipeline and look as `../vibe-40` (creator-tutorial format, pa
   floating UI pieces are left out
 
 Run exactly as in `../vibe-40/README.md`; outputs `out/vibe40_ad.mp4` and `out/vibe40_ad_comparison.mp4`.
+
+## Diary style (second reference)
+
+`diary.py` re-edits the same take in the cozy film-diary look of the second reference clip: every spoken
+word in a soft condensed serif (Fraunces Soft, butter #F6F39D) dropped into its own spot around the speaker
+and built up phrase by phrase; scrapbook stickers whose word swaps (envelope with ribbon + hand-drawn stars,
+lined note, cassette, taped polaroids); warm lamp-lit grade, bloom, halation, grain; jump-cut zooms.
+`python3 diary.py render` -> `out/vibe40_diary.mp4`; `python3 compare_diary.py render` -> `out/vibe40_diary_comparison.mp4`.
