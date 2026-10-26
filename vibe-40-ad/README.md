@@ -19,3 +19,13 @@ word in a soft condensed serif (Fraunces Soft, butter #F6F39D) dropped into its 
 and built up phrase by phrase; scrapbook stickers whose word swaps (envelope with ribbon + hand-drawn stars,
 lined note, cassette, taped polaroids); warm lamp-lit grade, bloom, halation, grain; jump-cut zooms.
 `python3 diary.py render` -> `out/vibe40_diary.mp4`; `python3 compare_diary.py render` -> `out/vibe40_diary_comparison.mp4`.
+
+## Scribble style (third reference)
+
+`scribble.py` re-edits the same take in the "hand-made text / retro computer" creator style: fisheye opening
+with a black ring, punchy cool grade, ONE white condensed word at a time (Bebas Neue), two-tier titles with a
+big hand-drawn marker word (Permanent Marker, red #EE4B20 / yellow #F9D514) written on letter by letter with a
+stop-motion boil (yellow ones behind the head), split screens with the speaker in a rounded card over a
+retro desktop (system-message dialogs in blue handwriting, media player, MS-DOS export) or a light canvas
+with royal-blue UI (#2553C6). `python3 scribble.py render` -> `out/vibe40_scribble.mp4`;
+`python3 compare_scribble.py render` -> `out/vibe40_scribble_comparison.mp4`.

@@ -7,3 +7,5 @@ out/*
 __pycache__/
 !out/vibe40_diary.mp4
 !out/vibe40_diary_comparison.mp4
+!out/vibe40_scribble.mp4
+!out/vibe40_scribble_comparison.mp4
