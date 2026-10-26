@@ -4,7 +4,7 @@
     python3 compare_scribble.py sheet 2 10 20
 
 Raw small on the left, the edit bigger on the right, "AI EDITED THIS VIDEO" on top, CTA "LEARN THE WORKFLOW";
-everything inside the Instagram Reels safe area. Dressed like the scribble edit (retro desktop windows,
+everything inside the Instagram Reels safe area, on black. Dressed like the scribble edit (retro windows,
 marker type, VT323 counters).
 """
 
@@ -38,7 +38,7 @@ def win_pic(c, box, title, img):
 
 def draw(c, t, f):
     src_t = E.src_at(t)
-    c.drawRect(skia.Rect.MakeWH(W, H), fill(S.DESK))
+    c.drawRect(skia.Rect.MakeWH(W, H), fill("#000000"))
     # title
     S.marker(c, "AI EDITED", 540, 400, 10, 0, 150, S.YEL)
     S.word_caps(c, "THIS VIDEO", 540, 480, 72, S.WHITE)
@@ -55,7 +55,7 @@ def draw(c, t, f):
         kit.text(c, v, x + 18, y + 62, "vt", 60, color=S.BLUE, anchor="l")
         kit.text(c, lab, x + RAW_BOX[2] + 8, y + 58, "vt", 30, color=S.INK, anchor="r")
     # call to action
-    S.marker(c, "LEARN THE WORKFLOW", 540, 1420, 10, 0, 105, S.RED, maxw=860)
+    S.marker(c, "LEARN THE WORKFLOW", 540, 1420, 10, 0, 105, S.YEL, maxw=860)
     return {}
 
 
